@@ -34,19 +34,16 @@ template<typename T>
 void add_children(Node<T> *tree, int curr) {
 
     //higher the number to the right, the bigger the tree
-    if (std::rand() % (2 * curr) <= 2) {
+    if (std::rand() % (2 * curr) <= 2)
         tree->left = new Node(std::rand() % 1000);
-        add_children(tree->left, curr + 1);
-        if (tree->right != nullptr)
-            add_children(tree->right, curr + 1);
-    }
-    if (std::rand() % (2 * curr) <= 2) {
-        tree->right = new Node(std::rand() % 1000);
-        if (tree->left != nullptr)
-            add_children(tree->left, curr + 1);
-        add_children(tree->right, curr + 1);
-    }
 
+    if (std::rand() % (2 * curr) <= 2)
+        tree->right = new Node(std::rand() % 1000);
+
+    if (has_left_child(tree))
+        add_children(tree->left, curr + 1);
+    if (has_right_child(tree))
+        add_children(tree->right, curr + 1);
 
 }
 
