@@ -50,7 +50,8 @@ void add_children(Node<int> *node, int curr) {
     std::cout << rand << std::endl;
     std::cout << std::endl;
 
-    if (rand > 2)
+    //higher this number bigger the tree
+    if (rand > 1)
         return;
 
     node->left = new Node(new int(std::rand() % 1000));
