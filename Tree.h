@@ -79,42 +79,68 @@ void print2D(Node<T> *tree) {
 template<typename T>
 int max_depth(Node<T> *tree) {
 
-    if (tree == nullptr)
-        return -1;
+    if (has_no_child(tree))
+        return 0;
 
-    int a = max_depth(tree->left);
-    int b = max_depth(tree->right);
+    std::list<int> ll;
 
-    int res = 1 + std::max({a, b});
+    if (has_left_child(tree)) {
+        int a = max_depth(tree->left);
+        ll.push_back(a);
+    }
 
+    if (has_right_child(tree)) {
+        int b = max_depth(tree->right);
+        ll.push_back(b);
+    }
+
+    int res = 1 + *std::max_element(ll.begin(), ll.end());
     return res;
 }
 
+//always check that the base case makes sense, here in fact a tree with no child has depth = 0
 template<typename T>
 int min_depth(Node<T> *tree) {
 
-    if (tree == nullptr)
-        return -1;
+    if (has_no_child(tree))
+        return 0;
 
-    int a = min_depth(tree->left);
-    int b = min_depth(tree->right);
+    std::list<int> ll;
 
-    int res = 1 + std::min({a, b});
+    if (has_left_child(tree)) {
+        int a = min_depth(tree->left);
+        ll.push_back(a);
+    }
 
+    if (has_right_child(tree)) {
+        int b = min_depth(tree->right);
+        ll.push_back(b);
+    }
+
+    int res = 1 + *std::min_element(ll.begin(), ll.end());
     return res;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
 
-    if (tree == nullptr)
-        return 0;
 
-    int a = how_many(tree->left);
-    int b = how_many(tree->right);
+    if (has_no_child(tree))
+        return 1;
 
-    int res = 1 + a + b;
+    std::list<int> ll;
 
+    if (has_left_child(tree)) {
+        int a = how_many(tree->left);
+        ll.push_back(a);
+    }
+
+    if (has_right_child(tree)) {
+        int b = how_many(tree->right);
+        ll.push_back(b);
+    }
+
+    int res = 1 + std::accumulate(ll.begin(), ll.end(), 0);
     return res;
 }
 
@@ -160,7 +186,7 @@ T max(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = *std::max_element(ll.begin(), ll.end());
+    T res = *std::max_element(ll.begin(), ll.end());
     return res;
 }
 
