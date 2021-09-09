@@ -10,16 +10,16 @@ int main() {
     std::srand(std::time(nullptr));
 
 
-    auto root = new Node<int>(std::rand() % 1000);
+    auto tree = new Node<int>(std::rand() % 1000);
 
-    add_children(root, 1);
+    add_children(tree, 1);
 
-    print2D(root);
+    print2D(tree);
 
-    cout << max_depth(root) << endl;
-    cout << min_depth(root) << endl;
-    cout << how_many(root) << endl;
-    cout << max(root) << endl;
+    cout << max_depth(tree) << endl;
+    cout << min_depth(tree) << endl;
+    cout << how_many(tree) << endl;
+    cout << max(tree) << endl;
 
     return 0;
 }
