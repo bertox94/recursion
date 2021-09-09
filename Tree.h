@@ -31,12 +31,12 @@ bool has_right_child(Node<T> *tree) {
 }
 
 template<typename T>
-T max(std::list<T> &ll) {
+T max_utils(std::list<T> &ll) {
     return *std::max_element(ll.begin(), ll.end());
 }
 
 template<typename T>
-T min(std::list<T> &ll) {
+T min_utils(std::list<T> &ll) {
     return *std::min_element(ll.begin(), ll.end());
 }
 
@@ -109,7 +109,7 @@ int max_depth(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = 1 + max(ll);
+    int res = 1 + max_utils(ll);
     return res;
 }
 
@@ -132,13 +132,12 @@ int min_depth(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = 1 + min(ll);
+    int res = 1 + min_utils(ll);
     return res;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
-
 
     if (has_no_child(tree))
         return 1;
@@ -181,8 +180,8 @@ T max_II(Node<T> *tree) {
     }
 }
 
-//here in fact max(empty tree) doesn't make sense, so
-//max of tree with one element (leaf) is the element, otherwise max between...
+//here in fact max_utils(empty tree) doesn't make sense, so
+//max of tree with one element (leaf) is the element, otherwise max_utils between...
 template<typename T>
 T max(Node<T> *tree) {
 
@@ -201,7 +200,29 @@ T max(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    T res = max(ll);
+    T res = max_utils(ll);
+    return res;
+}
+
+template<typename T>
+T min(Node<T> *tree) {
+
+    if (has_no_child(tree))
+        return *tree->item;
+
+    std::list<T> ll{*tree->item};
+
+    if (has_left_child(tree)) {
+        T a = min(tree->left);
+        ll.push_back(a);
+    }
+
+    if (has_right_child(tree)) {
+        T b = min(tree->right);
+        ll.push_back(b);
+    }
+
+    T res = min_utils(ll);
     return res;
 }
 
