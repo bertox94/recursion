@@ -31,6 +31,21 @@ bool has_right_child(Node<T> *tree) {
 }
 
 template<typename T>
+T max(std::list<T> &ll) {
+    return *std::max_element(ll.begin(), ll.end());
+}
+
+template<typename T>
+T min(std::list<T> &ll) {
+    return *std::min_element(ll.begin(), ll.end());
+}
+
+template<typename T>
+T sum(std::list<T> &ll) {
+    return std::accumulate(ll.begin(), ll.end(), 0);
+}
+
+template<typename T>
 void add_children(Node<T> *tree, int curr) {
 
     //higher the number to the right, the bigger the tree
@@ -94,7 +109,7 @@ int max_depth(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = 1 + *std::max_element(ll.begin(), ll.end());
+    int res = 1 + max(ll);
     return res;
 }
 
@@ -117,7 +132,7 @@ int min_depth(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = 1 + *std::min_element(ll.begin(), ll.end());
+    int res = 1 + min(ll);
     return res;
 }
 
@@ -140,7 +155,7 @@ int how_many(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    int res = 1 + std::accumulate(ll.begin(), ll.end(), 0);
+    int res = 1 + sum(ll);
     return res;
 }
 
@@ -186,7 +201,7 @@ T max(Node<T> *tree) {
         ll.push_back(b);
     }
 
-    T res = *std::max_element(ll.begin(), ll.end());
+    T res = max(ll);
     return res;
 }
 
