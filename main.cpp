@@ -1,21 +1,25 @@
 #include <iostream>
 #include "Node.h"
+#include "Tree.h"
+
+using namespace std;
 
 
 int main() {
 
-    std::random_device rd;  //Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); //Standard mersenne_twister_engine seeded with rd()
-    std::uniform_int_distribution<> distrib(1, 6);
+    std::srand(std::time(nullptr));
 
 
-    auto root = new Node(new int(distrib(gen)));
+    auto root = new Node<int>(std::rand() % 1000);
 
     add_children(root, 1);
 
     print2D(root);
 
+    cout << max_depth(root) << endl;
+    cout << min_depth(root) << endl;
+    cout << how_many(root) << endl;
+    cout << max(root) << endl;
 
-    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
