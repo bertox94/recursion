@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <list>
 #include "Node.h"
 
 //an empty tree is a tree?
@@ -110,29 +111,49 @@ int how_many(Node<T> *root) {
     return res;
 }
 
+//the base case coincides with the tree being a leaf!
+template<typename T>
+T max_II(Node<T> *root) {
+
+    if (root->left == nullptr && root->right == nullptr) {
+        return *root->item;
+    } else if (root->left != nullptr && root->right == nullptr) {
+        T a = max_II(root->left);
+        int res = std::max({a, *root->item});
+        return res;
+    } else if (root->left == nullptr && root->right != nullptr) {
+        T b = max_II(root->right);
+        int res = std::max({b, *root->item});
+        return res;
+    } else {
+        T a = max_II(root->left);
+        T b = max_II(root->right);
+        int res = std::max({a, b, *root->item});
+        return res;
+    }
+}
+
 //here in fact max(empty tree) doesn't make sense, so
 //max of tree with one element (leaf) is the element, otherwise max between...
 template<typename T>
 T max(Node<T> *root) {
 
-    //it is a leaf
     if (is_leaf(root))
         return *root->item;
 
-    T a, b;
-    int res;
+    std::list<T> ll{*root->item};
 
-    if (root->left != nullptr && root->right == nullptr) {
-        a = max(root->left);
-        res = std::max({a, *root->item});
-    } else if (root->left == nullptr && root->right != nullptr) {
-        b = max(root->right);
-        res = std::max({b, *root->item});
-    } else {
-        a = max(root->left);
-        b = max(root->right);
-        res = std::max({a, b, *root->item});
+    if (root->left != nullptr) {
+        T a = max(root->left);
+        ll.push_back(a);
     }
+
+    if (root->right != nullptr) {
+        T b = max(root->right);
+        ll.push_back(b);
+    }
+
+    int res = *std::max_element(ll.begin(), ll.end());
     return res;
 }
 
