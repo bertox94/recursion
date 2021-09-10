@@ -19,7 +19,8 @@ int main() {
     cout << max_depth(tree) << endl;
     cout << min_depth(tree) << endl;
     cout << how_many(tree) << endl;
-    cout << max_II(tree) << endl;
+    cout << max(tree) << endl;
+    scan(tree);
 
     return 0;
 }

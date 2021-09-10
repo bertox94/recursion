@@ -41,6 +41,18 @@ T min_utils(std::list<T> &ll) {
 }
 
 template<typename T>
+void scan(Node<T> *tree) {
+    if (has_no_child(tree))
+        return;
+
+    if (has_left_child(tree))
+        scan(tree->left);
+
+    if (has_right_child(tree))
+        scan(tree->right);
+}
+
+template<typename T>
 T sum(std::list<T> &ll) {
     return std::accumulate(ll.begin(), ll.end(), 0);
 }
@@ -159,27 +171,6 @@ int how_many(Node<T> *tree) {
 }
 
 //the base case coincides with the tree being a leaf!
-template<typename T>
-T max_II(Node<T> *tree) {
-
-    if (tree->left == nullptr && tree->right == nullptr) {
-        return *tree->item;
-    } else if (tree->left != nullptr && tree->right == nullptr) {
-        T a = max_II(tree->left);
-        int res = std::max({a, *tree->item});
-        return res;
-    } else if (tree->left == nullptr && tree->right != nullptr) {
-        T b = max_II(tree->right);
-        int res = std::max({b, *tree->item});
-        return res;
-    } else {
-        T a = max_II(tree->left);
-        T b = max_II(tree->right);
-        int res = std::max({a, b, *tree->item});
-        return res;
-    }
-}
-
 //here in fact max_utils(empty tree) doesn't make sense, so
 //max of tree with one element (leaf) is the element, otherwise max_utils between...
 template<typename T>
