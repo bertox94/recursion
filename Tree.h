@@ -114,11 +114,15 @@ int max_depth(Node<T> *tree) {
     if (has_left_child(tree)) {
         int a = max_depth(tree->left);
         ll.push_back(a);
+    } else {
+
     }
 
     if (has_right_child(tree)) {
         int b = max_depth(tree->right);
         ll.push_back(b);
+    } else {
+
     }
 
     int res = 1 + max_utils(ll);
@@ -137,11 +141,15 @@ int min_depth(Node<T> *tree) {
     if (has_left_child(tree)) {
         int a = min_depth(tree->left);
         ll.push_back(a);
+    } else {
+
     }
 
     if (has_right_child(tree)) {
         int b = min_depth(tree->right);
         ll.push_back(b);
+    } else {
+
     }
 
     int res = 1 + min_utils(ll);
@@ -159,11 +167,15 @@ int how_many(Node<T> *tree) {
     if (has_left_child(tree)) {
         int a = how_many(tree->left);
         ll.push_back(a);
+    } else {
+
     }
 
     if (has_right_child(tree)) {
         int b = how_many(tree->right);
         ll.push_back(b);
+    } else {
+
     }
 
     int res = 1 + sum(ll);
@@ -184,11 +196,15 @@ T max(Node<T> *tree) {
     if (has_left_child(tree)) {
         T a = max(tree->left);
         ll.push_back(a);
+    } else {
+
     }
 
     if (has_right_child(tree)) {
         T b = max(tree->right);
         ll.push_back(b);
+    } else {
+
     }
 
     T res = max_utils(ll);
@@ -206,11 +222,15 @@ T min(Node<T> *tree) {
     if (has_left_child(tree)) {
         T a = min(tree->left);
         ll.push_back(a);
+    } else {
+
     }
 
     if (has_right_child(tree)) {
         T b = min(tree->right);
         ll.push_back(b);
+    } else {
+
     }
 
     T res = min_utils(ll);
