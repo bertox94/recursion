@@ -6,9 +6,9 @@ using namespace std;
 
 int main() {
     std::srand(std::time(nullptr));
-/*
-    int times = 15;
-    int times2 = 100;
+
+    int times = 25;
+    int times2 = 5;
 
 
     for (int i = 0; i < times; i++) {
@@ -21,7 +21,7 @@ int main() {
         cout << i << ": " << val / times2 << endl;
     }
 
- */
+ /*
 
     Node<int>* tree = create_tree<int>(1);
 
@@ -33,6 +33,6 @@ int main() {
         cout << "Min:       " << min(tree) << endl;
         //scan(tree);
 
-
+*/
     return 0;
 }
