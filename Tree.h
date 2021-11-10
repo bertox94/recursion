@@ -126,7 +126,7 @@ int max_depth(Node<T>* tree) {
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T>* tree) {
-    std::list<T> ll{0};
+    std::list<T> ll;
 
     if (has_left_child(tree))
         ll.push_back(min_depth(tree->left));

@@ -6,7 +6,7 @@ using namespace std;
 
 int main() {
     std::srand(std::time(nullptr));
-
+/*
     int times = 15;
     int times2 = 100;
 
@@ -21,7 +21,10 @@ int main() {
         cout << i << ": " << val / times2 << endl;
     }
 
-    /*
+ */
+
+    Node<int>* tree = create_tree<int>(1);
+
         print2D(tree);
         cout << "Max depth: " << max_depth(tree) << endl;
         cout << "Min depth: " << min_depth(tree) << endl;
@@ -29,7 +32,7 @@ int main() {
         cout << "Max:       " << max(tree) << endl;
         cout << "Min:       " << min(tree) << endl;
         //scan(tree);
-    */
+
 
     return 0;
 }
