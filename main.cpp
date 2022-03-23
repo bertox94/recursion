@@ -11,17 +11,17 @@ int main() {
     int times2 = 5;
 
 
-    for (int i = 0; i < times; i++) {
-        long long val = 0;
-        for (int j = 0; j < times2; j++) {
-            Node<int>* tree = create_tree<int>(i);
-            val += how_many(tree);
-            delete tree;
-        }
-        cout << i << ": " << val / times2 << endl;
-    }
+   //for (int i = 0; i < times; i++) {
+   //    long long val = 0;
+   //    for (int j = 0; j < times2; j++) {
+   //        Node<int>* tree = create_tree<int>(i);
+   //        val += how_many(tree);
+   //        delete tree;
+   //    }
+   //    cout << i << ": " << val / times2 << endl;
+   //}
 
- /*
+
 
     Node<int>* tree = create_tree<int>(1);
 
@@ -33,6 +33,6 @@ int main() {
         cout << "Min:       " << min(tree) << endl;
         //scan(tree);
 
-*/
+
     return 0;
 }

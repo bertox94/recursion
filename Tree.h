@@ -76,7 +76,7 @@ void print2D(Node<T> *tree) {
 
 template<typename T>
 T max_utils(T lvalue, T rvalue) {
-    if (rvalue.value() > lvalue.value())
+    if (rvalue > lvalue)
         return rvalue;
     else
         return lvalue;
@@ -84,7 +84,7 @@ T max_utils(T lvalue, T rvalue) {
 
 template<typename T>
 T min_utils(T lvalue, T rvalue) {
-    if (rvalue.value() < lvalue.value())
+    if (rvalue < lvalue)
         return rvalue;
     else
         return lvalue;
@@ -108,6 +108,22 @@ std::optional<T> min_utils(std::optional<T> lvalue, std::optional<T> rvalue) {
         } else
             return lvalue;
     } else return rvalue;
+}
+
+template<typename T>
+T max_utils(T curr, std::optional<T> lvalue, std::optional<T> rvalue) {
+    std::optional<T> mmax = max_utils(lvalue, rvalue);
+    if (mmax.has_value())
+        return max(mmax.value(), curr);
+    return curr;
+}
+
+template<typename T>
+T min_utils(T curr, std::optional<T> lvalue, std::optional<T> rvalue) {
+    std::optional<T> mmin = min_utils(lvalue, rvalue);
+    if (mmin.has_value())
+        return min(mmin.value(), curr);
+    return curr;
 }
 
 template<typename T>
