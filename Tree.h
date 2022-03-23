@@ -153,7 +153,6 @@ int max_depth(Node<T> *tree) {
         rvalue = max_depth(tree->right);
 
     int res = 1 + max_utils(lvalue, rvalue);
-
     return res;
 }
 
@@ -174,7 +173,6 @@ int min_depth(Node<T> *tree) {
         rvalue = 0;
 
     int res = 1 + min_utils(lvalue, rvalue);
-
     return res;
 }
 
