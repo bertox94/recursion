@@ -91,16 +91,6 @@ T min_utils(T lvalue, T rvalue) {
 }
 
 template<typename T>
-std::optional<T> max_utils(std::optional<T> lvalue, std::optional<T> rvalue) {
-    if (lvalue.has_value()) {
-        if (rvalue.has_value()) {
-            return max_utils(lvalue.value(), rvalue.value());
-        } else
-            return lvalue;
-    } else return rvalue;
-}
-
-template<typename T>
 std::optional<T> min_utils(std::optional<T> lvalue, std::optional<T> rvalue) {
     if (lvalue.has_value()) {
         if (rvalue.has_value()) {
@@ -111,19 +101,22 @@ std::optional<T> min_utils(std::optional<T> lvalue, std::optional<T> rvalue) {
 }
 
 template<typename T>
-T max_utils(T curr, std::optional<T> lvalue, std::optional<T> rvalue) {
-    std::optional<T> mmax = max_utils(lvalue, rvalue);
-    if (mmax.has_value())
-        return max(mmax.value(), curr);
-    return curr;
+T max_utils(std::list<T> &ll) {
+    T max = ll.front();
+    for (auto el: ll) {
+        if (max < el)
+            max = el;
+    }
+    return max;
 }
 
-template<typename T>
-T min_utils(T curr, std::optional<T> lvalue, std::optional<T> rvalue) {
-    std::optional<T> mmin = min_utils(lvalue, rvalue);
-    if (mmin.has_value())
-        return min(mmin.value(), curr);
-    return curr;
+int min_utils(std::list<int> ll) {
+    int min = ll.front();
+    for (auto &el: ll) {
+        if (min > el)
+            min = el;
+    }
+    return min;
 }
 
 template<typename T>
@@ -152,43 +145,34 @@ int max_depth(Node<T> *tree) {
     if (has_right_child(tree))
         rvalue = max_depth(tree->right);
 
-    int res = 1 + max_utils(lvalue, rvalue);
-    return res;
+    return 1 + max_utils(lvalue, rvalue);
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T> *tree) {
-    int lvalue;
-    int rvalue;
-
-    if (has_left_child(tree))
-        lvalue = min_depth(tree->left);
-    else
-        lvalue = 0;
-
-    if (has_right_child(tree))
-        rvalue = min_depth(tree->right);
-    else
-        rvalue = 0;
-
-    int res = 1 + min_utils(lvalue, rvalue);
-    return res;
-}
-
-template<typename T>
-int how_many(Node<T> *tree) {
     int lvalue = 0;
     int rvalue = 0;
 
     if (has_left_child(tree))
-        lvalue = how_many(tree->left);
+        lvalue = min_depth(tree->left);
 
     if (has_right_child(tree))
-        rvalue = how_many(tree->right);
+        rvalue = min_depth(tree->right);
 
-    int res = 1 + lvalue + rvalue;
-    return res;
+    return 1 + min_utils(lvalue, rvalue);
+}
+
+template<typename T>
+int how_many(Node<T> *tree) {
+    int sum = 0;
+    if (has_left_child(tree))
+        sum += how_many(tree->left);
+
+    if (has_right_child(tree))
+        sum += how_many(tree->right);
+
+    return 1 + sum;
 }
 
 //the base case coincides with the tree being a leaf!
@@ -196,34 +180,33 @@ int how_many(Node<T> *tree) {
 //max of tree with one element (leaf) is the element, otherwise max_utils between...
 
 //A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
+//An empty tree doesn't exist. At least root must be.
 template<typename T>
 T max(Node<T> *tree) {
-    std::optional<int> lvalue;
-    std::optional<int> rvalue;
+    std::list<T> ll;
 
     if (has_left_child(tree))
-        lvalue = max(tree->left);
+        ll.push_back(max(tree->left));
 
     if (has_right_child(tree))
-        rvalue = max(tree->right);
+        ll.push_back(max(tree->right));
 
-    int res = max_utils(*tree->item, lvalue, rvalue);
-    return res;
+    ll.push_back(*tree->item);
+    return max_utils(ll);
 }
 
 template<typename T>
 T min(Node<T> *tree) {
-    std::optional<int> lvalue;
-    std::optional<int> rvalue;
+    std::list<T> ll;
 
     if (has_left_child(tree))
-        lvalue = min(tree->left);
+        ll.push_back(min(tree->left));
 
     if (has_right_child(tree))
-        rvalue = min(tree->right);
+        ll.push_back(min(tree->right));
 
-    int res = min_utils(*tree->item, lvalue, rvalue);
-    return res;
+    ll.push_back(*tree->item);
+    return min_utils(ll);
 }
 
 #endif //RECURSION_TREE_H
