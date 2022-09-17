@@ -171,7 +171,7 @@ std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
     //First, handle what comes up from children
     std::list<int> ll;
     for (auto &child: tree->children) {
-        auto ret = number_of_father_with_single_child(child);
+        auto ret = number_of_fathers_with_single_child(child);
         ll.push_back(ret);
     }
 
@@ -197,8 +197,8 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specif
     //define all that will be needed later
     std::list<int> nodes_at_specified_height;
     std::list<int> heights;
-    int curr_height; //left unspecified for now
     int num_of_nodes_at_specified_height; //left unspecified for now because we have to assign to it a value
+    int curr_height; //left unspecified for now
 
     //we want to know the parameters here for the successive computation
     if (tree->children.empty()) {
@@ -226,22 +226,41 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specif
 }
 
 template<typename T>
-int number_of_father_with_single_child(Node<T> *tree) {
+int number_of_fathers_with_single_child(Node<T> *tree) {
+    std::list<int> fathers_with_single_child;
+    int number_of_fathers_with_single_child;
+
+    if (tree->children.empty()) {
+        number_of_fathers_with_single_child = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = number_of_fathers_with_single_child(child);
+            fathers_with_single_child.push_back(ret);
+        }
+        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
+        if (tree->children.size() == 1)
+            number_of_fathers_with_single_child++;
+    }
+
+    return number_of_fathers_with_single_child;
+}
+
+template<typename T>
+int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
     //First, handle what comes up from children
     std::list<int> ll;
     for (auto &child: tree->children) {
-        auto ret = number_of_father_with_single_child(child);
+        auto ret = number_of_father_with_specified_number_of_children(child, num_of_children);
         ll.push_back(ret);
     }
 
     //Then, find a way to treat the father as the children
     if (tree->children.size() == 0) { // leaf (usually always present)
         ll.emplace_back(0);
-    } else if (tree->children.size() == 1) //specific case that need attention
-        ll.emplace_back(1);
-    else {
-        // nothing relevant here
     }
+    if (tree->children.size() == num_of_children) //specific case that need attention
+        ll.emplace_back(1);
+
 
     //Compute what to return
     int num = sum_utils(ll);
@@ -295,29 +314,6 @@ std::pair<int, int> number_of_fathers_with_single_child_at_same_and_maximal_dept
     }
 
     return {num, depth + 1};
-}
-
-template<typename T>
-int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
-    //First, handle what comes up from children
-    std::list<int> ll;
-    for (auto &child: tree->children) {
-        auto ret = number_of_father_with_specified_number_of_children(child, num_of_children);
-        ll.push_back(ret);
-    }
-
-    //Then, find a way to treat the father as the children
-    if (tree->children.size() == 0) { // leaf (usually always present)
-        ll.emplace_back(0);
-    }
-    if (tree->children.size() == num_of_children) //specific case that need attention
-        ll.emplace_back(1);
-
-
-    //Compute what to return
-    int num = sum_utils(ll);
-
-    return num;
 }
 
 #endif //RECURSION_TREE_H
