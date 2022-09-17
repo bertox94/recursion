@@ -148,91 +148,71 @@ list<T> list_nodes(Node<T> *tree) {
 }
 
 template<typename T>
-std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
-    return {};
-}
+int number_of_fathers_with_no_child(Node<T> *tree) {
+    // the following are left unspecified for now because we don't know what value is it now
+    // the data of the children can and usually must survive outside the if-else blocks, so it's declared here
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
 
-template<typename T>
-std::pair<int, int> number_of_nodes_at_specific_depth(Node<T> *tree, int depth) {
-    return {};
+    //in this if-else we deal only with children!!!
+    if (tree->children.empty()) {
+        num_of_nodes_of_the_children = 0;
+    } else {
+        std::list<int> nodes_from_the_children;
+        for (auto &child: tree->children)
+            nodes_from_the_children.push_back(number_of_fathers_with_no_child(child));
+        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+    }
+    // fair enpugh that we come out of this with data on the children,
+    // we don't care about current until now
+
+    current_num_of_nodes = num_of_nodes_of_the_children;
+    if (tree->children.empty())
+        current_num_of_nodes++;
+
+    return current_num_of_nodes;
 }
 
 template<typename T>
 int number_of_fathers_with_single_child(Node<T> *tree) {
-    std::list<int> fathers_with_single_child;
-    int number_of_fathers_with_single_child;
-
-    if (tree->children.empty()) {
-        number_of_fathers_with_single_child = 0;
-    } else {
-        for (auto &child: tree->children) {
-            auto ret = number_of_fathers_with_single_child(child);
-            fathers_with_single_child.push_back(ret);
-        }
-        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
-    }
-
-    if (tree->children.size() == 1)
-        number_of_fathers_with_single_child++;
-
-    return number_of_fathers_with_single_child;
-}
-
-template<typename T>
-int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
-    std::list<int> fathers_with_single_child;
-    int number_of_fathers_with_single_child;
-
-    if (tree->children.empty()) {
-        number_of_fathers_with_single_child = 0;
-    } else {
-        for (auto &child: tree->children) {
-            auto ret = number_of_fathers_with_specified_number_of_children(child, num_of_children);
-            fathers_with_single_child.push_back(ret);
-        }
-        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
-    }
-
-    if (tree->children.size() == num_of_children)
-        number_of_fathers_with_single_child++;
-
-    return number_of_fathers_with_single_child;
-}
-
-//define the specified_height of a node as the maximum of the heights of its children +1
-//here you can see that the dealing with the father variable and the computation of the returned variable are split
-// probably because we return a pair of two values
-// height is computated in each branch, nodes once outside the branches
-template<typename T>
-std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specified_height) {
-    std::list<int> nodes_from_the_children;
-    std::list<int> heights_of_the_children;
-    //the following are left unspecified for now because we don't know what value is it now
     int num_of_nodes_of_the_children;
     int current_num_of_nodes;
-    int height_of_the_children;
-    int max_height_among_the_children;
-    int current_height;
 
     if (tree->children.empty()) {
-        current_height = 0;
         num_of_nodes_of_the_children = 0;
     } else {
-        for (auto &child: tree->children) {
-            auto ret = number_of_nodes_at_specific_height(child, specified_height);
-            heights_of_the_children.push_back(ret.first);
-            nodes_from_the_children.push_back(ret.second);
-        }
-        max_height_among_the_children = max_utils(heights_of_the_children);
-        current_height = max_height_among_the_children + 1;
+        std::list<int> nodes_from_the_children;
+        for (auto &child: tree->children)
+            nodes_from_the_children.push_back(number_of_fathers_with_single_child(child));
         num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
     }
 
     current_num_of_nodes = num_of_nodes_of_the_children;
-    if (current_height == specified_height)
-        current_num_of_nodes = num_of_nodes_of_the_children + 1;
+    if (tree->children.size() == 1)
+        current_num_of_nodes++;
 
-    return {current_height, current_num_of_nodes};
+    return current_num_of_nodes;
+}
+
+template<typename T>
+int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
+
+    if (tree->children.empty()) {
+        num_of_nodes_of_the_children = 0;
+    } else {
+        std::list<int> nodes_from_the_children;
+        for (auto &child: tree->children)
+            nodes_from_the_children.push_back(number_of_fathers_with_single_child(child));
+        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+    }
+
+    current_num_of_nodes = num_of_nodes_of_the_children;
+    if (tree->children.size() == num_of_children)
+        current_num_of_nodes++;
+
+    return current_num_of_nodes;
 }
 
 template<typename T>
@@ -281,6 +261,132 @@ std::pair<int, int> number_of_fathers_with_single_child_at_same_and_maximal_dept
     }
 
     return {num, depth + 1};
+}
+
+/**
+ * HEIGHT
+ * The height of a node is the maximum of the heights of its children +1. If it has no children, it is 0.
+ */
+// here you can see that the dealing with the father variable and the computation of the returned variable are split
+// probably because we return a pair of two values
+// height is computed in each branch, nodes once outside the branches
+// note that it is superfluous to return the height at height 0, yet due to the mechanism of recursion used here,
+// we need to return it anyway
+template<typename T>
+std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *tree) {
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
+    int height_of_the_children;
+    int max_height_among_the_children;
+    int current_height;
+
+    if (tree->children.empty()) {
+        current_height = 0;
+        num_of_nodes_of_the_children = 0;
+    } else {
+        std::list<int> nodes_from_the_children;
+        std::list<int> heights_of_the_children;
+        for (auto &child: tree->children) {
+            auto ret = number_of_nodes_at_height_zero(child);
+            heights_of_the_children.push_back(ret.first);
+            nodes_from_the_children.push_back(ret.second);
+        }
+        max_height_among_the_children = max_utils(heights_of_the_children);
+        current_height = max_height_among_the_children + 1;
+        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+    }
+
+    current_num_of_nodes = num_of_nodes_of_the_children;
+    if (current_height == 0)
+        current_num_of_nodes = num_of_nodes_of_the_children + 1;
+
+    return {current_height, current_num_of_nodes};
+}
+
+template<typename T>
+std::pair<int, int> number_of_nodes_at_height_one(Node<T> *tree) {
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
+    int height_of_the_children;
+    int max_height_among_the_children;
+    int current_height;
+
+    if (tree->children.empty()) {
+        current_height = 0;
+        num_of_nodes_of_the_children = 0;
+    } else {
+        std::list<int> nodes_from_the_children;
+        std::list<int> heights_of_the_children;
+        for (auto &child: tree->children) {
+            auto ret = number_of_nodes_at_height_one(child);
+            heights_of_the_children.push_back(ret.first);
+            nodes_from_the_children.push_back(ret.second);
+        }
+        max_height_among_the_children = max_utils(heights_of_the_children);
+        current_height = max_height_among_the_children + 1;
+        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+    }
+
+    current_num_of_nodes = num_of_nodes_of_the_children;
+    if (current_height == 1)
+        current_num_of_nodes = num_of_nodes_of_the_children + 1;
+
+    return {current_height, current_num_of_nodes};
+}
+
+template<typename T>
+std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specified_height) {
+    //the following are left unspecified for now because we don't know what value is it now
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
+    int height_of_the_children;
+    int max_height_among_the_children;
+    int current_height;
+
+    if (tree->children.empty()) {
+        current_height = 0;
+        num_of_nodes_of_the_children = 0;
+    } else {
+        std::list<int> nodes_from_the_children;
+        std::list<int> heights_of_the_children;
+        for (auto &child: tree->children) {
+            auto ret = number_of_nodes_at_specific_height(child, specified_height);
+            heights_of_the_children.push_back(ret.first);
+            nodes_from_the_children.push_back(ret.second);
+        }
+        max_height_among_the_children = max_utils(heights_of_the_children);
+        current_height = max_height_among_the_children + 1;
+        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+    }
+
+    current_num_of_nodes = num_of_nodes_of_the_children;
+    if (current_height == specified_height)
+        current_num_of_nodes = num_of_nodes_of_the_children + 1;
+
+    return {current_height, current_num_of_nodes};
+}
+
+/**
+ * DEPTH
+ * The depth of a node is the depth of the father +1. The father has depth 0.
+ */
+// here you can see that the dealing with the father variable and the computation of the returned variable are split
+// probably because we return a pair of two values
+// height is computed in each branch, nodes once outside the branches
+// note that it is superfluous to return the height, yet in this case we need to return it anyway
+template<typename T>
+std::pair<int, int> number_of_nodes_at_depth_zero(Node<T> *tree, int current_depth) {
+    return {};
+}
+
+template<typename T>
+std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree, int current_depth) {
+    return {};
+}
+
+template<typename T>
+std::pair<int, int> number_of_nodes_at_specific_depth(Node<T> *tree, int current_depth, int target_depth) {
+    return {};
 }
 
 #endif //RECURSION_BASIC_H

@@ -33,6 +33,7 @@ int main() {
     cout << "Max depth:  " << max_depth(tree) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
+    cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
     //cout << "-------" << endl;
     //for (auto i = minval; i <= maxval; i++) {
     //    string str = string("HMLT (") + to_string(i) + "):";
