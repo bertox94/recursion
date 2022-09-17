@@ -144,10 +144,11 @@ template<typename T>
 std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specified_height) {
     std::list<int> nodes;
     std::list<int> heights_of_the_children;
-    int num_of_nodes_of_the_children; //left unspecified for now because we don't know what value is it now
-    int current_num_of_nodes; //left unspecified for now because we don't know what value is it now
-    int height_of_the_children; //left unspecified for now because we don't know what value is it now
-    int current_height; //left unspecified for now because we don't know what value is it now
+    //the following are left unspecified for now because we don't know what value is it now
+    int num_of_nodes_of_the_children;
+    int current_num_of_nodes;
+    int height_of_the_children;
+    int current_height;
 
     if (tree->children.empty()) {
         current_height = 0;
