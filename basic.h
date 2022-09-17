@@ -18,21 +18,17 @@ template<typename T>
 int max_depth(Node<T> *tree) {
     std::list<int> depths;
     int m_depth;
-
-    // data only from the children
     if (tree->children.empty()) {
-        m_depth = 0; // this should be seen as depth only from the children
+        m_depth = 0; // from the children
+        m_depth++; // for the father
     } else {
         for (auto &child: tree->children) {
             auto ret = max_depth(child);
             depths.push_back(ret);
         }
         m_depth = max_utils(depths);
+        m_depth++;
     }
-
-    //for the father
-    m_depth++;
-
     return m_depth;
 }
 
@@ -45,16 +41,15 @@ int min_depth(Node<T> *tree) {
     // the objective here is only to handle data that comes from children only, ignoring completely the father
     if (tree->children.empty()) {
         m_depth = 0; // this should be seen as depth only from the children
+        m_depth++; // for the father (preparing the value to be return on top arrow of the diagram)
     } else {
         for (auto &child: tree->children) {
             auto ret = min_depth(child);
             depths.push_back(ret);
         }
         m_depth = min_utils(depths);
+        m_depth++;
     }
-
-    //for the father
-    m_depth++;
 
     return m_depth;
 }
@@ -68,16 +63,15 @@ int how_many(Node<T> *tree) {
     // data only from the children
     if (tree->children.empty()) {
         h_many = 0; // see here, how many children below the current node
+        h_many++; // for the father
     } else {
         for (auto &child: tree->children) {
             auto ret = how_many(child);
             nodes.push_back(ret);
         }
-        h_many = sum_utils(nodes);
+        h_many = sum_utils(nodes); // from the children
+        h_many++; // for the father
     }
-
-    //for the father
-    h_many++;
 
     return h_many;
 }
@@ -90,24 +84,44 @@ int how_many(Node<T> *tree) {
 //An empty tree doesn't exist. At least root must be.
 template<typename T>
 T max_value(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = max_value(child);
-        ll.push_back(ret);
+    std::list<int> maxes;
+    int m_val;
+
+    // the objective here is to prepare data from the children to be assimilated as the father in the computation phase
+    // ideally we should make two separate computation, if the node has no child and if it does,
+    // but when possible to have just one computation phase I think it's better
+    // out of this if else we should have set all the variables of before ready to be returned
+    if (tree->children.empty()) {
+        m_val = *tree->item; // this should be seen as depth only from the children
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = min_depth(child);
+            maxes.push_back(ret);
+        }
+        maxes.push_back(*tree->item);
+        m_val = max_utils(maxes);
     }
-    ll.push_back(*tree->item);
-    return max_utils(ll);
+
+    return m_val;
 }
 
 template<typename T>
 T min_value(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = min_value(child);
-        ll.push_back(ret);
+    std::list<int> minima;
+    int m_val;
+
+    if (tree->children.empty()) {
+        m_val = *tree->item; // this should be seen as depth only from the children
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = min_depth(child);
+            minima.push_back(ret);
+        }
+        minima.push_back(*tree->item);
+        m_val = min_utils(minima);
     }
-    ll.push_back(*tree->item);
-    return min_utils(ll);
+
+    return m_val;
 }
 
 #endif //RECURSION_BASIC_H
