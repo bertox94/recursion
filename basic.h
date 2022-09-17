@@ -124,4 +124,25 @@ T min_value(Node<T> *tree) {
     return m_val;
 }
 
+template<typename T>
+T how_many_like_this(Node<T> *tree, T like) {
+    std::list<int> nodes;
+    int num_of_nodes;
+
+    if (tree->children.empty()) {
+        num_of_nodes = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = how_many_like_this(child, like);
+            nodes.push_back(ret);
+        }
+        num_of_nodes = sum_utils(nodes);
+    }
+
+    if (*tree->item == like)
+        num_of_nodes++;
+
+    return num_of_nodes;
+}
+
 #endif //RECURSION_BASIC_H

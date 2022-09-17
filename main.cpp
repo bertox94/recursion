@@ -24,11 +24,18 @@ int main() {
     //print2D(tree);
     scan(tree);
     cout << endl;
+    auto maxval = max_value(tree);
+    auto minval = min_value(tree);
     cout << "How many:   " << how_many(tree) << endl;
     cout << "Min depth:  " << min_depth(tree) << endl;
     cout << "Max depth:  " << max_depth(tree) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
+    //cout << "-------" << endl;
+    //for (auto i = minval; i <= maxval; i++) {
+    //    string str = string("HMLT (") + to_string(i) + "):";
+    //    cout << setw(13) << left << str << how_many_like_this(tree, i) << endl;
+    //}
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NNSH (") + to_string(i) + "):";
