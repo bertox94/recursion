@@ -16,21 +16,22 @@ void scan(Node<T> *tree) {
 
 template<typename T>
 int max_depth(Node<T> *tree) {
-    int m_depth;
+    int m_depth_of_the_children;
+    int m_depth_of_the_current;
     if (tree->children.empty()) {
         // no statement for the children
-        m_depth = 0; // for the father
+        m_depth_of_the_current = 0; // for the father
     } else {
         std::list<int> depths;
         for (auto &child: tree->children) {
             auto ret = max_depth(child);
             depths.push_back(ret);
         }
-        m_depth = max_utils(depths); // max heights at children level
-        m_depth++; // max height at father lever (current node)
+        m_depth_of_the_children = max_utils(depths);
+        m_depth_of_the_current = m_depth_of_the_children + 1;
     }
 
-    return m_depth;
+    return m_depth_of_the_current;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
