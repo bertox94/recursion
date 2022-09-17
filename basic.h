@@ -16,63 +16,57 @@ void scan(Node<T> *tree) {
 
 template<typename T>
 int max_depth(Node<T> *tree) {
-    std::list<int> depths;
     int m_depth;
+
     if (tree->children.empty()) {
         m_depth = 0; // from the children
         m_depth++; // for the father
     } else {
+        std::list<int> depths;
         for (auto &child: tree->children) {
             auto ret = max_depth(child);
             depths.push_back(ret);
         }
-        m_depth = max_utils(depths);
-        m_depth++;
+        m_depth = max_utils(depths); // from the children
+        m_depth++; // for the father
     }
+
     return m_depth;
+}
+
+template<typename T>
+int handle_children(){
+
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T> *tree) {
-    std::list<int> depths;
     int m_depth;
-
-    // the objective here is only to handle data that comes from children only, ignoring completely the father
     if (tree->children.empty()) {
-        m_depth = 0; // this should be seen as depth only from the children
-        m_depth++; // for the father (preparing the value to be return on top arrow of the diagram)
+        m_depth = 0;
     } else {
-        for (auto &child: tree->children) {
-            auto ret = min_depth(child);
-            depths.push_back(ret);
-        }
+        std::list<int> depths;
+        for (auto &child: tree->children)
+            depths.push_back(min_depth(child));
         m_depth = min_utils(depths);
-        m_depth++;
     }
-
+    m_depth++;
     return m_depth;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
-    std::list<int> nodes;
     int h_many;
-
-    //the assumption is that behavior differs only in 2 cases, no children, one or more children
-    // data only from the children
     if (tree->children.empty()) {
-        h_many = 0; // see here, how many children below the current node
-        h_many++; // for the father
+        h_many = 0;
     } else {
-        for (auto &child: tree->children) {
-            auto ret = how_many(child);
-            nodes.push_back(ret);
-        }
+        std::list<int> nodes;
+        for (auto &child: tree->children)
+            nodes.push_back(how_many(child));
         h_many = sum_utils(nodes); // from the children
-        h_many++; // for the father
     }
-
+    h_many++;
     return h_many;
 }
 
