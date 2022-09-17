@@ -6,6 +6,7 @@
 #define RECURSION_BASIC_H
 
 #include "Node.h"
+#include "Tree.h"
 
 template<typename T>
 void scan(Node<T> *tree) {
@@ -15,18 +16,24 @@ void scan(Node<T> *tree) {
 
 template<typename T>
 int max_depth(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = max_depth(child);
-        ll.push_back(ret);
+    std::list<int> depths;
+    int m_depth;
+
+    // data only from the children
+    if (tree->children.empty()) {
+        m_depth = 0; // this should be seen as depth only from the children
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = max_depth(child);
+            depths.push_back(ret);
+        }
+        m_depth = max_utils(depths);
     }
 
-    int max_depth_as_children_were_root;
-    if (tree->children.empty())
-        max_depth_as_children_were_root = 0;
-    else
-        max_depth_as_children_were_root = max_utils(ll);
-    return 1 + max_depth_as_children_were_root;
+    //for the father
+    m_depth++;
+
+    return m_depth;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1

@@ -136,6 +136,7 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specif
     }
 
     // compute with data from father and children
+    // here starts computation of what we want to put on the top arrow of the famous diagram
     if (curr_height == specified_height)
         num_of_nodes_at_specified_height++;
     curr_height++;

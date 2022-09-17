@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Node.h"
 #include "Tree.h"
+#include "basic.h"
 #include <sstream>
 #include <iomanip>
 
