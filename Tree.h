@@ -204,23 +204,24 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specif
     if (tree->children.empty()) {
         // compute with data from father, because he has no children
         // here you must define all the variables left unspecified above
+        // do not worry if the follwoing valies do not seems rght,
+        // computation for the father will be dealt later with the data of the children
         curr_height = 0;
-        if (curr_height == specified_height)
-            num_of_nodes_at_specified_height = 1;
-        else
-            num_of_nodes_at_specified_height = 0;
+        num_of_nodes_at_specified_height = 0;
     } else {
         for (auto &child: tree->children) {
             auto ret = number_of_nodes_at_specific_height(child, specified_height);
             heights.push_back(ret.first);
             nodes_at_specified_height.push_back(ret.second);
         }
-        //compute with data from father and children
-        curr_height = max_utils(heights) + 1;
+        curr_height = max_utils(heights);
         num_of_nodes_at_specified_height = sum_utils(nodes_at_specified_height);
-        if (curr_height == specified_height)
-            num_of_nodes_at_specified_height++;
     }
+
+    // compute with data from father and children
+    if (curr_height == specified_height)
+        num_of_nodes_at_specified_height++;
+    curr_height++;
 
     return {curr_height, num_of_nodes_at_specified_height};
 }
@@ -247,25 +248,22 @@ int number_of_fathers_with_single_child(Node<T> *tree) {
 
 template<typename T>
 int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
-    //First, handle what comes up from children
-    std::list<int> ll;
-    for (auto &child: tree->children) {
-        auto ret = number_of_father_with_specified_number_of_children(child, num_of_children);
-        ll.push_back(ret);
+    std::list<int> fathers_with_single_child;
+    int number_of_fathers_with_single_child;
+
+    if (tree->children.empty()) {
+        number_of_fathers_with_single_child = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = number_of_father_with_specified_number_of_children(child, num_of_children);
+            fathers_with_single_child.push_back(ret);
+        }
+        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
+        if (tree->children.size() == 1)
+            number_of_fathers_with_single_child++;
     }
 
-    //Then, find a way to treat the father as the children
-    if (tree->children.size() == 0) { // leaf (usually always present)
-        ll.emplace_back(0);
-    }
-    if (tree->children.size() == num_of_children) //specific case that need attention
-        ll.emplace_back(1);
-
-
-    //Compute what to return
-    int num = sum_utils(ll);
-
-    return num;
+    return number_of_fathers_with_single_child;
 }
 
 template<typename T>
