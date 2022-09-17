@@ -37,31 +37,38 @@ int max_depth(Node<T> *tree) {
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
 template<typename T>
 int min_depth(Node<T> *tree) {
-    int m_depth;
+    int m_depth_of_the_children;
+    int m_depth_of_the_current;
     if (tree->children.empty()) {
-        m_depth = 0;
+        // no statement for the children
+        m_depth_of_the_current = 0; // for the father
     } else {
         std::list<int> depths;
-        for (auto &child: tree->children)
-            depths.push_back(min_depth(child));
-        m_depth = min_utils(depths);
-        m_depth++;
+        for (auto &child: tree->children) {
+            auto ret = min_depth(child);
+            depths.push_back(ret);
+        }
+        m_depth_of_the_children = min_utils(depths);
+        m_depth_of_the_current = m_depth_of_the_children + 1;
     }
-    return m_depth;
+
+    return m_depth_of_the_current;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
+    int h_many_children;
     int h_many;
     if (tree->children.empty()) {
-        h_many = 0;
+        h_many_children = 0;
     } else {
         std::list<int> nodes;
         for (auto &child: tree->children)
             nodes.push_back(how_many(child));
-        h_many = sum_utils(nodes);
+        h_many_children = sum_utils(nodes);
     }
-    h_many++;
+
+    h_many = h_many_children + 1; //for the father
     return h_many;
 }
 
@@ -71,6 +78,7 @@ int how_many(Node<T> *tree) {
 
 //A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
 //An empty tree doesn't exist. At least root must be.
+//Just think that  leaf is just a root without children
 template<typename T>
 T max_value(Node<T> *tree) {
     int m_val;
