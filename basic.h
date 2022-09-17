@@ -39,34 +39,47 @@ int max_depth(Node<T> *tree) {
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = min_depth(child);
-        ll.push_back(ret);
+    std::list<int> depths;
+    int m_depth;
+
+    // the objective here is only to handle data that comes from children only, ignoring completely the father
+    if (tree->children.empty()) {
+        m_depth = 0; // this should be seen as depth only from the children
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = min_depth(child);
+            depths.push_back(ret);
+        }
+        m_depth = min_utils(depths);
     }
 
-    int min_depth_as_children_were_root;
-    if (tree->children.empty())
-        min_depth_as_children_were_root = 0;
-    else
-        min_depth_as_children_were_root = min_utils(ll);
-    return 1 + min_depth_as_children_were_root;
+    //for the father
+    m_depth++;
+
+    return m_depth;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = how_many(child);
-        ll.push_back(ret);
+    std::list<int> nodes;
+    int h_many;
+
+    //the assumption is that behavior differs only in 2 cases, no children, one or more children
+    // data only from the children
+    if (tree->children.empty()) {
+        h_many = 0; // see here, how many children below the current node
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = how_many(child);
+            nodes.push_back(ret);
+        }
+        h_many = sum_utils(nodes);
     }
 
-    int how_many_below_curr;
-    if (tree->children.empty())
-        how_many_below_curr = 0;
-    else
-        how_many_below_curr = std::accumulate(ll.begin(), ll.end(), 0);
-    return 1 + how_many_below_curr;
+    //for the father
+    h_many++;
+
+    return h_many;
 }
 
 //the base case coincides with the tree being a leaf!
