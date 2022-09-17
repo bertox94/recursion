@@ -18,7 +18,7 @@ string print(const list<int> &ll) {
 int main() {
     std::srand(std::time(nullptr));
 
-    Node<int> *tree = create_tree<int>(140);
+    Node<int> *tree = create_tree<int>(150);
 
     //print2D(tree);
     scan(tree);

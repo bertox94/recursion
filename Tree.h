@@ -28,7 +28,7 @@ void add_children(Node<T> *tree, int curr, int big) {
 
 template<typename T>
 Node<T> *create_tree(int big) {
-    auto tree = new Node<int>(std::rand() % 1000);
+    auto tree = new Node<int>(std::rand());
     add_children(tree, 1, big);
     return tree;
 }
@@ -58,12 +58,6 @@ int sum_utils(std::list<T> ll) {
     return std::accumulate(ll.begin(), ll.end(), 0);
 }
 
-template<typename T>
-void scan(Node<T> *tree) {
-    for (auto &child: tree->children)
-        scan(child);
-}
-
 /**
 * ----------------------------------------
 * --BEGIN FUNCTIONS-----------------------
@@ -77,83 +71,6 @@ void scan(Node<T> *tree) {
 // Otherwise just throw yourself in the middle and apply the question direclty with the the n input (from children), 1 output (to root)
 // diagram and apply children gives me how many, then think when no children at all
 // A directed tree, differs from a DAG, since each child in the tree have only one father, i.e. during a scan, each node will be visited exactly once.
-
-template<typename T>
-int max_depth(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = max_depth(child);
-        ll.push_back(ret);
-    }
-
-    int max_depth_as_children_were_root;
-    if (tree->children.empty())
-        max_depth_as_children_were_root = 0;
-    else
-        max_depth_as_children_were_root = max_utils(ll);
-    return 1 + max_depth_as_children_were_root;
-}
-
-//always check that the base case makes sense, here in fact a tree with no child has depth = 1
-template<typename T>
-int min_depth(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = min_depth(child);
-        ll.push_back(ret);
-    }
-
-    int min_depth_as_children_were_root;
-    if (tree->children.empty())
-        min_depth_as_children_were_root = 0;
-    else
-        min_depth_as_children_were_root = min_utils(ll);
-    return 1 + min_depth_as_children_were_root;
-}
-
-template<typename T>
-int how_many(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = how_many(child);
-        ll.push_back(ret);
-    }
-
-    int how_many_below_curr;
-    if (tree->children.empty())
-        how_many_below_curr = 0;
-    else
-        how_many_below_curr = std::accumulate(ll.begin(), ll.end(), 0);
-    return 1 + how_many_below_curr;
-}
-
-//the base case coincides with the tree being a leaf!
-//here in fact max_utils(empty tree) doesn't make sense, so
-//max of tree with one element (leaf) is the element, otherwise max_utils between...
-
-//A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
-//An empty tree doesn't exist. At least root must be.
-template<typename T>
-T max_value(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = max_value(child);
-        ll.push_back(ret);
-    }
-    ll.push_back(*tree->item);
-    return max_utils(ll);
-}
-
-template<typename T>
-T min_value(Node<T> *tree) {
-    std::list<T> ll;
-    for (auto &child: tree->children) {
-        auto ret = min_value(child);
-        ll.push_back(ret);
-    }
-    ll.push_back(*tree->item);
-    return min_utils(ll);
-}
 
 template<typename T>
 list<T> list_nodes(Node<T> *tree) {
@@ -239,9 +156,10 @@ int number_of_fathers_with_single_child(Node<T> *tree) {
             fathers_with_single_child.push_back(ret);
         }
         number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
-        if (tree->children.size() == 1)
-            number_of_fathers_with_single_child++;
     }
+
+    if (tree->children.size() == 1)
+        number_of_fathers_with_single_child++;
 
     return number_of_fathers_with_single_child;
 }
@@ -259,9 +177,10 @@ int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of
             fathers_with_single_child.push_back(ret);
         }
         number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
-        if (tree->children.size() == 1)
-            number_of_fathers_with_single_child++;
     }
+
+    if (tree->children.size() == num_of_children)
+        number_of_fathers_with_single_child++;
 
     return number_of_fathers_with_single_child;
 }
