@@ -4,25 +4,25 @@
 #include <random>
 #include <ctime>
 #include <iostream>
+#include <list>
 
 using namespace std;
 
 template<typename T>
 class Node {
 public:
-    T* item;
-    Node* left;
-    Node* right;
+    T *item;
+    list<Node *> children;
 
-    Node() : left(nullptr), right(nullptr) {}
+    Node() = default;
 
-    explicit Node(T& item) : item(new T(item)), left(nullptr), right(nullptr) {}
+    explicit Node(const T &item) : item(new T(item)) {}
 
-    explicit Node(T&& item) : Node(item) {}
+    explicit Node(T &&item) : Node(item) {}
 
     ~Node() {
-        delete left;
-        delete right;
+        for (auto &child: children)
+            delete child;
         delete item;
     }
 

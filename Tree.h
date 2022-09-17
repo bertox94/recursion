@@ -12,30 +12,18 @@
 
 //an empty tree is a tree?
 // In my opinion no! a tree can be a leaf, and on a leaf computation is easier but not totally empty!
-
-template<typename T>
-bool has_left_child(Node<T> *tree) {
-    return tree->left != nullptr;
-}
-
-template<typename T>
-bool has_right_child(Node<T> *tree) {
-    return tree->right != nullptr;
-}
+// an empty nothing doesn't exists!
 
 template<typename T>
 void add_children(Node<T> *tree, int curr, int big) {
     //higher the number to the right, the bigger the tree
-    if (std::rand() % (2 * curr) <= big)
-        tree->left = new Node<int>(std::rand() % 1000);
+    while (std::rand() % (2 * curr) <= big) {
+        tree->children.push_back(new Node<int>(std::rand() % 1000));
+        curr++;
+    }
 
-    if (std::rand() % (2 * curr) <= big)
-        tree->right = new Node<int>(std::rand() % 1000);
-
-    if (has_left_child(tree))
-        add_children(tree->left, curr + 1, big);
-    if (has_right_child(tree))
-        add_children(tree->right, curr + 1, big);
+    for (auto &child: tree->children)
+        add_children(child, curr + 1, big);
 }
 
 template<typename T>
@@ -43,61 +31,6 @@ Node<T> *create_tree(int big) {
     auto tree = new Node<int>(std::rand() % 1000);
     add_children(tree, 1, big);
     return tree;
-}
-
-template<typename T>
-void print2DUtil(Node<T> *tree, int space) {
-    // Base case
-    if (tree == NULL)
-        return;
-
-    // Increase distance between levels
-    space += COUNT;
-
-    // Process right child first
-    print2DUtil(tree->right, space);
-
-    // Print current node after space
-    // count
-    std::cout << std::endl;
-    for (int i = COUNT; i < space; i++)
-        std::cout << " ";
-    std::cout << *tree->item << "\n";
-
-    // Process left child
-    print2DUtil(tree->left, space);
-}
-
-template<typename T>
-void print2D(Node<T> *tree) {
-    // Pass initial space count as 0
-    print2DUtil(tree, 0);
-}
-
-template<typename T>
-T max_utils(T lvalue, T rvalue) {
-    if (rvalue > lvalue)
-        return rvalue;
-    else
-        return lvalue;
-}
-
-template<typename T>
-T min_utils(T lvalue, T rvalue) {
-    if (rvalue < lvalue)
-        return rvalue;
-    else
-        return lvalue;
-}
-
-template<typename T>
-std::optional<T> min_utils(std::optional<T> lvalue, std::optional<T> rvalue) {
-    if (lvalue.has_value()) {
-        if (rvalue.has_value()) {
-            return min_utils(lvalue.value(), rvalue.value());
-        } else
-            return lvalue;
-    } else return rvalue;
 }
 
 template<typename T>
@@ -110,8 +43,9 @@ T max_utils(std::list<T> &ll) {
     return max;
 }
 
-int min_utils(std::list<int> ll) {
-    int min = ll.front();
+template<typename T>
+int min_utils(std::list<T> ll) {
+    T &min = ll.front();
     for (auto &el: ll) {
         if (min > el)
             min = el;
@@ -121,11 +55,8 @@ int min_utils(std::list<int> ll) {
 
 template<typename T>
 void scan(Node<T> *tree) {
-    if (has_left_child(tree))
-        scan(tree->left);
-
-    if (has_right_child(tree))
-        scan(tree->right);
+    for (auto &child: tree->children)
+        scan(child);
 }
 
 /**
@@ -134,45 +65,61 @@ void scan(Node<T> *tree) {
 * ----------------------------------------
 */
 
+// since a tree with one element is a tree, you can apply all the reasoning to just the leaf, by pretending to move big things.
+// Then you just change the words to the general case, because the big things (that you say assume that we have the list of nodes,
+// instead of just ine element of node or an empty list for the children, if a leaf ---> an empty list is a list as well,
+// be it empty or in the middle of the tree)
+// Otherwise just throw yourself in the middle and apply the question direclty with the the n input (from children), 1 output (to root)
+// diagram and apply children gives me how many, then think when no children at all
+// A directed tree, differs from a DAG, since each child in the tree have only one father, i.e. during a scan, each node will be visited exactly once.
+
 template<typename T>
 int max_depth(Node<T> *tree) {
-    int lvalue = 0;
-    int rvalue = 0;
+    std::list<T> ll;
+    for (auto &child: tree->children) {
+        auto ret = max_depth(child);
+        ll.push_back(ret);
+    }
 
-    if (has_left_child(tree))
-        lvalue = max_depth(tree->left);
-
-    if (has_right_child(tree))
-        rvalue = max_depth(tree->right);
-
-    return 1 + max_utils(lvalue, rvalue);
+    int max_depth_as_children_were_root;
+    if (tree->children.empty())
+        max_depth_as_children_were_root = 0;
+    else
+        max_depth_as_children_were_root = max_utils(ll);
+    return 1 + max_depth_as_children_were_root;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T> *tree) {
-    int lvalue = 0;
-    int rvalue = 0;
+    std::list<T> ll;
+    for (auto &child: tree->children) {
+        auto ret = min_depth(child);
+        ll.push_back(ret);
+    }
 
-    if (has_left_child(tree))
-        lvalue = min_depth(tree->left);
-
-    if (has_right_child(tree))
-        rvalue = min_depth(tree->right);
-
-    return 1 + min_utils(lvalue, rvalue);
+    int min_depth_as_children_were_root;
+    if (tree->children.empty())
+        min_depth_as_children_were_root = 0;
+    else
+        min_depth_as_children_were_root = min_utils(ll);
+    return 1 + min_depth_as_children_were_root;
 }
 
 template<typename T>
 int how_many(Node<T> *tree) {
-    int sum = 0;
-    if (has_left_child(tree))
-        sum += how_many(tree->left);
+    std::list<T> ll;
+    for (auto &child: tree->children) {
+        auto ret = how_many(child);
+        ll.push_back(ret);
+    }
 
-    if (has_right_child(tree))
-        sum += how_many(tree->right);
-
-    return 1 + sum;
+    int how_many_below_curr;
+    if (tree->children.empty())
+        how_many_below_curr = 0;
+    else
+        how_many_below_curr = std::accumulate(ll.begin(), ll.end(), 0);
+    return 1 + how_many_below_curr;
 }
 
 //the base case coincides with the tree being a leaf!
@@ -182,31 +129,33 @@ int how_many(Node<T> *tree) {
 //A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
 //An empty tree doesn't exist. At least root must be.
 template<typename T>
-T max(Node<T> *tree) {
-    std::list<T> ll;
-
-    if (has_left_child(tree))
-        ll.push_back(max(tree->left));
-
-    if (has_right_child(tree))
-        ll.push_back(max(tree->right));
-
-    ll.push_back(*tree->item);
+T max_value(Node<T> *tree) {
+    std::list<T> ll{*tree->item};
+    for (auto &child: tree->children) {
+        auto ret = max_value(child);
+        ll.push_back(ret);
+    }
     return max_utils(ll);
 }
 
 template<typename T>
-T min(Node<T> *tree) {
-    std::list<T> ll;
-
-    if (has_left_child(tree))
-        ll.push_back(min(tree->left));
-
-    if (has_right_child(tree))
-        ll.push_back(min(tree->right));
-
-    ll.push_back(*tree->item);
+T min_value(Node<T> *tree) {
+    std::list<T> ll{*tree->item};
+    for (auto &child: tree->children) {
+        auto ret = min_value(child);
+        ll.push_back(ret);
+    }
     return min_utils(ll);
+}
+
+template<typename T>
+list<T> list_nodes(Node<T> *tree) {
+    std::list<T> ll{*tree->item};
+    for (auto &child: tree->children) {
+        auto ret = list_nodes(child);
+        ll.splice(ll.end(), ret);
+    }
+    return ll;
 }
 
 #endif //RECURSION_TREE_H
