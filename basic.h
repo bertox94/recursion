@@ -134,28 +134,41 @@ list<T> list_nodes(Node<T> *tree) {
     return nodes;
 }
 
-//define the height of a node as the maximum of the heights of its children +1
 template<typename T>
-std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
-    std::list<int> ll;
-    for (auto &child: tree->children) {
-        auto ret = number_of_fathers_with_single_child(child);
-        ll.push_back(ret);
-    }
-
-    //Then, find a way to treat the father as the children
-    if (tree->children.size() == 0) { // leaf (usually always present)
-        ll.emplace_back(0);
-    } else if (tree->children.size() == 1) //specific case that need attention
-        ll.emplace_back(1);
-    else {
-        // nothing relevant here
-    }
-
-    //Compute what to return
-    int num = sum_utils(ll);
-
+std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree, int depth) {
     return {};
 }
+
+//define the specified_height of a node as the maximum of the heights of its children +1
+template<typename T>
+std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specified_height) {
+    std::list<int> nodes;
+    std::list<int> heights_of_the_children;
+    int num_of_nodes_of_the_children; //left unspecified for now because we don't know what value is it now
+    int current_num_of_nodes; //left unspecified for now because we don't know what value is it now
+    int height_of_the_children; //left unspecified for now because we don't know what value is it now
+    int current_height; //left unspecified for now because we don't know what value is it now
+
+    if (tree->children.empty()) {
+        current_height = 0;
+        num_of_nodes_of_the_children = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = number_of_nodes_at_specific_height(child, specified_height);
+            heights_of_the_children.push_back(ret.first);
+            nodes.push_back(ret.second);
+        }
+        current_height = max_utils(heights_of_the_children) + 1;
+        num_of_nodes_of_the_children = sum_utils(nodes);
+    }
+
+    if (current_height == specified_height)
+        current_num_of_nodes = num_of_nodes_of_the_children + 1;
+    else
+        current_num_of_nodes = num_of_nodes_of_the_children;
+
+    return {current_height, current_num_of_nodes};
+}
+
 
 #endif //RECURSION_BASIC_H

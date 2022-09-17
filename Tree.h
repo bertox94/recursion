@@ -75,41 +75,7 @@ int sum_utils(std::list<T> ll) {
 
 
 
-//define the specified_height of a node as the maximum of the heights of its children +1
-template<typename T>
-std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specified_height) {
-    //define all that will be needed later
-    std::list<int> nodes_at_specified_height;
-    std::list<int> heights;
-    int num_of_nodes_at_specified_height; //left unspecified for now because we have to assign to it a value
-    int curr_height; //left unspecified for now
 
-    //we want to know the parameters here for the successive computation
-    if (tree->children.empty()) {
-        // compute with data from father, because he has no children
-        // here you must define all the variables left unspecified above
-        // do not worry if the follwoing valies do not seems rght,
-        // computation for the father will be dealt later with the data of the children
-        curr_height = 0;
-        num_of_nodes_at_specified_height = 0;
-    } else {
-        for (auto &child: tree->children) {
-            auto ret = number_of_nodes_at_specific_height(child, specified_height);
-            heights.push_back(ret.first);
-            nodes_at_specified_height.push_back(ret.second);
-        }
-        curr_height = max_utils(heights);
-        num_of_nodes_at_specified_height = sum_utils(nodes_at_specified_height);
-    }
-
-    // compute with data from father and children
-    // here starts computation of what we want to put on the top arrow of the famous diagram
-    if (curr_height == specified_height)
-        num_of_nodes_at_specified_height++;
-    curr_height++;
-
-    return {curr_height, num_of_nodes_at_specified_height};
-}
 
 template<typename T>
 int number_of_fathers_with_single_child(Node<T> *tree) {
