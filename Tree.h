@@ -72,40 +72,7 @@ int sum_utils(std::list<T> ll) {
 // diagram and apply children gives me how many, then think when no children at all
 // A directed tree, differs from a DAG, since each child in the tree have only one father, i.e. during a scan, each node will be visited exactly once.
 
-template<typename T>
-list<T> list_nodes(Node<T> *tree) {
-    std::list<T> ll{*tree->item};
-    for (auto &child: tree->children) {
-        auto ret = list_nodes(child);
-        ll.splice(ll.end(), ret);
-    }
-    return ll;
-}
 
-//define the height of a node as the maximum of the heights of its children +1
-template<typename T>
-std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
-    //First, handle what comes up from children
-    std::list<int> ll;
-    for (auto &child: tree->children) {
-        auto ret = number_of_fathers_with_single_child(child);
-        ll.push_back(ret);
-    }
-
-    //Then, find a way to treat the father as the children
-    if (tree->children.size() == 0) { // leaf (usually always present)
-        ll.emplace_back(0);
-    } else if (tree->children.size() == 1) //specific case that need attention
-        ll.emplace_back(1);
-    else {
-        // nothing relevant here
-    }
-
-    //Compute what to return
-    int num = sum_utils(ll);
-
-    return {};
-}
 
 
 //define the specified_height of a node as the maximum of the heights of its children +1

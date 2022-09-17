@@ -34,11 +34,6 @@ int max_depth(Node<T> *tree) {
     return m_depth;
 }
 
-template<typename T>
-int handle_children(){
-
-}
-
 //always check that the base case makes sense, here in fact a tree with no child has depth = 1
 template<typename T>
 int min_depth(Node<T> *tree) {
@@ -64,7 +59,7 @@ int how_many(Node<T> *tree) {
         std::list<int> nodes;
         for (auto &child: tree->children)
             nodes.push_back(how_many(child));
-        h_many = sum_utils(nodes); // from the children
+        h_many = sum_utils(nodes);
     }
     h_many++;
     return h_many;
@@ -78,39 +73,29 @@ int how_many(Node<T> *tree) {
 //An empty tree doesn't exist. At least root must be.
 template<typename T>
 T max_value(Node<T> *tree) {
-    std::list<int> maxes;
     int m_val;
-
-    // the objective here is to prepare data from the children to be assimilated as the father in the computation phase
-    // ideally we should make two separate computation, if the node has no child and if it does,
-    // but when possible to have just one computation phase I think it's better
-    // out of this if else we should have set all the variables of before ready to be returned
     if (tree->children.empty()) {
-        m_val = *tree->item; // this should be seen as depth only from the children
+        //empty statement for the children
+        m_val = *tree->item; // for the father
     } else {
-        for (auto &child: tree->children) {
-            auto ret = min_depth(child);
-            maxes.push_back(ret);
-        }
-        maxes.push_back(*tree->item);
-        m_val = max_utils(maxes);
+        std::list<int> maxes;
+        for (auto &child: tree->children)
+            maxes.push_back(max_value(child));
+        m_val = max_utils(maxes); // for the children
+        m_val = std::max(m_val, *tree->item); // for the father
     }
-
     return m_val;
 }
 
 template<typename T>
 T min_value(Node<T> *tree) {
-    std::list<int> minima;
     int m_val;
-
     if (tree->children.empty()) {
-        m_val = *tree->item; // this should be seen as depth only from the children
+        m_val = *tree->item;
     } else {
-        for (auto &child: tree->children) {
-            auto ret = min_depth(child);
-            minima.push_back(ret);
-        }
+        std::list<int> minima;
+        for (auto &child: tree->children)
+            minima.push_back(min_value(child));
         minima.push_back(*tree->item);
         m_val = min_utils(minima);
     }
@@ -120,23 +105,57 @@ T min_value(Node<T> *tree) {
 
 template<typename T>
 T how_many_like_this(Node<T> *tree, T like) {
-    std::list<int> nodes;
     int num_of_nodes;
-
     if (tree->children.empty()) {
         num_of_nodes = 0;
     } else {
-        for (auto &child: tree->children) {
-            auto ret = how_many_like_this(child, like);
-            nodes.push_back(ret);
-        }
+        std::list<int> nodes;
+        for (auto &child: tree->children)
+            nodes.push_back(how_many_like_this(child, like));
         num_of_nodes = sum_utils(nodes);
     }
-
     if (*tree->item == like)
         num_of_nodes++;
-
     return num_of_nodes;
+}
+
+template<typename T>
+list<T> list_nodes(Node<T> *tree) {
+    std::list<int> nodes;
+    if (tree->children.empty()) {
+        // no need to do anything for the children, for the father will be done later once for this two cases
+    } else {
+        std::list<int> children_nodes;
+        for (auto &child: tree->children)
+            children_nodes.splice(children_nodes.end(), list_nodes(child));
+        nodes = children_nodes;
+    }
+    nodes.push_back(*tree->item);
+    return nodes;
+}
+
+//define the height of a node as the maximum of the heights of its children +1
+template<typename T>
+std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
+    std::list<int> ll;
+    for (auto &child: tree->children) {
+        auto ret = number_of_fathers_with_single_child(child);
+        ll.push_back(ret);
+    }
+
+    //Then, find a way to treat the father as the children
+    if (tree->children.size() == 0) { // leaf (usually always present)
+        ll.emplace_back(0);
+    } else if (tree->children.size() == 1) //specific case that need attention
+        ll.emplace_back(1);
+    else {
+        // nothing relevant here
+    }
+
+    //Compute what to return
+    int num = sum_utils(ll);
+
+    return {};
 }
 
 #endif //RECURSION_BASIC_H
