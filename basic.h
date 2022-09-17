@@ -147,6 +147,9 @@ list<T> list_nodes(Node<T> *tree) {
     return nodes;
 }
 
+/**
+ * Number of fathers with a specified number of children
+ */
 template<typename T>
 int number_of_fathers_with_no_child(Node<T> *tree) {
     // the following are left unspecified for now because we don't know what value is it now
@@ -204,7 +207,7 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
     } else {
         std::list<int> nodes_from_the_children;
         for (auto &child: tree->children)
-            nodes_from_the_children.push_back(number_of_fathers_with_single_child(child));
+            nodes_from_the_children.push_back(number_of_fathers_with_specified_number_of_children(child));
         num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
     }
 
@@ -215,6 +218,9 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
     return current_num_of_nodes;
 }
 
+/**
+ * Number of fathers with a specified number of children
+ */
 template<typename T>
 int depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
     //First, handle what comes up from children
@@ -234,7 +240,6 @@ int depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
 
     return max_depth + 1;
 }
-
 
 template<typename T>
 std::pair<int, int> number_of_fathers_with_single_child_at_same_and_maximal_depth(Node<T> *tree) {
