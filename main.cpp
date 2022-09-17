@@ -19,10 +19,12 @@ string print(const list<int> &ll) {
 int main() {
     std::srand(std::time(nullptr));
 
-    Node<int> *tree = create_tree<int>(150);
+    cout << "Creating tree..." << endl;
+    Node<int> *tree = create_tree<int>(140);
+    cout << "Done" << endl;
 
     //print2D(tree);
-    scan(tree);
+    //scan(tree);
     cout << endl;
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
@@ -44,7 +46,7 @@ int main() {
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NFSNC (") + to_string(i) + "):";
-        cout << setw(13) << left << str << number_of_father_with_specified_number_of_children(tree, i) << endl;
+        cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
     }
     cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree) << endl;
     auto pair = number_of_fathers_with_single_child_at_same_and_maximal_depth(tree);

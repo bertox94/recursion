@@ -72,11 +72,6 @@ int sum_utils(std::list<T> ll) {
 // diagram and apply children gives me how many, then think when no children at all
 // A directed tree, differs from a DAG, since each child in the tree have only one father, i.e. during a scan, each node will be visited exactly once.
 
-
-
-
-
-
 template<typename T>
 int number_of_fathers_with_single_child(Node<T> *tree) {
     std::list<int> fathers_with_single_child;
@@ -99,7 +94,7 @@ int number_of_fathers_with_single_child(Node<T> *tree) {
 }
 
 template<typename T>
-int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
+int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
     std::list<int> fathers_with_single_child;
     int number_of_fathers_with_single_child;
 
@@ -107,7 +102,7 @@ int number_of_father_with_specified_number_of_children(Node<T> *tree, int num_of
         number_of_fathers_with_single_child = 0;
     } else {
         for (auto &child: tree->children) {
-            auto ret = number_of_father_with_specified_number_of_children(child, num_of_children);
+            auto ret = number_of_fathers_with_specified_number_of_children(child, num_of_children);
             fathers_with_single_child.push_back(ret);
         }
         number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
