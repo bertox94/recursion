@@ -148,8 +148,55 @@ list<T> list_nodes(Node<T> *tree) {
 }
 
 template<typename T>
-std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree, int depth) {
+std::pair<int, int> number_of_nodes_at_depth_one(Node<T> *tree) {
     return {};
+}
+
+template<typename T>
+std::pair<int, int> number_of_nodes_at_specific_depth(Node<T> *tree, int depth) {
+    return {};
+}
+
+template<typename T>
+int number_of_fathers_with_single_child(Node<T> *tree) {
+    std::list<int> fathers_with_single_child;
+    int number_of_fathers_with_single_child;
+
+    if (tree->children.empty()) {
+        number_of_fathers_with_single_child = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = number_of_fathers_with_single_child(child);
+            fathers_with_single_child.push_back(ret);
+        }
+        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
+    }
+
+    if (tree->children.size() == 1)
+        number_of_fathers_with_single_child++;
+
+    return number_of_fathers_with_single_child;
+}
+
+template<typename T>
+int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
+    std::list<int> fathers_with_single_child;
+    int number_of_fathers_with_single_child;
+
+    if (tree->children.empty()) {
+        number_of_fathers_with_single_child = 0;
+    } else {
+        for (auto &child: tree->children) {
+            auto ret = number_of_fathers_with_specified_number_of_children(child, num_of_children);
+            fathers_with_single_child.push_back(ret);
+        }
+        number_of_fathers_with_single_child = sum_utils(fathers_with_single_child);
+    }
+
+    if (tree->children.size() == num_of_children)
+        number_of_fathers_with_single_child++;
+
+    return number_of_fathers_with_single_child;
 }
 
 //define the specified_height of a node as the maximum of the heights of its children +1
@@ -188,5 +235,52 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *tree, int specif
     return {current_height, current_num_of_nodes};
 }
 
+template<typename T>
+int depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
+    //First, handle what comes up from children
+    std::list<int> ll;
+    for (auto &child: tree->children) {
+        auto ret = depth_of_the_deepest_father_with_single_child(child);
+        ll.push_back(ret);
+    }
+
+    //Then, handle the father/consider it a leaf (i.e. once you took care of children in the steps above,
+    // the father is just a leaf (what you call the base case))
+    if (tree->children.size() == 1)
+        ll.emplace_back(0);
+
+    //Compute what to return
+    int max_depth = max_utils(ll);
+
+    return max_depth + 1;
+}
+
+
+template<typename T>
+std::pair<int, int> number_of_fathers_with_single_child_at_same_and_maximal_depth(Node<T> *tree) {
+    //First, handle what comes up from children
+    std::list<std::pair<int, int>> ll;
+    for (auto &child: tree->children) {
+        auto ret = number_of_fathers_with_single_child_at_same_and_maximal_depth(child);
+        ll.push_back(ret);
+    }
+
+    //Then, handle the father, usually you can handle it the same way you deal with children, so just add it to the same list
+    if (tree->children.size() == 1)
+        ll.emplace_back(1, 0);
+
+    //Compute what to return
+    int num = 0, depth = 0;
+    for (auto &el: ll) {
+        if (el.second > depth) {
+            num = 1;
+            depth = el.second;
+        } else if (el.second == depth) {
+            num++;
+        }
+    }
+
+    return {num, depth + 1};
+}
 
 #endif //RECURSION_BASIC_H
