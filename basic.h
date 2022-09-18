@@ -353,11 +353,11 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
 }
 
 template<typename T>
-std::pair<int, int> number_of_fathers_with_single_child_at_same_and_maximal_depth(Node<T> *tree) {
+std::pair<int, int> number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree) {
     //First, handle what comes up from children
     std::list<std::pair<int, int>> ll;
     for (auto &child: tree->children) {
-        auto ret = number_of_fathers_with_single_child_at_same_and_maximal_depth(child);
+        auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child);
         ll.push_back(ret);
     }
 

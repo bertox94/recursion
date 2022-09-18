@@ -50,7 +50,7 @@ int main() {
         cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
     }
     cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree) << endl;
-    auto pair = number_of_fathers_with_single_child_at_same_and_maximal_depth(tree);
+    auto pair = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree);
     cout << "NFWSCSMD:   " << pair.first << ", " << pair.second << endl;
     //auto ll = list_nodes(tree);
     //cout << "List:       \n" << print(ll) << endl;
