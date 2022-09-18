@@ -17,7 +17,7 @@
         * provide the values to be returned out of current only
     } else {
         * get all the values to be returned from the children, as if existed only them
-        * test the property on current only (children do not need to be tested)
+        * test the property on current only
         * get all the values to be returned from current only, as if existed only him
         * provide the values to be returned out of children + current
     }
