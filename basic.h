@@ -16,8 +16,9 @@
         * test the property on current only
         * provide the values to be returned out of current only
     } else {
-        * get the values from the children
+        * get all the values to be returned from the children, as if existed only them
         * test the property on current only (children do not need to be tested)
+        * get all the values to be returned from current only, as if existed only him
         * provide the values to be returned out of children + current
     }
 
@@ -223,12 +224,13 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
     int num_of_nodes_of_the_children;
     int current_num_of_nodes;
 
-    if (tree->children.empty()) {
+    if (leaf(tree)) {
         num_of_nodes_of_the_children = 0;
     } else {
         std::list<int> nodes_from_the_children;
         for (auto &child: tree->children)
-            nodes_from_the_children.push_back(number_of_fathers_with_specified_number_of_children(child));
+            nodes_from_the_children.push_back(
+                    number_of_fathers_with_specified_number_of_children(child, num_of_children));
         num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
     }
 
@@ -286,9 +288,10 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
     return {found, depth};
 }
 
+// do also by passing depth as parameter, but leave also those here with height so you can see the differences
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
-    int depth;
+    int distance;
     bool found;
 
     auto has_exactly_one_child = [](Node<T> *tree) -> bool { return tree->children.size() == 1; };
@@ -296,27 +299,35 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree
     if (leaf(tree)) {
         if (has_exactly_one_child(tree)) {
             found = true;
-            depth = 0;
+            distance = 0;
         } else
             found = false;
     } else {
-        list<int> depths;
+        list<int> depths_of_the_children;
         for (auto &child: tree->children) {
             auto ret = depth_of_the_deepest_father_with_single_child(child);
             if (ret.first)
-                depths.push_back(ret.second);
+                depths_of_the_children.push_back(ret.second);
         }
 
-        if (has_exactly_one_child(tree))
-            depths.push_back(0);
-
-        if (depths.empty()) {
+        if (!depths_of_the_children.empty()) {
             found = true;
-            depth = max_utils(depths);
-        } else
-            found = false;
+            int max_distance_among_the_children = max_utils(depths_of_the_children);
+            int max_distance_among_the_children_seen_by_curr = max_distance_among_the_children + 1;
+            if (has_exactly_one_child(tree)) {
+                int distance_of_the_current = 0;
+                distance = std::max(0, max_distance_among_the_children_seen_by_curr);
+            } else
+                distance = max_distance_among_the_children_seen_by_curr;
+        } else {
+            if (has_exactly_one_child(tree)) {
+                found = true;
+                distance = 0;
+            } else
+                found = false;
+        }
     }
-    return {found, depth};
+    return {found, distance};
 }
 
 template<typename T>
@@ -372,7 +383,8 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
         std::list<int> depths;
         std::list<int> numbers;
         for (auto &child: tree->children) {
-            auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child);
+            auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
+                                                                                                          children);
             if (get<0>(ret)) {
                 depths.push_back(get<1>(ret));
                 numbers.push_back(get<2>(ret));
