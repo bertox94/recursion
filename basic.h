@@ -272,15 +272,21 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
                 depths_of_the_children.push_back(ret.second);
         }
 
-        if (has_at_least_one_child(tree)) // if the current is a father, i.e. test the current for the property
-            depths_of_the_children.push_back(0);
-
-        //computation treating father and children the same way
-        if (depths_of_the_children.empty())
-            found = false;
-        else {
+        if (!depths_of_the_children.empty()) {
             found = true;
-            distance = max_utils(depths_of_the_children);
+            int max_distance_among_the_children = max_utils(depths_of_the_children);
+            int max_distance_among_the_children_seen_by_curr = max_distance_among_the_children + 1;
+            if (has_exactly_one_child(tree)) { // if the current is a father, i.e. test the current for the property
+                int distance_of_the_current = 0;
+                distance = std::max(0, max_distance_among_the_children_seen_by_curr);
+            } else
+                distance = max_distance_among_the_children_seen_by_curr;
+        } else {
+            if (has_at_least_one_child(tree)) { // if the current is a father, i.e. test the current for the property
+                found = true;
+                distance = 0;
+            } else
+                found = false;
         }
     }
     //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
