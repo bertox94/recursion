@@ -27,6 +27,11 @@ void add_children(Node<T> *tree, int curr, int big) {
 }
 
 template<typename T>
+bool leaf(Node<T> *tree) {
+    return tree->children.empty();
+}
+
+template<typename T>
 Node<T> *create_tree(int big) {
     auto tree = new Node<int>(std::rand());
     add_children(tree, 1, big);

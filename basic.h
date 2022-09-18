@@ -8,6 +8,27 @@
 #include "Node.h"
 #include "Tree.h"
 
+/**
+ * TEMPLATE:
+    declare all values to be returned
+
+    if (leaf(tree)) {
+        * test the property on current only
+        * provide all the values to be returned
+    } else {
+        * get the values from the children
+        * test the property on children + current
+        * provide all the values to be returned
+    }
+
+    return values;
+ */
+
+// The trick of recursion is: the question is: bla bla complex. You draw the diagram and say,
+// assume I have the solution of exactly bla bla complex of this branch coming up from this branch,
+// and the same for the other branch, let's build the solution of bla bla complex to return to the branch upward.
+// So basically you pretend to know the answer of the exactly same big question for the entire tree coming up from the branches
+
 template<typename T>
 void scan(Node<T> *tree) {
     for (auto &child: tree->children)
@@ -221,24 +242,80 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
 /**
  * Number of fathers with a specified number of children
  */
+
 template<typename T>
-int depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
-    //First, handle what comes up from children
-    std::list<int> ll;
-    for (auto &child: tree->children) {
-        auto ret = depth_of_the_deepest_father_with_single_child(child);
-        ll.push_back(ret);
+std::pair<bool, int> depth_of_the_deepest_father(Node<T> *tree) {
+    int depth;
+    bool found;
+
+    //the only difference between these two branches is that the first considers only the current, while the other considers the children plus the current
+    // the else will never be taken, yet we write it here for completeness
+    // it comes easier to do the else branch before, because you are helped by the children
+    if (leaf(tree)) {
+        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
+            found = false;
+        else {
+            found = true;
+            depth = 0;
+        }
+    } else {
+        list<int> depths; //here we see that depth when false is a random value, bacause there is no rihgt value
+        for (auto &child: tree->children) {
+            auto ret = depth_of_the_deepest_father(child);
+            if (ret.first)
+                depths.push_back(ret.second);
+        }
+
+        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
+            depths.push_back(0);
+
+        //computation treating father and children the same way
+        if (depths.empty())
+            found = false;
+        else {
+            found = true;
+            depth = max_utils(depths);
+        }
     }
+    //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
 
-    //Then, handle the father/consider it a leaf (i.e. once you took care of children in the steps above,
-    // the father is just a leaf (what you call the base case))
-    if (tree->children.size() == 1)
-        ll.emplace_back(0);
+    return {found, depth};
+}
 
-    //Compute what to return
-    int max_depth = max_utils(ll);
+template<typename T>
+std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
+    int depth;
+    bool found;
 
-    return max_depth + 1;
+    if (leaf(tree)) {
+        if (tree->children.size() == 1) { // if the current is a father, i.e. test the current for the property
+            found = true;
+            depth = 0;
+        } else {
+            found = false;
+        }
+    } else {
+        list<int> depths; //here we see that depth when false is a random value, bacause there is no rihgt value
+        for (auto &child: tree->children) {
+            auto ret = depth_of_the_deepest_father(child);
+            if (ret.first)
+                depths.push_back(ret.second);
+        }
+
+        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
+            depths.push_back(0);
+
+        //computation treating father and children the same way
+        if (depths.empty())
+            found = false;
+        else {
+            found = true;
+            depth = max_utils(depths);
+        }
+    }
+    //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
+
+    return {found, depth};
 }
 
 template<typename T>
