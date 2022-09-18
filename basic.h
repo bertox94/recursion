@@ -247,7 +247,7 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
 
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *tree) {
-    int depth;
+    int distance;
     bool found;
 
     auto has_at_least_one_child = [](Node<T> *tree) -> bool { return !tree->children.empty(); };
@@ -260,32 +260,32 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
     if (leaf(tree)) {
         if (has_at_least_one_child(tree)) { // if the current is a father, i.e. test the current for the property
             found = true;
-            depth = 0;
+            distance = 0;
         } else {
             found = false;
         }
     } else {
-        list<int> depths; //here we see that depth when false is a random value, bacause there is no rihgt value
+        list<int> depths_of_the_children; //here we see that distance when false is a random value, bacause there is no rihgt value
         for (auto &child: tree->children) {
             auto ret = depth_of_the_deepest_node_with_at_least_one_child(child);
             if (ret.first)
-                depths.push_back(ret.second);
+                depths_of_the_children.push_back(ret.second);
         }
 
         if (has_at_least_one_child(tree)) // if the current is a father, i.e. test the current for the property
-            depths.push_back(0);
+            depths_of_the_children.push_back(0);
 
         //computation treating father and children the same way
-        if (depths.empty())
+        if (depths_of_the_children.empty())
             found = false;
         else {
             found = true;
-            depth = max_utils(depths);
+            distance = max_utils(depths_of_the_children);
         }
     }
     //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
 
-    return {found, depth};
+    return {found, distance};
 }
 
 // do also by passing depth as parameter, but leave also those here with height so you can see the differences
