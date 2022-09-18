@@ -324,10 +324,10 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
     int depth;
     bool found;
 
-    auto has_exactly_n_child = [&children](Node<T> *tree) -> bool { return tree->children.size() == children; };
+    auto has_exactly_n_children = [&children](Node<T> *tree) -> bool { return tree->children.size() == children; };
 
     if (leaf(tree)) {
-        if (has_exactly_n_child(tree)) {
+        if (has_exactly_n_children(tree)) {
             found = true;
             depth = 0;
         } else
@@ -340,7 +340,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
                 depths.push_back(ret.second);
         }
 
-        if (has_exactly_n_child(tree))
+        if (has_exactly_n_children(tree))
             depths.push_back(0);
 
         if (depths.empty()) {
@@ -353,30 +353,49 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
 }
 
 template<typename T>
-std::pair<int, int> number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int children) {
-    //First, handle what comes up from children
-    std::list<std::pair<int, int>> ll;
-    for (auto &child: tree->children) {
-        auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child);
-        ll.push_back(ret);
-    }
+std::tuple<bool, int, int>
+number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int children) {
 
-    //Then, handle the father, usually you can handle it the same way you deal with children, so just add it to the same list
-    if (tree->children.size() == 1)
-        ll.emplace_back(1, 0);
+    bool found;
+    int depth;
+    int number;
 
-    //Compute what to return
-    int num = 0, depth = 0;
-    for (auto &el: ll) {
-        if (el.second > depth) {
-            num = 1;
-            depth = el.second;
-        } else if (el.second == depth) {
-            num++;
+    auto has_exactly_n_children = [&children](Node<T> *tree) -> bool { return tree->children.size() == children; };
+
+    if (leaf(tree)) {
+        if (has_exactly_n_children(tree)) {
+            found = true;
+            depth = 0;
+        } else
+            found = false;
+    } else {
+        std::list<int> depths;
+        std::list<int> numbers;
+        for (auto &child: tree->children) {
+            auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child);
+            if (get<0>(ret)) {
+                depths.push_back(get<1>(ret));
+                numbers.push_back(get<2>(ret));
+            }
         }
-    }
 
-    return {num, depth + 1};
+        //one may think that could be easier/faster to do:
+        //-check if depths is empty then add the father, but it's better to go with lead foot and
+        // treat the father the same way of the children (i.e. share depths, numbers)
+
+        if (has_exactly_n_children(tree)) {
+            depths.push_back(0);
+            numbers.push_back(1);
+        }
+
+        if (depths.empty()) {
+            found = true;
+            depth = max_utils(depths);
+            number = sum_utils(numbers);
+        } else
+            found = false;
+    }
+    return {found, depth, number};
 }
 
 /**
