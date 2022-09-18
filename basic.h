@@ -295,6 +295,7 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
 }
 
 // do also by passing depth as parameter, but leave also those here with height so you can see the differences
+// father must be treated differently of the children
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree) {
     int distance;
