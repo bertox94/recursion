@@ -14,11 +14,11 @@
 
     if (leaf(tree)) {
         * test the property on current only
-        * provide all the values to be returned
+        * provide the values to be returned out of current only
     } else {
         * get the values from the children
-        * test the property on children + current
-        * provide all the values to be returned
+        * test the property on current only (children do not need to be tested)
+        * provide the values to be returned out of children + current
     }
 
     return values;
@@ -287,34 +287,62 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree
     int depth;
     bool found;
 
+    auto father_test = [](Node<T> *tree) -> bool { return tree->children.size() == 1; };
+
     if (leaf(tree)) {
-        if (tree->children.size() == 1) { // if the current is a father, i.e. test the current for the property
+        if (father_test(tree)) {
             found = true;
             depth = 0;
-        } else {
+        } else
             found = false;
-        }
     } else {
-        list<int> depths; //here we see that depth when false is a random value, bacause there is no rihgt value
+        list<int> depths;
         for (auto &child: tree->children) {
-            auto ret = depth_of_the_deepest_father(child);
+            auto ret = depth_of_the_deepest_father_with_single_child(child);
             if (ret.first)
                 depths.push_back(ret.second);
         }
 
-        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
+        if (father_test(tree))
             depths.push_back(0);
 
-        //computation treating father and children the same way
-        if (depths.empty())
-            found = false;
-        else {
+        if (depths.empty()) {
             found = true;
             depth = max_utils(depths);
-        }
+        } else
+            found = false;
     }
-    //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
+    return {found, depth};
+}
 
+template<typename T>
+std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *tree, int children) {
+    int depth;
+    bool found;
+
+    if (leaf(tree)) {
+        if (tree->children.size() == children) {
+            found = true;
+            depth = 0;
+        } else
+            found = false;
+    } else {
+        list<int> depths;
+        for (auto &child: tree->children) {
+            auto ret = depth_of_the_deepest_father_with_single_child(child);
+            if (ret.first)
+                depths.push_back(ret.second);
+        }
+
+        if (!tree->children.empty())
+            depths.push_back(0);
+
+        if (tree->children.size() == 1) {
+            found = true;
+            depth = max_utils(depths);
+        } else
+            found = false;
+    }
     return {found, depth};
 }
 
