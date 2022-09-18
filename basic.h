@@ -244,29 +244,33 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_o
  */
 
 template<typename T>
-std::pair<bool, int> depth_of_the_deepest_father(Node<T> *tree) {
+std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *tree) {
     int depth;
     bool found;
+
+    auto has_at_least_one_child = [](Node<T> *tree) -> bool { return !tree->children.empty(); };
 
     //the only difference between these two branches is that the first considers only the current, while the other considers the children plus the current
     // the else will never be taken, yet we write it here for completeness
     // it comes easier to do the else branch before, because you are helped by the children
+    // in the if branch, test the current and provide the results may be done at the same time, in the else branch usually no,
+    // children are to be considered as well
     if (leaf(tree)) {
-        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
-            found = false;
-        else {
+        if (has_at_least_one_child(tree)) { // if the current is a father, i.e. test the current for the property
             found = true;
             depth = 0;
+        } else {
+            found = false;
         }
     } else {
         list<int> depths; //here we see that depth when false is a random value, bacause there is no rihgt value
         for (auto &child: tree->children) {
-            auto ret = depth_of_the_deepest_father(child);
+            auto ret = depth_of_the_deepest_node_with_at_least_one_child(child);
             if (ret.first)
                 depths.push_back(ret.second);
         }
 
-        if (!tree->children.empty()) // if the current is a father, i.e. test the current for the property
+        if (has_at_least_one_child(tree)) // if the current is a father, i.e. test the current for the property
             depths.push_back(0);
 
         //computation treating father and children the same way
@@ -287,10 +291,10 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree
     int depth;
     bool found;
 
-    auto father_test = [](Node<T> *tree) -> bool { return tree->children.size() == 1; };
+    auto has_exactly_one_child = [](Node<T> *tree) -> bool { return tree->children.size() == 1; };
 
     if (leaf(tree)) {
-        if (father_test(tree)) {
+        if (has_exactly_one_child(tree)) {
             found = true;
             depth = 0;
         } else
@@ -303,7 +307,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *tree
                 depths.push_back(ret.second);
         }
 
-        if (father_test(tree))
+        if (has_exactly_one_child(tree))
             depths.push_back(0);
 
         if (depths.empty()) {
@@ -320,8 +324,10 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
     int depth;
     bool found;
 
+    auto has_exactly_n_child = [&children](Node<T> *tree) -> bool { return tree->children.size() == children; };
+
     if (leaf(tree)) {
-        if (tree->children.size() == children) {
+        if (has_exactly_n_child(tree)) {
             found = true;
             depth = 0;
         } else
@@ -329,15 +335,15 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
     } else {
         list<int> depths;
         for (auto &child: tree->children) {
-            auto ret = depth_of_the_deepest_father_with_single_child(child);
+            auto ret = depth_of_the_deepest_father_with_specified_number_of_children(child);
             if (ret.first)
                 depths.push_back(ret.second);
         }
 
-        if (!tree->children.empty())
+        if (has_exactly_n_child(tree))
             depths.push_back(0);
 
-        if (tree->children.size() == 1) {
+        if (depths.empty()) {
             found = true;
             depth = max_utils(depths);
         } else
