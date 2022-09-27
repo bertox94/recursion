@@ -39,7 +39,7 @@ Node<T> *create_tree(int big) {
 }
 
 template<typename T>
-T max_utils(std::list<T> &ll) {
+T max_utils(const std::list<T> &ll) {
     T max = ll.front();
     for (auto el: ll) {
         if (max < el)

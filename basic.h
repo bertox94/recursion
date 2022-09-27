@@ -220,6 +220,25 @@ int number_of_fathers_with_single_child(Node<T> *tree) {
 }
 
 template<typename T>
+int max_num_of_direct_children(Node<T> *tree) {
+    int max_num_of_children_of_the_children;
+    int maximum_num_of_children;
+
+    if (tree->children.empty()) {
+        maximum_num_of_children = 0;
+    } else {
+        std::list<int> children_of_the_children;
+        for (auto &child: tree->children)
+            children_of_the_children.push_back(max_num_of_direct_children(child));
+        max_num_of_children_of_the_children = max_utils(children_of_the_children);
+        int n_of_children = tree->children.size();
+        maximum_num_of_children = max_utils(std::list<T>{n_of_children, max_num_of_children_of_the_children});
+    }
+
+    return maximum_num_of_children;
+}
+
+template<typename T>
 int number_of_fathers_with_specified_number_of_children(Node<T> *tree, int num_of_children) {
     int num_of_nodes_of_the_children;
     int current_num_of_nodes;
@@ -372,7 +391,8 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
 
 template<typename T>
 std::tuple<bool, int, int>
-number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int children) {
+number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int current_dept,
+                                                                                   int children) {
 
     bool found;
     int depth;
@@ -407,7 +427,7 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
             numbers.push_back(1);
         }
 
-        if (depths.empty()) {
+        if (!depths.empty()) {
             found = true;
             depth = max_utils(depths);
             number = sum_utils(numbers);
