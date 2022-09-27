@@ -29,8 +29,8 @@ int main() {
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
     cout << "How many:   " << how_many(tree) << endl;
-    cout << "Min depth:  " << min_depth(tree) << endl;
-    cout << "Max depth:  " << max_depth(tree) << endl;
+    cout << "Min depth:  " << min_depth(tree,0) << endl;
+    cout << "Max depth:  " << max_depth(tree,0) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
     //cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;

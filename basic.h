@@ -37,20 +37,21 @@ void scan(Node<T> *tree) {
 }
 
 template<typename T>
-int max_depth(Node<T> *tree) {
+int max_depth(Node<T> *tree, int curr_depth) {
     int m_depth_of_the_children;
     int m_depth_of_the_current;
     if (tree->children.empty()) {
         // no statement for the children
-        m_depth_of_the_current = 0; // for the father
+        m_depth_of_the_current = curr_depth; // for the father
     } else {
         std::list<int> depths;
         for (auto &child: tree->children) {
-            auto ret = max_depth(child);
+            int depth_of_the_children = curr_depth + 1;
+            auto ret = max_depth(child, depth_of_the_children);
             depths.push_back(ret);
         }
         m_depth_of_the_children = max_utils(depths);
-        m_depth_of_the_current = m_depth_of_the_children + 1;
+        m_depth_of_the_current = m_depth_of_the_children;
     }
 
     return m_depth_of_the_current;
@@ -58,24 +59,26 @@ int max_depth(Node<T> *tree) {
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
 template<typename T>
-int min_depth(Node<T> *tree) {
+int min_depth(Node<T> *tree, int curr_depth) {
     int m_depth_of_the_children;
     int m_depth_of_the_current;
     if (tree->children.empty()) {
         // no statement for the children
-        m_depth_of_the_current = 0; // for the father
+        m_depth_of_the_current = curr_depth; // for the father
     } else {
         std::list<int> depths;
         for (auto &child: tree->children) {
-            auto ret = min_depth(child);
+            int depth_of_the_children = curr_depth + 1;
+            auto ret = min_depth(child, depth_of_the_children);
             depths.push_back(ret);
         }
         m_depth_of_the_children = min_utils(depths);
-        m_depth_of_the_current = m_depth_of_the_children + 1;
+        m_depth_of_the_current = m_depth_of_the_children;
     }
 
     return m_depth_of_the_current;
 }
+
 
 template<typename T>
 int how_many(Node<T> *tree) {
