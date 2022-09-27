@@ -391,11 +391,11 @@ std::pair<bool, int> depth_of_the_deepest_father_with_specified_number_of_childr
 
 template<typename T>
 std::tuple<bool, int, int>
-number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int current_dept,
+number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *tree, int current_depth,
                                                                                    int children) {
 
     bool found;
-    int depth;
+    int depth_of_the_target;
     int number;
 
     auto has_exactly_n_children = [&children](Node<T> *tree) -> bool { return tree->children.size() == children; };
@@ -403,14 +403,16 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
     if (leaf(tree)) {
         if (has_exactly_n_children(tree)) {
             found = true;
-            depth = 0;
+            depth_of_the_target = current_depth;
         } else
             found = false;
     } else {
         std::list<int> depths;
         std::list<int> numbers;
         for (auto &child: tree->children) {
+            int depth_of_the_children = current_depth + 1;
             auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
+                                                                                                          depth_of_the_children,
                                                                                                           children);
             if (get<0>(ret)) {
                 depths.push_back(get<1>(ret));
@@ -429,12 +431,12 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
 
         if (!depths.empty()) {
             found = true;
-            depth = max_utils(depths);
+            depth_of_the_target = max_utils(depths);
             number = sum_utils(numbers);
         } else
             found = false;
     }
-    return {found, depth, number};
+    return {found, depth_of_the_target, number};
 }
 
 /**
