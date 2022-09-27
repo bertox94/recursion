@@ -20,6 +20,10 @@ public:
 
     explicit Node(T &&item) : Node(item) {}
 
+    bool is_leaf() const{
+        return children.size() == 0;
+    }
+
     ~Node() {
         for (auto &child: children)
             delete child;

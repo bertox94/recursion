@@ -29,8 +29,8 @@ int main() {
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
     cout << "How many:   " << how_many(tree) << endl;
-    cout << "Min depth:  " << min_depth(tree,0) << endl;
-    cout << "Max depth:  " << max_depth(tree,0) << endl;
+    cout << "Min depth:  " << min_depth(tree, 0) << endl;
+    cout << "Max depth:  " << max_depth(tree, 0) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
     //cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
@@ -49,9 +49,19 @@ int main() {
         string str = string("NFSNC (") + to_string(i) + "):";
         cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
     }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("MaxNOCD (") + to_string(i) + "):";
+        cout << setw(13) << left << str << get<1>(max_num_of_direct_children_at_depth(tree, 0, i)) << endl;
+    }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("MinNOCD (") + to_string(i) + "):";
+        cout << setw(13) << left << str << get<1>(min_num_of_direct_children_at_depth(tree, 0, i)) << endl;
+    }
     cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree).second << endl;
     cout << "MNOC:      " << max_num_of_direct_children(tree) << endl;
-    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree,0, 1);
+    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree, 0, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
     //auto ll = list_nodes(tree);
     //cout << "List:       \n" << print(ll) << endl;
