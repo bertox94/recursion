@@ -39,10 +39,10 @@ void scan(Node<T> *tree) {
 template<typename T>
 int max_depth(Node<T> *tree, int curr_depth) {
     int m_depth_of_the_children;
-    int m_depth_of_the_current;
+    int m_depth;
     if (tree->children.empty()) {
         // no statement for the children
-        m_depth_of_the_current = curr_depth; // for the father
+        m_depth = curr_depth; // for the father
     } else {
         std::list<int> depths;
         for (auto &child: tree->children) {
@@ -50,21 +50,20 @@ int max_depth(Node<T> *tree, int curr_depth) {
             auto ret = max_depth(child, depth_of_the_children);
             depths.push_back(ret);
         }
-        m_depth_of_the_children = max_utils(depths);
-        m_depth_of_the_current = m_depth_of_the_children;
+        m_depth = max_utils(depths);
     }
 
-    return m_depth_of_the_current;
+    return m_depth;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
 template<typename T>
-int min_depth(Node<T> *tree, int curr_depth) {
+int min_depth(Node<T> *tree, int curr_depth) { //i.e. depth of the less deep leaf
     int m_depth_of_the_children;
-    int m_depth_of_the_current;
+    int m_depth;
     if (tree->children.empty()) {
         // no statement for the children
-        m_depth_of_the_current = curr_depth; // for the father
+        m_depth = curr_depth;
     } else {
         std::list<int> depths;
         for (auto &child: tree->children) {
@@ -73,10 +72,10 @@ int min_depth(Node<T> *tree, int curr_depth) {
             depths.push_back(ret);
         }
         m_depth_of_the_children = min_utils(depths);
-        m_depth_of_the_current = m_depth_of_the_children;
+        m_depth = m_depth_of_the_children;
     }
 
-    return m_depth_of_the_current;
+    return m_depth;
 }
 
 
@@ -85,15 +84,17 @@ int how_many(Node<T> *tree) {
     int h_many_children;
     int h_many;
     if (tree->children.empty()) {
-        h_many_children = 0;
+        h_many = 1;
     } else {
         std::list<int> nodes;
-        for (auto &child: tree->children)
-            nodes.push_back(how_many(child));
+        for (auto &child: tree->children) {
+            auto ret = how_many(child);
+            nodes.push_back(ret);
+        }
         h_many_children = sum_utils(nodes);
+        h_many = h_many_children + 1;
     }
 
-    h_many = h_many_children + 1; //for the father
     return h_many;
 }
 
@@ -113,8 +114,10 @@ T max_value(Node<T> *tree) {
         m_val = *tree->item; // for the father
     } else {
         std::list<int> maxes;
-        for (auto &child: tree->children)
-            maxes.push_back(max_value(child));
+        for (auto &child: tree->children) {
+            auto ret = max_value(child);
+            maxes.push_back(ret);
+        }
         m_val_among_the_children = max_utils(maxes); // for the children
         m_val = std::max(m_val_among_the_children, *tree->item); // for the father
     }
@@ -130,8 +133,10 @@ T min_value(Node<T> *tree) {
         m_val = *tree->item; // for the father
     } else {
         std::list<int> minima;
-        for (auto &child: tree->children)
-            minima.push_back(min_value(child));
+        for (auto &child: tree->children) {
+            auto ret = min_value(child);
+            minima.push_back(ret);
+        }
         m_val_among_the_children = min_utils(minima); // for the children
         m_val = std::min(m_val_among_the_children, *tree->item); // for the father
     }
@@ -140,20 +145,27 @@ T min_value(Node<T> *tree) {
 
 template<typename T>
 T how_many_like_this(Node<T> *tree, T like) {
-    int num_of_nodes_of_the_children;
-    int num_of_nodes;
+    int h_many_from_the_children;
+    int h_many;
     if (tree->children.empty()) {
-        num_of_nodes_of_the_children = 0;
+        if (*tree->item == like)
+            h_many = 1;
+        else
+            h_many = 0;
     } else {
         std::list<int> nodes;
-        for (auto &child: tree->children)
-            nodes.push_back(how_many_like_this(child, like));
-        num_of_nodes_of_the_children = sum_utils(nodes);
+        for (auto &child: tree->children) {
+            auto ret = how_many_like_this(child, like);
+            nodes.push_back(ret);
+        }
+        h_many_from_the_children = sum_utils(nodes);
+        if (*tree->item == like)
+            h_many = h_many_from_the_children + 1;
+        else
+            h_many = h_many_from_the_children;
     }
-    num_of_nodes = num_of_nodes_of_the_children;
-    if (*tree->item == like)
-        num_of_nodes++;
-    return num_of_nodes;
+
+    return h_many;
 }
 
 template<typename T>
@@ -162,13 +174,17 @@ list<T> list_nodes(Node<T> *tree) {
     if (tree->children.empty()) {
         // for the children, the list is already empty, no need to do anything
         // for the father will be done later once for this two cases
+        nodes.push_back(*tree->item);
     } else {
         std::list<int> children_nodes;
-        for (auto &child: tree->children)
-            children_nodes.splice(children_nodes.end(), list_nodes(child));
+        for (auto &child: tree->children) {
+            auto ret = list_nodes(child);
+            children_nodes.splice(children_nodes.end(), ret);
+        }
         nodes = children_nodes;
+        nodes.push_back(*tree->item);
     }
-    nodes.push_back(*tree->item);
+
     return nodes;
 }
 
@@ -176,69 +192,87 @@ list<T> list_nodes(Node<T> *tree) {
  * Number of fathers with a specified number of children
  */
 template<typename T>
-int number_of_fathers_with_no_child(Node<T> *tree) {
+int number_of_fathers_with_no_child(Node<T> *node) {
     // the following are left unspecified for now because we don't know what value is it now
     // the data of the children can and usually must survive outside the if-else blocks, so it's declared here
-    int num_of_nodes_of_the_children;
-    int current_num_of_nodes;
-
-    //in this if-else we deal only with children!!!
-    if (tree->children.empty()) {
-        num_of_nodes_of_the_children = 0;
+    int num_from_the_children;
+    int num;
+    auto test_property = [](Node<T> *tree) -> bool { return tree->children.empty(); };
+    if (node->children.empty()) {
+        if (test_property(node))
+            num = 1;
+        else
+            num = 0;
     } else {
         std::list<int> nodes_from_the_children;
-        for (auto &child: tree->children)
-            nodes_from_the_children.push_back(number_of_fathers_with_no_child(child));
-        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+        for (auto &child: node->children) {
+            auto ret = number_of_fathers_with_no_child(child);
+            nodes_from_the_children.push_back(ret);
+        }
+        num_from_the_children = sum_utils(nodes_from_the_children);
+        if (test_property(node))
+            num = num_from_the_children + 1;
+        else
+            num = num_from_the_children;
     }
-    // fair enpugh that we come out of this with data on the children,
-    // we don't care about current until now
 
-    current_num_of_nodes = num_of_nodes_of_the_children;
-    if (tree->children.empty())
-        current_num_of_nodes++;
-
-    return current_num_of_nodes;
+    return num;
 }
 
 template<typename T>
 int number_of_fathers_with_single_child(Node<T> *tree) {
-    int num_of_nodes_of_the_children;
-    int current_num_of_nodes;
-
+    int num_from_the_children;
+    int num;
+    auto test_property = [](Node<T> *tree) -> bool { return tree->children.size() == 1; };
     if (tree->children.empty()) {
-        num_of_nodes_of_the_children = 0;
+        if (test_property(tree))
+            num = 1;
+        else
+            num = 0;
     } else {
         std::list<int> nodes_from_the_children;
-        for (auto &child: tree->children)
-            nodes_from_the_children.push_back(number_of_fathers_with_single_child(child));
-        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+        for (auto &child: tree->children) {
+            auto ret = number_of_fathers_with_single_child(child);
+            nodes_from_the_children.push_back(ret);
+        }
+        num_from_the_children = sum_utils(nodes_from_the_children);
+        if (test_property(tree))
+            num = num_from_the_children + 1;
+        else
+            num = num_from_the_children;
     }
 
-    current_num_of_nodes = num_of_nodes_of_the_children;
-    if (tree->children.size() == 1)
-        current_num_of_nodes++;
-
-    return current_num_of_nodes;
+    return num;
 }
 
 template<typename T>
 int max_num_of_direct_children(Node<T> *tree) {
-    int max_num_of_children_of_the_children;
-    int maximum_num_of_children;
+    int num;
 
     if (tree->children.empty()) {
-        maximum_num_of_children = 0;
+        num = 0;
     } else {
-        std::list<int> children_of_the_children;
-        for (auto &child: tree->children)
-            children_of_the_children.push_back(max_num_of_direct_children(child));
-        max_num_of_children_of_the_children = max_utils(children_of_the_children);
-        int n_of_children = tree->children.size();
-        maximum_num_of_children = max_utils(std::list<T>{n_of_children, max_num_of_children_of_the_children});
+        std::list<int> nums;
+        for (auto &child: tree->children) {
+            auto ret = max_num_of_direct_children(child);
+            nums.push_back(ret);
+        }
+        nums.push_back(tree->children.size());
+        num = max_utils(nums);
     }
 
-    return maximum_num_of_children;
+    return num;
+}
+
+template<typename T>
+int max_num_of_direct_children_at_depth(Node<T> *tree, int depth) {
+
+}
+
+template<typename T>
+int min_num_of_direct_children_at_depth(Node<T> *tree, int depth) {
+    // min_num_of_direct_children_at_depth(tree,1) should be 0
+// be useful to test there there are leaf at depth one, as usually shown in min_dept(...)
 }
 
 template<typename T>
