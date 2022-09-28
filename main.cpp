@@ -59,7 +59,7 @@ int main() {
         string str = string("MinNOCD (") + to_string(i) + "):";
         cout << setw(13) << left << str << get<1>(min_num_of_direct_children_at_depth(tree, 0, i)) << endl;
     }
-    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree).second << endl;
+    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree, 0).second << endl;
     cout << "MNOC:      " << max_num_of_direct_children(tree) << endl;
     auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree, 0, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
