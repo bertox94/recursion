@@ -10,8 +10,8 @@
 
 /**
  * TEMPLATE:
-    declare all values to be returned
-
+    * update descending values
+    * declare all values to be returned
     if (leaf(node)) {
         * test the property on current only
         * provide the values to be returned out of current only
@@ -41,6 +41,7 @@ void scan(Node<T> *node) {
 
 template<typename T>
 int max_depth(Node<T> *node, int depth) {
+    depth++;
     int m_depth;
     if (node->is_leaf()) {
         // no statement for the children
@@ -48,8 +49,7 @@ int max_depth(Node<T> *node, int depth) {
     } else {
         std::list<int> ll;
         for (auto &child: node->children) {
-            int depth_for_the_children = depth + 1;
-            auto ret = max_depth(child, depth_for_the_children);
+            auto ret = max_depth(child, depth);
             ll.push_back(ret);
         }
         m_depth = max_utils(ll);
@@ -61,6 +61,7 @@ int max_depth(Node<T> *node, int depth) {
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
 template<typename T>
 int min_depth(Node<T> *node, int depth) { //i.e. depth of the less deep leaf
+    depth++;
     int m_depth;
     if (node->is_leaf()) {
         // no statement for the children
@@ -68,8 +69,7 @@ int min_depth(Node<T> *node, int depth) { //i.e. depth of the less deep leaf
     } else {
         std::list<int> ll;
         for (auto &child: node->children) {
-            int depth_for_the_children = depth + 1;
-            auto ret = min_depth(child, depth_for_the_children);
+            auto ret = min_depth(child, depth);
             ll.push_back(ret);
         }
         m_depth = min_utils(ll);
@@ -141,8 +141,10 @@ T min_value(Node<T> *node) {
 template<typename T>
 T how_many_like_this(Node<T> *node, T like) {
     int h_many;
+    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
+
     if (node->is_leaf()) {
-        if (*node->item == like)
+        if (test_property(node, like))
             h_many = 1;
         else
             h_many = 0;
@@ -153,7 +155,7 @@ T how_many_like_this(Node<T> *node, T like) {
             ll.push_back(ret);
         }
         h_many = sum_utils(ll);
-        if (*node->item == like)
+        if (test_property(node, like))
             h_many++;
     }
 
@@ -254,6 +256,7 @@ int max_num_of_direct_children(Node<T> *node) {
 // no need to consider everything else. Basically just assume the entire tree is a leaf.
 template<typename T>
 std::tuple<bool, int> max_num_of_direct_children_at_depth(Node<T> *node, int curr_depth, int target_depth) {
+    curr_depth++;
     int m_num;
     bool valid;
     auto test_property = [](int curr, int target) -> bool { return curr == target; };
@@ -266,8 +269,7 @@ std::tuple<bool, int> max_num_of_direct_children_at_depth(Node<T> *node, int cur
     } else {
         std::list<std::tuple<int, int>> ll;
         for (auto &child: node->children) {
-            int curr_depth_for_children = curr_depth + 1;
-            auto ret = max_num_of_direct_children_at_depth(child, curr_depth_for_children, target_depth);
+            auto ret = max_num_of_direct_children_at_depth(child, curr_depth, target_depth);
             ll.push_back(ret);
         }
         std::list<int> maxes;
@@ -293,6 +295,7 @@ std::tuple<bool, int> max_num_of_direct_children_at_depth(Node<T> *node, int cur
 // be useful to test there there are leaf at depth one, as usually shown in min_dept(...)
 template<typename T>
 std::tuple<bool, int> min_num_of_direct_children_at_depth(Node<T> *node, int curr_depth, int target_depth) {
+    curr_depth++;
     int m_num;
     bool valid;
     auto test_property = [](int curr, int target) -> bool { return curr == target; };
@@ -305,8 +308,7 @@ std::tuple<bool, int> min_num_of_direct_children_at_depth(Node<T> *node, int cur
     } else {
         std::list<std::tuple<int, int>> ll;
         for (auto &child: node->children) {
-            int curr_depth_for_children = curr_depth + 1;
-            auto ret = min_num_of_direct_children_at_depth(child, curr_depth_for_children, target_depth);
+            auto ret = min_num_of_direct_children_at_depth(child, curr_depth, target_depth);
             ll.push_back(ret);
         }
         std::list<int> minima;
@@ -359,6 +361,8 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_o
 
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *node, int curr_depth) {
+    curr_depth++;
+
     int depth;
     bool found;
 
@@ -380,8 +384,7 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
     } else {
         list<std::pair<bool, int>> ll; //here we see that depth when false is a random value, bacause there is no rihgt value
         for (auto &child: node->children) {
-            int depth_for_the_children = curr_depth + 1;
-            auto ret = depth_of_the_deepest_node_with_at_least_one_child(child, depth_for_the_children);
+            auto ret = depth_of_the_deepest_node_with_at_least_one_child(child, curr_depth);
             ll.push_back(ret);
         }
         list<int> ll2;
@@ -410,6 +413,8 @@ std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *
 // father must be treated differently of the children
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node, int curr_depth) {
+    curr_depth++;
+
     int depth;
     bool found;
 
@@ -421,7 +426,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
     // it comes easier to do the else branch before, because you are helped by the children
     // in the if branch, test the current and provide the results may be done at the same time, in the else branch usually no,
     // children are to be considered as well
-    if (leaf(node)) {
+    if (node->is_leaf()) {
         if (test_property(node)) { // if the current is a father, i.e. test the current for the property
             found = true;
             depth = curr_depth;
@@ -431,8 +436,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
     } else {
         list<std::pair<bool, int>> ll; //here we see that depth when false is a random value, bacause there is no rihgt value
         for (auto &child: node->children) {
-            int depth_for_the_children = curr_depth + 1;
-            auto ret = depth_of_the_deepest_father_with_single_child(child, depth_for_the_children);
+            auto ret = depth_of_the_deepest_father_with_single_child(child, curr_depth);
             ll.push_back(ret);
         }
         list<int> ll2;
@@ -460,6 +464,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
 template<typename T>
 std::pair<bool, int>
 depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int curr_depth, int children) {
+    curr_depth++;
     int depth;
     bool found;
 
@@ -481,8 +486,7 @@ depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int
     } else {
         list<std::pair<bool, int>> ll; //here we see that depth when false is a random value, bacause there is no rihgt value
         for (auto &child: node->children) {
-            int depth_for_the_children = curr_depth + 1;
-            auto ret = depth_of_the_deepest_father_with_single_child(child, depth_for_the_children);
+            auto ret = depth_of_the_deepest_father_with_single_child(child, curr_depth);
             ll.push_back(ret);
         }
         list<int> ll2;
@@ -511,7 +515,7 @@ template<typename T>
 std::tuple<bool, int, int> //do the same also with min, so that you test all properties (i.e. testproperty on children branch)
 number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *node, int current_depth,
                                                                                    int children) {
-
+    current_depth++;
     bool found;
     int depth_of_the_target;
     int number;
@@ -528,9 +532,8 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
     } else {
         std::list<std::tuple<bool, int, int>> ll;
         for (auto &child: node->children) {
-            int depth_of_the_children = current_depth + 1;
             auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
-                                                                                                          depth_of_the_children,
+                                                                                                          current_depth,
                                                                                                           children);
             ll.push_back(ret);
         }
@@ -579,98 +582,128 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
 // height is computed in each branch, nodes once outside the branches
 // note that it is superfluous to return the height at height 0, yet due to the mechanism of recursion used here,
 // we need to return it anyway
+
+// each one pass values about itself only, do not prepare nothing, what I get in curr, from below,
+// is the height from the childrem I must add +1. Same for depth (adjust before). node is the only exception.
+// It's like hook to the partner and pass them your values, without preparing anything for him.
+// In a node, those operation are done before the recursive call (at the beginning, since an empty recursive call is done if it is a leaf),
+// operation on values from children are done after the rec call (they are done only in the else branch since only there there is a rec. call.).
 template<typename T>
 std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
-    int num_of_nodes_of_the_children;
-    int current_num_of_nodes;
-    int height_of_the_children;
-    int max_height_among_the_children;
-    int current_height;
+    int num;
+    int height;
 
-    if (node->children.empty()) {
-        current_height = 0;
-        num_of_nodes_of_the_children = 0;
+    auto test_property = [](int height) -> bool { return height == 0; };
+
+    if (node->is_leaf()) {
+        height = 0;
+        if (test_property(height))
+            num = 1;
+        else
+            num = 0;
     } else {
-        std::list<int> nodes_from_the_children;
-        std::list<int> heights_of_the_children;
+        std::list<pair<int, int>> ll;
         for (auto &child: node->children) {
             auto ret = number_of_nodes_at_height_zero(child);
-            heights_of_the_children.push_back(ret.first);
-            nodes_from_the_children.push_back(ret.second);
+            ll.push_back(ret);
+        } // you can always assume that ll is not empty
+
+        height = ll.front().first;
+        for (auto &el: ll) {
+            if (height < el.first)
+                height = el.first;
         }
-        max_height_among_the_children = max_utils(heights_of_the_children);
-        current_height = max_height_among_the_children + 1;
-        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+        height++; //this is the height of the current node
+
+        if (test_property(height))
+            ll.emplace_back(height, 1);
+
+        num = 0;
+        for (auto el: ll) {
+            num += el.second;
+        }
     }
 
-    current_num_of_nodes = num_of_nodes_of_the_children;
-    if (current_height == 0)
-        current_num_of_nodes = num_of_nodes_of_the_children + 1;
-
-    return {current_height, current_num_of_nodes};
+    return {height, num};
 }
 
 template<typename T>
 std::pair<int, int> number_of_nodes_at_height_one(Node<T> *node) {
-    int num_of_nodes_of_the_children;
-    int current_num_of_nodes;
-    int height_of_the_children;
-    int max_height_among_the_children;
-    int current_height;
+    int num;
+    int height;
 
-    if (node->children.empty()) {
-        current_height = 0;
-        num_of_nodes_of_the_children = 0;
+    auto test_property = [](int height) -> bool { return height == 1; };
+
+    if (node->is_leaf()) {
+        height = 0;
+        if (test_property(height))
+            num = 1;
+        else
+            num = 0;
     } else {
-        std::list<int> nodes_from_the_children;
-        std::list<int> heights_of_the_children;
+        std::list<pair<int, int>> ll;
         for (auto &child: node->children) {
             auto ret = number_of_nodes_at_height_one(child);
-            heights_of_the_children.push_back(ret.first);
-            nodes_from_the_children.push_back(ret.second);
+            ll.push_back(ret);
+        } // you can always assume that ll is not empty
+
+        height = ll.front().first;
+        for (auto &el: ll) {
+            if (height < el.first)
+                height = el.first;
         }
-        max_height_among_the_children = max_utils(heights_of_the_children);
-        current_height = max_height_among_the_children + 1;
-        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+        height++; //this is the height of the current node
+
+        if (test_property(height))
+            ll.emplace_back(height, 1);
+
+        num = 0;
+        for (auto el: ll) {
+            num += el.second;
+        }
     }
 
-    current_num_of_nodes = num_of_nodes_of_the_children;
-    if (current_height == 1)
-        current_num_of_nodes = num_of_nodes_of_the_children + 1;
-
-    return {current_height, current_num_of_nodes};
+    return {height, num};
 }
 
 template<typename T>
 std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int specified_height) {
     //the following are left unspecified for now because we don't know what value is it now
-    int num_of_nodes_of_the_children;
-    int current_num_of_nodes;
-    int height_of_the_children;
-    int max_height_among_the_children;
-    int current_height;
+    int num;
+    int height;
 
-    if (node->children.empty()) {
-        current_height = 0;
-        num_of_nodes_of_the_children = 0;
+    auto test_property = [](int curr_height, int specified_height) -> bool { return curr_height == specified_height; };
+
+    if (node->is_leaf()) {
+        height = 0;
+        if (test_property(height, specified_height))
+            num = 1;
+        else
+            num = 0;
     } else {
-        std::list<int> nodes_from_the_children;
-        std::list<int> heights_of_the_children;
+        std::list<pair<int, int>> ll;
         for (auto &child: node->children) {
             auto ret = number_of_nodes_at_specific_height(child, specified_height);
-            heights_of_the_children.push_back(ret.first);
-            nodes_from_the_children.push_back(ret.second);
+            ll.push_back(ret);
         }
-        max_height_among_the_children = max_utils(heights_of_the_children);
-        current_height = max_height_among_the_children + 1;
-        num_of_nodes_of_the_children = sum_utils(nodes_from_the_children);
+
+        height = ll.front().first;
+        for (auto &el: ll) {
+            if (height < el.first)
+                height = el.first;
+        }
+        height++;
+
+        if (test_property(height, specified_height))
+            ll.emplace_back(height, 1);
+
+        num = 0;
+        for (auto el: ll) {
+            num += el.second;
+        }
     }
 
-    current_num_of_nodes = num_of_nodes_of_the_children;
-    if (current_height == specified_height)
-        current_num_of_nodes = num_of_nodes_of_the_children + 1;
-
-    return {current_height, current_num_of_nodes};
+    return {height, num};
 }
 
 /**
