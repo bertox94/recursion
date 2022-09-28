@@ -508,7 +508,7 @@ depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int
 }
 
 template<typename T>
-std::tuple<bool, int, int>
+std::tuple<bool, int, int> //do the same also with min, so that you test all properties (i.e. testproperty on children branch)
 number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *node, int current_depth,
                                                                                    int children) {
 
@@ -516,41 +516,54 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
     int depth_of_the_target;
     int number;
 
-    auto has_exactly_n_children = [](Node<T> *node, int children) -> bool { return node->children.size() == children; };
+    auto test_property = [](Node<T> *node, int children) -> bool { return node->children.size() == children; };
 
     if (leaf(node)) {
-        if (has_exactly_n_children(node)) {
+        if (test_property(node, children)) {
             found = true;
             depth_of_the_target = current_depth;
+            number = 1;
         } else
             found = false;
     } else {
-        std::list<int> depths;
-        std::list<int> numbers;
+        std::list<std::tuple<bool, int, int>> ll;
         for (auto &child: node->children) {
             int depth_of_the_children = current_depth + 1;
             auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
                                                                                                           depth_of_the_children,
                                                                                                           children);
-            if (get<0>(ret)) {
-                depths.push_back(get<1>(ret));
-                numbers.push_back(get<2>(ret));
-            }
+            ll.push_back(ret);
         }
 
         //one may think that could be easier/faster to do:
-        //-check if depths is empty then add the father, but it's better to go with lead foot and
-        // treat the father the same way of the children (i.e. share depths, numbers)
+        //-check if ll is empty then add the father, but it's better to go with lead foot and
+        // treat the father the same way of the children (i.e. share ll, ll2)
 
-        if (has_exactly_n_children(node)) {
-            depths.push_back(0);
-            numbers.push_back(1);
+        list<pair<int, int>> ll2;
+
+        for (auto &el: ll) {
+            if (std::get<0>(el)) {
+                ll2.emplace_back(std::get<1>(el), std::get<2>(el));
+            }
         }
 
-        if (!depths.empty()) {
+        if (test_property(node, children)) {
+            ll2.emplace_back(current_depth, 1);
+        }
+
+        if (!ll2.empty()) {
             found = true;
-            depth_of_the_target = max_utils(depths);
-            number = sum_utils(numbers);
+
+            depth_of_the_target = ll2.front().first;
+            for (auto el: ll2) {
+                if (el.first > depth_of_the_target)
+                    depth_of_the_target = el.first;
+            }
+
+            number = 0;
+            for (auto el: ll2)
+                if (el.first == depth_of_the_target)
+                    number += el.second;
         } else
             found = false;
     }
