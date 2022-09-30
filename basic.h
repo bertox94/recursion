@@ -124,36 +124,31 @@ int how_many_variant(Node<T> *node, int count) {
 //When thinking what to return and stuff, just think that a leaf is just a root without children
 template<typename T>
 T max_value(Node<T> *node) {
-    int m_val;
-    if (node->is_leaf()) {
-        //empty statement for the children
-        m_val = *node->item; // for the father
-    } else {
-        std::list<int> ll;
-        for (auto &child: node->children) {
-            auto ret = max_value(child);
-            ll.push_back(ret);
-        }
-        ll.push_back(*node->item);
-        m_val = max_utils(ll);
+    std::list<int> ll;
+    for (auto &child: node->children) {
+        auto ret = max_value(child);
+        ll.push_back(ret);
     }
+    ll.push_back(*node->item);
+
+    int m_val;
+    m_val = max_utils(ll);
+
     return m_val;
 }
 
 template<typename T>
 T min_value(Node<T> *node) {
-    int m_val;
-    if (node->is_leaf()) {
-        m_val = *node->item;
-    } else {
-        std::list<int> ll;
-        for (auto &child: node->children) {
-            auto ret = min_value(child);
-            ll.push_back(ret);
-        }
-        ll.push_back(*node->item);
-        m_val = min_utils(ll);
+    std::list<int> ll;
+    for (auto &child: node->children) {
+        auto ret = min_value(child);
+        ll.push_back(ret);
     }
+    ll.push_back(*node->item);
+
+    int m_val;
+    m_val = min_utils(ll);
+
     return m_val;
 }
 
