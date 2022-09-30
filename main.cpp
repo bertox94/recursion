@@ -29,16 +29,20 @@ int main() {
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
     cout << "How many (L):   " << how_many(tree) << endl;
+    cout << "How many (R):   " << how_many_variant(tree, 0) << endl;
     cout << "Min depth:  " << min_depth(tree, -1) << endl;
     cout << "Max depth:  " << max_depth(tree, -1) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
     //cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
     //cout << "-------" << endl;
-    //for (auto i = minval; i <= maxval; i++) {
-    //    string str = string("HMLT (") + to_string(i) + "):";
-    //    cout << setw(13) << left << str << how_many_like_this(tree, i) << endl;
-    //}
+    for (auto i = minval; i <= minval + 25; i++) {
+        string str = string("HMLT (") + to_string(i) + "):";
+        auto res1 = how_many_like_this(tree, i);
+        auto res2 = how_many_like_this_variant(tree, i, 0);
+        //if (res1 != res2)
+        cout << setw(13) << left << str << res1 << ", " << res2 << endl;
+    }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NNSH (") + to_string(i) + "):";

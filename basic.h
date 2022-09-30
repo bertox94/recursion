@@ -96,6 +96,25 @@ int how_many(Node<T> *node) {
     return h_many;
 }
 
+template<typename T>
+int how_many_variant(Node<T> *node, int count) {
+    count++;
+
+    int h_many;
+    if (node->is_leaf()) {
+        h_many = count;
+    } else {
+        int ret;
+        for (auto &child: node->children) {
+            ret = how_many_variant(child, count);
+            count = ret;
+        }
+        h_many = count;
+    }
+
+    return h_many;
+}
+
 //the base case coincides with the tree being a leaf!
 //here in fact max_utils(empty tree) doesn't make sense, so
 //max of tree with one element (leaf) is the element, otherwise max_utils between...
@@ -139,7 +158,7 @@ T min_value(Node<T> *node) {
 }
 
 template<typename T>
-T how_many_like_this(Node<T> *node, T like) {
+int how_many_like_this(Node<T> *node, T like) {
     int h_many;
     auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
 
@@ -160,6 +179,49 @@ T how_many_like_this(Node<T> *node, T like) {
     }
 
     return h_many;
+}
+
+template<typename T>
+//contrived example, to avoid, but interesting for how it is the normal dealing of right and left attributes
+//nb the loop in the else branch changes, it is an indicator of a bad choice of attributes
+int how_many_like_this_variant(Node<T> *node, T like, int count) {
+    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
+
+    if (test_property(node, like)) //since it is a right attribute we update it right now
+        count++;
+    int h_many;
+
+    if (node->is_leaf()) {
+        h_many = count;
+    } else {
+        int ret;
+        for (auto &child: node->children) {
+            ret = how_many_like_this_variant(child, like, count);
+            count = ret;
+        }
+        h_many = ret;
+    }
+
+    return h_many;
+}
+
+template<typename T>
+//little bit more confusing
+int how_many_like_this_variant_II(Node<T> *node, T like, int count) {
+    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
+
+    if (test_property(node, like)) //since it is a right attribute we update it as first thing
+        count++;
+
+    if (node->is_leaf()) {
+        // nothing
+    } else {
+        for (auto &child: node->children) {
+            count = how_many_like_this_variant(child, like, count);
+        }
+    }
+
+    return count;
 }
 
 template<typename T>
