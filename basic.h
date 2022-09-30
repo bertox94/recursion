@@ -607,12 +607,10 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
 // operation on values from children are done after the rec call (they are done only in the else branch since only there there is a rec. call.).
 template<typename T>
 std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
-    std::list<int> ll1;
-    std::list<int> ll2;
+    std::list<std::pair<int, int>> ll;
     for (auto &child: node->children) {
         auto ret = number_of_nodes_at_height_zero(child);
-        ll1.push_back(ret.first);
-        ll2.push_back(ret.second);
+        ll.push_back(ret);
     }
 
     int num;
@@ -621,13 +619,17 @@ std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
     if (node->is_leaf())
         height = 0;
     else
-        height = max_utils(ll1);
+        height = (*max_element(ll.begin(), ll.end(),
+                               [](auto &l, auto &r) { return l.first < r.first; })).first;
 
-    if (height == 0) {
-        ll2.push_back(1);
-    }
+    if (height == 0)
+        ll.emplace_back(height, 1);
 
-    num = sum_utils(ll2);
+    num = accumulate(
+            ll.begin(), ll.end(), 0,
+            [&](auto acc, auto pair) {
+                return acc + pair.second;
+            });
 
     return {height, num};
 }
