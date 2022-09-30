@@ -558,34 +558,32 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
                                                                                    int children) {
     current_depth++;
 
-    std::list<std::pair<int, int>> ll;
+    std::list<std::tuple<bool, int, int>> ll;
     for (auto &child: node->children) {
         auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
                                                                                                       current_depth,
                                                                                                       children);
-        if (std::get<0>(ret))
-            ll.emplace_back(std::get<1>(ret), std::get<2>(ret));
+        ll.emplace_back(ret);
     }
 
     if (node->children.size() == children)
-        ll.emplace_back(current_depth, 1);
+        ll.emplace_back(true, current_depth, 1);
 
     bool found;
     int depth;
     int number;
 
+    ll.erase(std::remove_if(ll.begin(), ll.end(), [](auto &el) { return !std::get<0>(el); }), ll.end());
     if (!ll.empty()) {
         found = true;
-
-        depth = ll.front().first;
-        for (auto el: ll)
-            if (el.first > depth)
-                depth = el.first;
-
-        number = 0;
-        for (auto el: ll)
-            if (el.first == depth)
-                number += el.second;
+        depth = std::get<1>(*max_element(ll.begin(), ll.end(),
+                                         [](auto &l, auto &r) { return get<1>(l) < get<1>(r); }));
+        number = accumulate(
+                ll.begin(), ll.end(), 0,
+                [&](auto acc, auto tpl) {
+                    return std::get<1>(tpl) == depth ? acc + std::get<2>(tpl) : acc;
+                }
+        );
     } else
         found = false;
 
@@ -609,39 +607,27 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
 // operation on values from children are done after the rec call (they are done only in the else branch since only there there is a rec. call.).
 template<typename T>
 std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
+    std::list<int> ll1;
+    std::list<int> ll2;
+    for (auto &child: node->children) {
+        auto ret = number_of_nodes_at_height_zero(child);
+        ll1.push_back(ret.first);
+        ll2.push_back(ret.second);
+    }
+
     int num;
     int height;
 
-    auto test_property = [](int height) -> bool { return height == 0; };
-
-    if (node->is_leaf()) {
+    if (node->is_leaf())
         height = 0;
-        if (test_property(height))
-            num = 1;
-        else
-            num = 0;
-    } else {
-        std::list<pair<int, int>> ll;
-        for (auto &child: node->children) {
-            auto ret = number_of_nodes_at_height_zero(child);
-            ll.push_back(ret);
-        } // you can always assume that ll is not empty
+    else
+        height = max_utils(ll1);
 
-        height = ll.front().first;
-        for (auto &el: ll) {
-            if (height < el.first)
-                height = el.first;
-        }
-        height++; //this is the height of the current node
-
-        if (test_property(height))
-            ll.emplace_back(height, 1);
-
-        num = 0;
-        for (auto el: ll) {
-            num += el.second;
-        }
+    if (height == 0) {
+        ll2.push_back(1);
     }
+
+    num = sum_utils(ll2);
 
     return {height, num};
 }
