@@ -578,60 +578,38 @@ std::tuple<bool, int, int> //do the same also with min, so that you test all pro
 number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *node, int current_depth,
                                                                                    int children) {
     current_depth++;
+
+    std::list<std::pair<int, int>> ll;
+    for (auto &child: node->children) {
+        auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
+                                                                                                      current_depth,
+                                                                                                      children);
+        if (std::get<0>(ret))
+            ll.emplace_back(std::get<1>(ret), std::get<2>(ret));
+    }
+
+    if (node->children.size() == children)
+        ll.emplace_back(current_depth, 1);
+
     bool found;
     int depth_of_the_target;
     int number;
 
-    auto test_property = [](Node<T> *node, int children) -> bool { return node->children.size() == children; };
+    if (!ll.empty()) {
+        found = true;
 
-    if (leaf(node)) {
-        if (test_property(node, children)) {
-            found = true;
-            depth_of_the_target = current_depth;
-            number = 1;
-        } else
-            found = false;
-    } else {
-        std::list<std::tuple<bool, int, int>> ll;
-        for (auto &child: node->children) {
-            auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
-                                                                                                          current_depth,
-                                                                                                          children);
-            ll.push_back(ret);
-        }
+        depth_of_the_target = ll.front().first;
+        for (auto el: ll)
+            if (el.first > depth_of_the_target)
+                depth_of_the_target = el.first;
 
-        //one may think that could be easier/faster to do:
-        //-check if ll is empty then add the father, but it's better to go with lead foot and
-        // treat the father the same way of the children (i.e. share ll, ll2)
+        number = 0;
+        for (auto el: ll)
+            if (el.first == depth_of_the_target)
+                number += el.second;
+    } else
+        found = false;
 
-        list<pair<int, int>> ll2;
-
-        for (auto &el: ll) {
-            if (std::get<0>(el)) {
-                ll2.emplace_back(std::get<1>(el), std::get<2>(el));
-            }
-        }
-
-        if (test_property(node, children)) {
-            ll2.emplace_back(current_depth, 1);
-        }
-
-        if (!ll2.empty()) {
-            found = true;
-
-            depth_of_the_target = ll2.front().first;
-            for (auto el: ll2) {
-                if (el.first > depth_of_the_target)
-                    depth_of_the_target = el.first;
-            }
-
-            number = 0;
-            for (auto el: ll2)
-                if (el.first == depth_of_the_target)
-                    number += el.second;
-        } else
-            found = false;
-    }
     return {found, depth_of_the_target, number};
 }
 
@@ -731,18 +709,12 @@ std::pair<int, int> number_of_nodes_at_height_one(Node<T> *node) {
 template<typename T>
 std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int specified_height) {
     //the following are left unspecified for now because we don't know what value is it now
-    int num;
-    int height;
-
+    // assume instead we are in the leaf, and knw that the test for curr is done at the end
     auto test_property = [](int curr_height, int specified_height) -> bool { return curr_height == specified_height; };
+    int height = 0;
+    int num = 0;
 
-    if (node->is_leaf()) {
-        height = 0;
-        if (test_property(height, specified_height))
-            num = 1;
-        else
-            num = 0;
-    } else {
+    if (node->is_not_leaf()) {
         std::list<pair<int, int>> ll;
         for (auto &child: node->children) {
             auto ret = number_of_nodes_at_specific_height(child, specified_height);
@@ -756,14 +728,13 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int specif
         }
         height++;
 
-        if (test_property(height, specified_height))
-            ll.emplace_back(height, 1);
-
-        num = 0;
         for (auto el: ll) {
             num += el.second;
         }
     }
+
+    if (test_property(height, specified_height))
+        num++;
 
     return {height, num};
 }

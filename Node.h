@@ -20,8 +20,12 @@ public:
 
     explicit Node(T &&item) : Node(item) {}
 
-    bool is_leaf() const{
+    bool is_leaf() const {
         return children.size() == 0;
+    }
+
+    bool is_not_leaf() const {
+        return children.size() > 0;
     }
 
     ~Node() {
