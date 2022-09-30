@@ -21,7 +21,7 @@
         * get all the values to be returned from current only, as if existed only him
         * provide the values to be returned out of children + current
     }
-
+    * can we update "for the father" only here and remove the if(leaf())?
     return values;
  */
 
