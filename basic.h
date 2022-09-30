@@ -420,7 +420,7 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_o
 /**
  * Number of fathers with a specified number of children
  */
-
+/*
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_node_with_at_least_one_child(Node<T> *node, int curr_depth) {
     curr_depth++;
@@ -522,7 +522,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
 
     return {found, depth};
 }
-
+*/
 template<typename T>
 std::pair<bool, int>
 depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int current_depth, int children) {
@@ -620,7 +620,7 @@ std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
         height = 0;
     else
         height = (*max_element(ll.begin(), ll.end(),
-                               [](auto &l, auto &r) { return l.first < r.first; })).first;
+                               [](auto &l, auto &r) { return l.first < r.first; })).first + 1;
 
     if (height == 0)
         ll.emplace_back(height, 1);
@@ -636,72 +636,59 @@ std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
 
 template<typename T>
 std::pair<int, int> number_of_nodes_at_height_one(Node<T> *node) {
+    std::list<std::pair<int, int>> ll;
+    for (auto &child: node->children) {
+        auto ret = number_of_nodes_at_height_one(child);
+        ll.push_back(ret);
+    }
+
     int num;
     int height;
 
-    auto test_property = [](int height) -> bool { return height == 1; };
-
-    if (node->is_leaf()) {
+    if (node->is_leaf())
         height = 0;
-        if (test_property(height))
-            num = 1;
-        else
-            num = 0;
-    } else {
-        std::list<pair<int, int>> ll;
-        for (auto &child: node->children) {
-            auto ret = number_of_nodes_at_height_one(child);
-            ll.push_back(ret);
-        } // you can always assume that ll is not empty
+    else
+        height = (*max_element(ll.begin(), ll.end(),
+                               [](auto &l, auto &r) { return l.first < r.first; })).first + 1;
 
-        height = ll.front().first;
-        for (auto &el: ll) {
-            if (height < el.first)
-                height = el.first;
-        }
-        height++; //this is the height of the current node
+    if (height == 1)
+        ll.emplace_back(height, 1);
 
-        if (test_property(height))
-            ll.emplace_back(height, 1);
-
-        num = 0;
-        for (auto el: ll) {
-            num += el.second;
-        }
-    }
+    num = accumulate(
+            ll.begin(), ll.end(), 0,
+            [&](auto acc, auto pair) {
+                return acc + pair.second;
+            });
 
     return {height, num};
 }
 
 template<typename T>
 std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int specified_height) {
-    //the following are left unspecified for now because we don't know what value is it now
-    // assume instead we are in the leaf, and knw that the test for curr is done at the end
-    auto test_property = [](int curr_height, int specified_height) -> bool { return curr_height == specified_height; };
-    int height = 0;
-    int num = 0;
-
-    if (node->is_not_leaf()) {
-        std::list<pair<int, int>> ll;
-        for (auto &child: node->children) {
-            auto ret = number_of_nodes_at_specific_height(child, specified_height);
-            ll.push_back(ret);
-        }
-
-        height = ll.front().first;
-        for (auto &el: ll) {
-            if (height < el.first)
-                height = el.first;
-        }
-        height++;
-
-        for (auto el: ll) {
-            num += el.second;
-        }
+    std::list<std::pair<int, int>> ll;
+    for (auto &child: node->children) {
+        auto ret = number_of_nodes_at_specific_height(child, specified_height);
+        ll.push_back(ret);
     }
 
-    if (test_property(height, specified_height))
-        num++;
+    // the following are left unspecified because we don't know yet their value
+    int num;
+    int height;
+
+    if (node->is_leaf())
+        height = 0;
+    else
+        height = (*max_element(ll.begin(), ll.end(),
+                               [](auto &l, auto &r) { return l.first < r.first; })).first + 1;
+
+    if (height == specified_height)
+        ll.emplace_back(height, 1);
+
+    num = accumulate(
+            ll.begin(), ll.end(), 0,
+            [&](auto acc, auto pair) {
+                return acc + pair.second;
+            });
 
     return {height, num};
 }
