@@ -15,6 +15,24 @@
 // an empty nothing doesn't exists!
 
 template<typename T>
+class RightAttr {
+public:
+    RightAttr(int depth, int target) : depth(depth), target(target) {}
+
+    int depth;
+    int target;
+    T value;
+};
+
+template<typename T>
+class LeftAttr {
+public:
+    bool valid;
+    int num;
+    T value;
+};
+
+template<typename T>
 void add_children(Node<T> *tree, int curr, int big) {
     //higher the number to the right, the bigger the tree
     while (std::rand() % (2 * curr) <= big) {

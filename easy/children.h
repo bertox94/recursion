@@ -5,6 +5,8 @@
 #ifndef RECURSION_CHILDREN_H
 #define RECURSION_CHILDREN_H
 
+#include <utility>
+
 #include "../Node.h"
 #include "../Tree.h"
 
@@ -29,46 +31,39 @@ int max_num_of_direct_children(Node<T> *node) {
 
 // to reason for leaves, just say, the tree is of one element. Then max num is exactly that,
 // no need to consider everything else. Basically just assume the entire tree is a leaf.
-// R: [depth, target_depth]
+// RightAttr: [depth, target_depth]
+// LeftAttr: [valid, max_num]
 template<typename T>
-std::tuple<bool, int> max_num_of_direct_children_at_depth(Node<T> *node, std::pair<int, int> Rfather) {
+LeftAttr<T> max_num_of_direct_children_at_depth(Node<T> *node, RightAttr<T> Rfather) {
     auto Rtemp = Rfather;
-    Rtemp.first++;
+    Rtemp.depth++;
     auto R = Rtemp;
 
-    std::pair<bool, int> L;
-    int m_num;
-    bool valid;
-    auto test_property = [](int curr, int target) -> bool { return curr == target; };
-    if (node->is_leaf()) {
-        if (R.first == R.second) {
-            m_num = node->children.size();
-            valid = true;
-        } else
-            valid = false;
-    } else {
-        std::list<std::tuple<int, int>> ll;
+    LeftAttr<T> L;
+    if (node->has_children()) {
+        std::list<int> Lchildren;
         for (auto &child: node->children) {
-            auto ret = max_num_of_direct_children_at_depth(child, R);
-            ll.push_back(ret);
+            auto Lchild = max_num_of_direct_children_at_depth(child, R);
+            if (Lchild.valid)
+                Lchildren.push_back(Lchild.num);
         }
-        std::list<int> maxes;
-        for (auto &tpl: ll) {
-            if (std::get<0>(tpl))
-                maxes.push_back(std::get<1>(tpl));
-        }
-        if (test_property(curr_depth, target_depth)) {
-            maxes.push_back(node->children.size());
-        }
-        if (maxes.empty()) {
-            valid = false;
-        } else {
-            valid = true;
-            m_num = max_utils(maxes);
-        }
+        if (!Lchildren.empty()) { // then you can assume that the current depth is not the target depth
+            L.num = *max_element(Lchildren.begin(), Lchildren.end());
+            L.valid = true;
+        } else if (R.depth == R.target) { // target depth = current depth
+            L.num = node->children.size();
+            L.valid = true;
+        } else // target depth < current depth
+            L.valid = false;
+    } else {
+        if (R.depth == R.target) {
+            L.num = node->children.size();
+            L.valid = true;
+        } else
+            L.valid = false;
     }
 
-    return {valid, m_num};
+    return L;
 }
 
 // min_num_of_direct_children_at_depth(node,1) should be 0

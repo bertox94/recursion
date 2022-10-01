@@ -77,7 +77,7 @@ std::pair<int, int> number_of_nodes_at_height_one(Node<T> *node) {
     return L;
 }
 
-//R: specified height
+//RightAttr: specified height
 template<typename T>
 std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int Rfather) {
     int R = Rfather;

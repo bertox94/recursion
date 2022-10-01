@@ -39,11 +39,11 @@ int main() {
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
     cout << "How many:   " << how_many(tree) << endl;
-    //cout << "How many (R):   " << how_many_variant(tree, 0) << endl;
+    //cout << "How many (RightAttr):   " << how_many_variant(tree, 0) << endl;
     cout << "Min depth:  " << min_depth(tree, -1) << endl;
     cout << "Max depth:  " << max_depth(tree, -1) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
-    cout << "Max value:  " << max_value(tree) << endl;
+    cout << "Max value:  " << max_value(tree).value << endl;
     cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
     cout << "-------" << endl;
     for (auto i = minval; i <= minval + 25; i++) {
@@ -66,8 +66,8 @@ int main() {
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MaxNOCD (") + to_string(i) + "):";
-        auto tuple = max_num_of_direct_children_at_depth(tree, -1, i);
-        cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
+        auto L = max_num_of_direct_children_at_depth(tree, RightAttr<int>(-1, i));
+        cout << setw(13) << left << str << (L.valid ? to_string(L.num) : "-") << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {

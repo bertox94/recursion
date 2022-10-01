@@ -129,21 +129,20 @@ int how_many_variant(Node<T> *node, int R1i) {
 //When thinking what to return and stuff, just think that a leaf is just a root without children
 //L1: max_value
 template<typename T>
-T max_value(Node<T> *node) {
-    int L1;
+LeftAttr<T> max_value(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<int> ll;
+        std::list<T> list{*node->item};
         for (auto &child: node->children) {
-            auto L1k = max_value(child);
-            ll.push_back(L1k);
+            auto Lchild = max_value(child);
+            list.push_back(Lchild.value);
         }
-        auto Ltemp = *max_element(ll.begin(), ll.end());
-        L1 = max(Ltemp, *node->item);
+        L.value = *max_element(list.begin(), list.end());
     } else {
-        L1 = *node->item;
+        L.value = *node->item;
     }
 
-    return L1;
+    return L;
 }
 
 //L1: min_value
