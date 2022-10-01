@@ -28,13 +28,12 @@ template<typename T>
 LeftAttr<T> list_nodes_II(Node<T> *node) {
     LeftAttr<T> L;
     if (node->has_children()) {
-        LeftAttr<T> Ltemp;
         for (auto &child: node->children) {
             auto Lchild = list_nodes_II(child);
 
             for (auto &LAttr1: Lchild.llist) {
                 bool found = false;
-                for (auto &LAttr2: Ltemp.llist) {
+                for (auto &LAttr2: L.llist) {
                     if (LAttr1.value == LAttr2.value) {
                         LAttr2.num += LAttr1.num;
                         found = true;
@@ -42,11 +41,11 @@ LeftAttr<T> list_nodes_II(Node<T> *node) {
                     }
                 }
                 if (!found)
-                    Ltemp.llist.push_back(LeftAttr<T>(LAttr1.num, LAttr1.value));
+                    L.llist.push_back(LeftAttr<T>(LAttr1.num, LAttr1.value));
             }
         }
         bool found = false;
-        for (auto &LAttr: Ltemp.llist) {
+        for (auto &LAttr: L.llist) {
             if (*node->item == LAttr.value) {
                 LAttr.num++;
                 found = true;
@@ -54,12 +53,9 @@ LeftAttr<T> list_nodes_II(Node<T> *node) {
             }
         }
         if (!found)
-            Ltemp.llist.emplace_back(1, *node->item);
-        L = Ltemp;
+            L.llist.emplace_back(1, *node->item);
     } else {
-        LeftAttr<T> Ltemp;
-        Ltemp.llist.emplace_back(1, *node->item);
-        L = Ltemp;
+        L.llist.emplace_back(1, *node->item);
     }
 
     return L;
