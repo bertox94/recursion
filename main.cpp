@@ -1,12 +1,13 @@
 #include <iostream>
 #include "Node.h"
 #include "Tree.h"
-#include "basic.h"
-#include "advanced.h"
+#include "easy/basic.h"
+#include "hard/Height.h"
+#include "hard/ListNodes.h"
+#include "easy/fathers.h"
+#include "easy/children.h"
 #include <sstream>
 #include <iomanip>
-
-using namespace std;
 
 
 string print(const list<int> &ll) {
@@ -43,37 +44,37 @@ int main() {
     cout << "Max depth:  " << max_depth(tree, -1) << endl;
     cout << "Min value:  " << min_value(tree) << endl;
     cout << "Max value:  " << max_value(tree) << endl;
-    //cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
-    //cout << "-------" << endl;
-    //for (auto i = minval; i <= minval + 25; i++) {
-    //    string str = string("HMLT (") + to_string(i) + "):";
-    //    auto res1 = how_many_like_this(tree, i);
-    //    //auto res2 = how_many_like_this_variant(tree, i, 0);
-    //    //if (res1 != res2)
-    //    cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;
-    //}
-    //cout << "-------" << endl;
-    //for (auto i = 0; i <= 25; i++) {
-    //    string str = string("NNSH (") + to_string(i) + "):";
-    //    cout << setw(13) << left << str << number_of_nodes_at_specific_height(tree, i).second << endl;
-    //}
-    //cout << "-------" << endl;
-    //for (auto i = 0; i <= 25; i++) {
-    //    string str = string("NFSNC (") + to_string(i) + "):";
-    //    cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
-    //}
-    //cout << "-------" << endl;
-    //for (auto i = 0; i <= 25; i++) {
-    //    string str = string("MaxNOCD (") + to_string(i) + "):";
-    //    auto tuple = max_num_of_direct_children_at_depth(tree, -1, i);
-    //    cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
-    //}
-    //cout << "-------" << endl;
-    //for (auto i = 0; i <= 25; i++) {
-    //    string str = string("MinNOCD (") + to_string(i) + "):";
-    //    auto tuple = min_num_of_direct_children_at_depth(tree, -1, i);
-    //    cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
-    //}
+    cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
+    cout << "-------" << endl;
+    for (auto i = minval; i <= minval + 25; i++) {
+        string str = string("HMLT (") + to_string(i) + "):";
+        auto res1 = how_many_like_this(tree, i);
+        //auto res2 = how_many_like_this_variant(tree, i, 0);
+        //if (res1 != res2)
+        cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;
+    }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("NNSH (") + to_string(i) + "):";
+        cout << setw(13) << left << str << number_of_nodes_at_specific_height(tree, i).second << endl;
+    }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("NFSNC (") + to_string(i) + "):";
+        cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
+    }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("MaxNOCD (") + to_string(i) + "):";
+        auto tuple = max_num_of_direct_children_at_depth(tree, -1, i);
+        cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
+    }
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("MinNOCD (") + to_string(i) + "):";
+        auto tuple = min_num_of_direct_children_at_depth(tree, -1, i);
+        cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
+    }
 
     cout << "-------" << endl;
     auto lll = list_nodes_II(tree);
@@ -83,8 +84,9 @@ int main() {
     for (auto &el: ll) {
         string str = string("Report (") + to_string(std::get<1>(el)) + "):";
         cout << setw(13) << left << str << to_string(std::get<0>(el)) << endl;
-        if (num > 25)
+        if (num > 25) {
             break;
+        }
         num++;
     }
 
@@ -99,11 +101,13 @@ int main() {
     num = 0;
     for (auto &el: singletonss) {
         cout << to_string(el) << endl;
-        if (num > 25)
+        if (num > 25) {
             break;
+        }
         num++;
     }
 
+    cout << "-------" << endl;
     std::cout << "Elements that appear more then once: " << std::endl;
     num = 0;
     for (auto &el: duplicatess) {
@@ -113,10 +117,9 @@ int main() {
             break;
         num++;
     }
-    cout << "How many:   " << num << endl;
 
-    //cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree, -1).second << endl;
-    //cout << "MNOC:      " << max_num_of_direct_children(tree) << endl;
+    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree, -1).second << endl;
+    cout << "MNOC:      " << max_num_of_direct_children(tree) << endl;
     auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree, -1, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
     //auto ll = list_nodes(tree);
