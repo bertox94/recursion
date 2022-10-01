@@ -38,6 +38,7 @@ int main() {
     cout << endl;
     auto maxval = max_value(tree);
     auto minval = min_value(tree);
+    auto l = list_nodes(tree);
     cout << "How many:   " << how_many(tree) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(tree, 0) << endl;
     cout << "Min depth:  " << min_depth(tree, -1) << endl;
@@ -78,12 +79,12 @@ int main() {
 
     cout << "-------" << endl;
     auto lll = list_nodes_II(tree);
-    std::vector<std::tuple<int, int>> ll{lll.begin(), lll.end()};
-    std::sort(ll.begin(), ll.end(), [](auto &left, auto &right) { return std::get<1>(left) < std::get<1>(right); });
+    std::vector<LeftAttr<int>> ll{lll.llist.begin(), lll.llist.end()};
+    std::sort(ll.begin(), ll.end(), [](auto &left, auto &right) { return left.value < right.value; });
     int num = 0;
     for (auto &el: ll) {
-        string str = string("Report (") + to_string(std::get<1>(el)) + "):";
-        cout << setw(13) << left << str << to_string(std::get<0>(el)) << endl;
+        string str = string("Report (") + to_string(el.value) + "):";
+        cout << setw(13) << left << str << to_string(el.num) << endl;
         if (num > 25) {
             break;
         }

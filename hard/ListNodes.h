@@ -9,60 +9,56 @@
 #include "../Node.h"
 
 template<typename T>
-list<T> list_nodes(Node<T> *node) {
-    std::list<int> L;
-    if (node->has_children()) {
-        std::list<int> Ltemp; //Lchildren would be used if this was std::list<std::list<int>>, if the tyoe is similar to the return one, then call it Ltemp
+LeftAttr<T> list_nodes(Node<T> *node) {
+    LeftAttr<T> L;
+    if (node->has_children()) { //Lchildren would be used if this was std::list<std::list<int>>, if the tyoe is similar to the return one, then call it Ltemp
         for (auto &child: node->children) {
             auto Lchild = list_nodes(child);
-            Ltemp.splice(Ltemp.end(), Lchild);
+            L.list.splice(L.list.end(), Lchild.list);
         }
-        Ltemp.push_back(*node->item);
-        L = Ltemp;
+        L.list.push_back(*node->item);
     } else {
-        std::list<int> Ltemp;
-        Ltemp.push_back(*node->item);
-        L = Ltemp;
+        L.list.push_back(*node->item);
     }
 
     return L;
 }
 
 template<typename T>
-std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
-    std::list<std::tuple<int, int>> L;
+LeftAttr<T> list_nodes_II(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<std::tuple<int, int>> Ltemp;
+        LeftAttr<T> Ltemp;
         for (auto &child: node->children) {
             auto Lchild = list_nodes_II(child);
 
-            for (auto &tpl1: Lchild) {
+            for (auto &LAttr1: Lchild.llist) {
                 bool found = false;
-                for (auto &tpl2: Ltemp) {
-                    if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
-                        std::get<0>(tpl2) += std::get<0>(tpl1);
+                for (auto &LAttr2: Ltemp.llist) {
+                    if (LAttr1.value == LAttr2.value) {
+                        LAttr2.num += LAttr1.num;
                         found = true;
                         break;
                     }
                 }
                 if (!found)
-                    Ltemp.emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+                    Ltemp.llist.push_back(LeftAttr<T>(LAttr1.num, LAttr1.value));
             }
         }
         bool found = false;
-        for (auto &tpl: Ltemp) {
-            if (*node->item == std::get<1>(tpl)) {
-                std::get<0>(tpl)++;
+        for (auto &LAttr: Ltemp.llist) {
+            if (*node->item == LAttr.value) {
+                LAttr.num++;
                 found = true;
                 break;
             }
         }
         if (!found)
-            Ltemp.emplace_back(1, *node->item);
+            Ltemp.llist.emplace_back(1, *node->item);
         L = Ltemp;
     } else {
-        std::list<std::tuple<int, int>> Ltemp;
-        Ltemp.emplace_back(1, *node->item);
+        LeftAttr<T> Ltemp;
+        Ltemp.llist.emplace_back(1, *node->item);
         L = Ltemp;
     }
 

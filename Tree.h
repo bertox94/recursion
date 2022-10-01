@@ -27,9 +27,15 @@ public:
 template<typename T>
 class LeftAttr {
 public:
+    LeftAttr(int num, int value) : num(num), value(value) {}
+
+    LeftAttr() = default;
+
     bool valid;
     int num;
     T value;
+    std::list<T> list;
+    std::list<LeftAttr<T>> llist;
 };
 
 template<typename T>
