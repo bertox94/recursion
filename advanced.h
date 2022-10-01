@@ -114,34 +114,35 @@ std::pair<int, int> number_of_nodes_at_specific_height(Node<T> *node, int specif
 
 template<typename T>
 list<T> list_nodes(Node<T> *node) {
-    std::list<int> nodes;
-    if (node->is_leaf()) {
-        // for the children, the list is already empty, no need to do anything
-        // for the father will be done later once for this two cases
-        nodes.push_back(*node->item);
-    } else {
-        std::list<int> ll;
+    std::list<int> L;
+    if (node->has_children()) {
+        std::list<int> Ltemp;
         for (auto &child: node->children) {
-            auto ret = list_nodes(child);
-            ll.splice(ll.end(), ret);
+            auto Lchild = list_nodes(child);
+            Ltemp.splice(Ltemp.end(), Lchild);
         }
-        ll.push_back(*node->item);
-        nodes = ll;
+        Ltemp.push_back(*node->item);
+        L = Ltemp;
+    } else {
+        std::list<int> Ltemp;
+        Ltemp.push_back(*node->item);
+        L = Ltemp;
     }
 
-    return nodes;
+    return L;
 }
 
 template<typename T>
 std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
     std::list<std::tuple<int, int>> L;
     if (node->has_children()) {
+        std::list<std::tuple<int, int>> Ltemp;
         for (auto &child: node->children) {
-            auto Ltemp = list_nodes_II(child);
+            auto Lchild = list_nodes_II(child);
 
-            for (auto &tpl1: Ltemp) {
+            for (auto &tpl1: Lchild) {
                 bool found = false;
-                for (auto &tpl2: L) {
+                for (auto &tpl2: Ltemp) {
                     if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
                         std::get<0>(tpl2) += std::get<0>(tpl1);
                         found = true;
@@ -149,11 +150,11 @@ std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
                     }
                 }
                 if (!found)
-                    L.emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+                    Ltemp.emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
             }
         }
         bool found = false;
-        for (auto &tpl: L) {
+        for (auto &tpl: Ltemp) {
             if (*node->item == std::get<1>(tpl)) {
                 std::get<0>(tpl)++;
                 found = true;
@@ -161,9 +162,12 @@ std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
             }
         }
         if (!found)
-            L.emplace_back(1, *node->item);
+            Ltemp.emplace_back(1, *node->item);
+        L = Ltemp;
     } else {
-        L.emplace_back(1, *node->item);
+        std::list<std::tuple<int, int>> Ltemp;
+        Ltemp.emplace_back(1, *node->item);
+        L = Ltemp;
     }
 
     return L;
@@ -173,32 +177,33 @@ template<typename T>
 std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *node) {
     std::tuple<std::list<std::tuple<int, int>>, std::list<int>> L;
     if (node->has_children()) {
+        std::tuple<std::list<std::tuple<int, int>>, std::list<int>> Ltemp;
         for (auto &child: node->children) {
-            auto Ltemp = duplicates(child);
+            auto Lchild = duplicates(child);
 
-            // We assume that one number can either be in L list or L singleton, not both
+            // We assume that one number can either be in Ltemp list or Ltemp singleton, not both
 
             // elements in child singleton
-            //      may appear in L list
-            //          --> increase number of that element in L by 1
-            //      may appear in L singletons
-            //          --> push {2, elem} in L list
-            //          --> remove elem from L singletons
+            //      may appear in Ltemp list
+            //          --> increase number of that element in Ltemp by 1
+            //      may appear in Ltemp singletons
+            //          --> push {2, elem} in Ltemp list
+            //          --> remove elem from Ltemp singletons
             //      may not be in either of them
-            //          --> append elem to L singletons
+            //          --> append elem to Ltemp singletons
 
             // elements in child list
-            //      may appear in L singletons
-            //          --> append elem to L list and increment by one the number of occurrences (because we assume that one number can either be in L list or L singleton, not both)
-            //          --> remove elem from L singletons
-            //      may appear in L list
-            //          --> increase number of that element in L by the corresponding number
+            //      may appear in Ltemp singletons
+            //          --> append elem to Ltemp list and increment by one the number of occurrences (because we assume that one number can either be in Ltemp list or Ltemp singleton, not both)
+            //          --> remove elem from Ltemp singletons
+            //      may appear in Ltemp list
+            //          --> increase number of that element in Ltemp by the corresponding number
             //      may not be in either of them
-            //          --> append elem to L list
+            //          --> append elem to Ltemp list
 
-            for (auto &item: std::get<1>(Ltemp)) {
+            for (auto &item: std::get<1>(Lchild)) {
                 bool found = false;
-                for (auto &tpl: std::get<0>(L)) {
+                for (auto &tpl: std::get<0>(Ltemp)) {
                     if (item == std::get<1>(tpl)) {
                         std::get<0>(tpl)++;
                         found = true;
@@ -206,31 +211,32 @@ std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *
                     }
                 }
                 if (!found) {
-                    for (auto it = std::get<1>(L).begin(); it != std::get<1>(L).end(); it++) {
+                    for (auto it = std::get<1>(Ltemp).begin(); it != std::get<1>(Ltemp).end(); it++) {
                         if (item == *it) {
-                            std::get<0>(L).emplace_back(2, item);
-                            it = std::get<1>(L).erase(it);
+                            std::get<0>(Ltemp).emplace_back(2, item);
+                            it = std::get<1>(Ltemp).erase(it);
                             found = true;
                             break;
                         }
                     }
                 }
-                if (!found)
-                    std::get<1>(L).push_back(item);
+                if (!found) {
+                    std::get<1>(Ltemp).push_back(item);
+                }
             }
 
-            for (auto &tpl1: std::get<0>(Ltemp)) {
+            for (auto &tpl1: std::get<0>(Lchild)) {
                 bool found = false;
-                for (auto it = std::get<1>(L).begin(); it != std::get<1>(L).end(); it++) {
+                for (auto it = std::get<1>(Ltemp).begin(); it != std::get<1>(Ltemp).end(); it++) {
                     if (std::get<1>(tpl1) == *it) {
-                        std::get<0>(L).emplace_back(std::get<0>(tpl1) + 1, std::get<1>(tpl1));
-                        std::get<1>(L).erase(it);
+                        std::get<0>(Ltemp).emplace_back(std::get<0>(tpl1) + 1, std::get<1>(tpl1));
+                        std::get<1>(Ltemp).erase(it);
                         found = true;
                         break;
                     }
                 }
                 if (!found) {
-                    for (auto &tpl2: std::get<0>(L)) {
+                    for (auto &tpl2: std::get<0>(Ltemp)) {
                         if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
                             std::get<0>(tpl2) += std::get<0>(tpl1);
                             found = true;
@@ -238,16 +244,17 @@ std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *
                         }
                     }
                 }
-                if (!found)
-                    std::get<0>(L).emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+                if (!found) {
+                    std::get<0>(Ltemp).emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+                }
             }
         }
 
-        //curr that appear in L list --> increase number
-        //curr that appear in L singleton --> move them both to L list
-        //curr that do not appear in L singleton --> append them to L singleton
+        //curr that appear in Ltemp list --> increase number
+        //curr that appear in Ltemp singleton --> move them both to Ltemp list
+        //curr that do not appear in Ltemp singleton --> append them to Ltemp singleton
         bool found = false;
-        for (auto &tpl: std::get<0>(L)) {
+        for (auto &tpl: std::get<0>(Ltemp)) {
             if (*node->item == std::get<1>(tpl)) {
                 std::get<0>(tpl)++;
                 found = true;
@@ -255,20 +262,23 @@ std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *
             }
         }
         if (!found) {
-            for (auto it = std::get<1>(L).begin(); it != std::get<1>(L).end(); it++) {
+            for (auto it = std::get<1>(Ltemp).begin(); it != std::get<1>(Ltemp).end(); it++) {
                 if (*node->item == *it) {
-                    std::get<0>(L).emplace_back(2, *node->item);
-                    it = std::get<1>(L).erase(it);
+                    std::get<0>(Ltemp).emplace_back(2, *node->item);
+                    it = std::get<1>(Ltemp).erase(it);
                     found = true;
                     break;
                 }
             }
         }
-        if (!found)
-            std::get<1>(L).push_back(*node->item);
-
+        if (!found) {
+            std::get<1>(Ltemp).push_back(*node->item);
+        }
+        L = Ltemp;
     } else {
-        std::get<1>(L).push_back(*node->item);
+        std::tuple<std::list<std::tuple<int, int>>, std::list<int>> Ltemp;
+        std::get<1>(Ltemp).push_back(*node->item);
+        L = Ltemp;
     }
 
 
