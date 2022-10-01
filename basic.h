@@ -193,7 +193,6 @@ int how_many_like_this(Node<T> *node, T R1i) {
 }
 
 //every node that appears more than one time, list_nodes_II in a list of item and number of occurrences
-//then try doing it only for elements with 2 or more occurrences
 template<typename T>
 std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
     std::list<std::tuple<int, int>> L;
@@ -207,12 +206,23 @@ std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
                     if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
                         std::get<0>(tpl2)++;
                         found = true;
+                        break;
                     }
                 }
                 if (!found)
                     L.emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
             }
         }
+        bool found = false;
+        for (auto &tpl: L) {
+            if (*node->item == std::get<1>(tpl)) {
+                std::get<0>(tpl)++;
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+            L.emplace_back(1, *node->item);
     } else {
         L.emplace_back(1, *node->item);
     }
@@ -220,6 +230,87 @@ std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
     return L;
 }
 
+//if the current node appears in the singleton list, then move them in the list of duplicates, otherwise add it to that list
+template<typename T>
+std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *node) {
+    std::tuple<std::list<std::tuple<int, int>>, std::list<int>> L;
+    if (node->has_children()) {
+        for (auto &child: node->children) {
+            auto Ltemp = duplicates(child);
+
+
+            //elements in child singleton that appears in the L list --> increase number
+            //                            that do not                --> but do in L singleton --> move them to L list
+            //                            that do not                --> do not                 --> append them to L singleton
+
+            // element in child list that appears in L list         --> increase number
+            //                       that do not                    --> append them (occurrences and item)
+
+            for (auto &item: std::get<1>(Ltemp)) {
+                bool found = false;
+                for (auto &tpl: std::get<0>(L)) {
+                    if (item == std::get<1>(tpl)) {
+                        std::get<0>(tpl)++;
+                        found = true;
+                    }
+                }
+                if (!found) {
+                    for (auto it = std::get<1>(L).begin(); it != std::get<1>(L).end(); it++) {
+                        if (item == *it) {
+                            std::get<0>(L).emplace_back(2, item);
+                            it = std::get<1>(L).erase(it);
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found)
+                    std::get<1>(L).push_back(item);
+            }
+
+            for (auto &tpl1: std::get<0>(Ltemp)) {
+                bool found = false;
+                for (auto &tpl2: std::get<0>(L)) {
+                    if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
+                        std::get<0>(tpl2)++;
+                        found = true;
+                    }
+                }
+                if (!found)
+                    std::get<0>(L).emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+            }
+        }
+
+        //curr that appear in L list --> increase number
+        //curr that appear in L singleton --> move them both to L list
+        //curr that do not appear in L singleton --> append them to L singleton
+        bool found = false;
+        for (auto &tpl: std::get<0>(L)) {
+            if (*node->item == std::get<1>(tpl)) {
+                std::get<0>(tpl)++;
+                found = true;
+            }
+        }
+        if (!found) {
+            for (auto it = std::get<1>(L).begin(); it != std::get<1>(L).end(); it++) {
+                if (*node->item == *it) {
+                    std::get<0>(L).emplace_back(2, *node->item);
+                    it = std::get<1>(L).erase(it);
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found)
+            std::get<1>(L).push_back(*node->item);
+
+    } else {
+        std::get<1>(L).push_back(*node->item);
+    }
+
+
+    return L;
+}
 
 template<typename T>
 list<T> list_nodes(Node<T> *node) {
