@@ -73,25 +73,25 @@ std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *
         for (auto &child: node->children) {
             auto Lchild = duplicates(child);
 
-// We assume that one number can either be in Ltemp list or Ltemp singleton, not both
+            // We assume that one number can either be in Ltemp list or Ltemp singleton, not both
 
-// elements in child singleton
-//      may appear in Ltemp list
-//          --> increase number of that element in Ltemp by 1
-//      may appear in Ltemp singletons
-//          --> push {2, elem} in Ltemp list
-//          --> remove elem from Ltemp singletons
-//      may not be in either of them
-//          --> append elem to Ltemp singletons
+            // elements in child singleton
+            //      may appear in Ltemp list
+            //          --> increase number of that element in Ltemp by 1
+            //      may appear in Ltemp singletons
+            //          --> push {2, elem} in Ltemp list
+            //          --> remove elem from Ltemp singletons
+            //      may not be in either of them
+            //          --> append elem to Ltemp singletons
 
-// elements in child list
-//      may appear in Ltemp singletons
-//          --> append elem to Ltemp list and increment by one the number of occurrences (because we assume that one number can either be in Ltemp list or Ltemp singleton, not both)
-//          --> remove elem from Ltemp singletons
-//      may appear in Ltemp list
-//          --> increase number of that element in Ltemp by the corresponding number
-//      may not be in either of them
-//          --> append elem to Ltemp list
+            // elements in child list
+            //      may appear in Ltemp singletons
+            //          --> append elem to Ltemp list and increment by one the number of occurrences (because we assume that one number can either be in Ltemp list or Ltemp singleton, not both)
+            //          --> remove elem from Ltemp singletons
+            //      may appear in Ltemp list
+            //          --> increase number of that element in Ltemp by the corresponding number
+            //      may not be in either of them
+            //          --> append elem to Ltemp list
 
             for (auto &item: std::get<1>(Lchild)) {
                 bool found = false;
@@ -142,9 +142,9 @@ std::tuple<std::list<std::tuple<int, int>>, std::list<int>> duplicates(Node<T> *
             }
         }
 
-//curr that appear in Ltemp list --> increase number
-//curr that appear in Ltemp singleton --> move them both to Ltemp list
-//curr that do not appear in Ltemp singleton --> append them to Ltemp singleton
+        //curr that appear in Ltemp list --> increase number
+        //curr that appear in Ltemp singleton --> move them both to Ltemp list
+        //curr that do not appear in Ltemp singleton --> append them to Ltemp singleton
         bool found = false;
         for (auto &tpl: std::get<0>(Ltemp)) {
             if (*node->item == std::get<1>(tpl)) {
