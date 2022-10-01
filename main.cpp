@@ -79,7 +79,7 @@ int main() {
 
     cout << "-------" << endl;
     auto lll = list_nodes_II(tree);
-    std::vector<LeftAttr<int>> ll{lll.llist.begin(), lll.llist.end()};
+    std::vector<LeftAttr<int>> ll{lll.compositeList.begin(), lll.compositeList.end()};
     std::sort(ll.begin(), ll.end(), [](auto &left, auto &right) { return left.value < right.value; });
     int num = 0;
     for (auto &el: ll) {
@@ -93,10 +93,10 @@ int main() {
 
     cout << "-------" << endl;
     auto llll = duplicates(tree);
-    std::vector<std::tuple<int, int>> duplicatess{std::get<0>(llll).begin(), std::get<0>(llll).end()};
-    std::vector<int> singletonss{std::get<1>(llll).begin(), std::get<1>(llll).end()};
+    std::vector<LeftAttr<int>> duplicatess{llll.compositeList.begin(), llll.compositeList.end()};
+    std::vector<int> singletonss{llll.simpleList.begin(), llll.simpleList.end()};
     std::sort(duplicatess.begin(), duplicatess.end(),
-              [](auto &left, auto &right) { return std::get<1>(left) < std::get<1>(right); });
+              [](auto &left, auto &right) { return left.value < right.value; });
     std::sort(singletonss.begin(), singletonss.end(), [](auto &left, auto &right) { return left < right; });
     std::cout << "Elements that appear once: " << std::endl;
     num = 0;
@@ -112,8 +112,7 @@ int main() {
     std::cout << "Elements that appear more then once: " << std::endl;
     num = 0;
     for (auto &el: duplicatess) {
-        auto nn = std::get<0>(el);
-        cout << to_string(std::get<1>(el)) << ", " << to_string(nn) << endl;
+        cout << to_string(el.value) << ", " << to_string(el.num) << endl;
         if (num > 25)
             break;
         num++;

@@ -34,8 +34,8 @@ public:
     bool valid;
     int num;
     T value;
-    std::list<T> list;
-    std::list<LeftAttr<T>> llist;
+    std::list<T> simpleList;
+    std::list<LeftAttr<T>> compositeList;
 };
 
 template<typename T>
@@ -88,8 +88,8 @@ int sum_utils(std::list<T> ll) {
 }
 
 // since a tree with one element is a tree, you can apply all the reasoning to just the leaf, by pretending to move big things.
-// Then you just change the words to the general case, because the big things (that you say assume that we have the list of nodes,
-// instead of just ine element of node or an empty list for the children, if a leaf ---> an empty list is a list as well,
+// Then you just change the words to the general case, because the big things (that you say assume that we have the simpleList of nodes,
+// instead of just ine element of node or an empty simpleList for the children, if a leaf ---> an empty simpleList is a simpleList as well,
 // be it empty or in the middle of the tree)
 // Otherwise just throw yourself in the middle and apply the question direclty with the the n input (from children), 1 output (to root)
 // diagram and apply children gives me how many, then think when no children at all
