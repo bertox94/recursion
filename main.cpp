@@ -2,6 +2,7 @@
 #include "Node.h"
 #include "Tree.h"
 #include "basic.h"
+#include "advanced.h"
 #include <sstream>
 #include <iomanip>
 
@@ -28,7 +29,7 @@ int main() {
     std::srand(std::time(nullptr));
 
     cout << "Creating tree..." << endl;
-    Node<int> *tree = create_tree<int>(8);
+    Node<int> *tree = create_tree<int>(100);
     cout << "Done" << endl;
 
     //print2D(tree);
@@ -81,12 +82,12 @@ int main() {
     int num = 0;
     for (auto &el: ll) {
         string str = string("Report (") + to_string(std::get<1>(el)) + "):";
-        num += std::get<0>(el);
         cout << setw(13) << left << str << to_string(std::get<0>(el)) << endl;
+        if (num > 25)
+            break;
+        num++;
     }
-    cout << "How many:   " << num << endl;
 
-    num = 0;
     cout << "-------" << endl;
     auto llll = duplicates(tree);
     std::vector<std::tuple<int, int>> duplicatess{std::get<0>(llll).begin(), std::get<0>(llll).end()};
@@ -95,16 +96,22 @@ int main() {
               [](auto &left, auto &right) { return std::get<1>(left) < std::get<1>(right); });
     std::sort(singletonss.begin(), singletonss.end(), [](auto &left, auto &right) { return left < right; });
     std::cout << "Elements that appear once: " << std::endl;
+    num = 0;
     for (auto &el: singletonss) {
         cout << to_string(el) << endl;
+        if (num > 25)
+            break;
         num++;
     }
 
     std::cout << "Elements that appear more then once: " << std::endl;
+    num = 0;
     for (auto &el: duplicatess) {
         auto nn = std::get<0>(el);
-        num += nn;
         cout << to_string(std::get<1>(el)) << ", " << to_string(nn) << endl;
+        if (num > 25)
+            break;
+        num++;
     }
     cout << "How many:   " << num << endl;
 

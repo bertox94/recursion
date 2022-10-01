@@ -1,7 +1,7 @@
 #ifndef RECURSION_TREE_H
 #define RECURSION_TREE_H
 
-#define MAX_RAND 10
+#define MAX_RAND RAND_MAX
 
 #include <algorithm>
 #include <chrono>
@@ -18,7 +18,7 @@ template<typename T>
 void add_children(Node<T> *tree, int curr, int big) {
     //higher the number to the right, the bigger the tree
     while (std::rand() % (2 * curr) <= big) {
-        tree->children.push_back(new Node<int>(std::rand()%MAX_RAND));
+        tree->children.push_back(new Node<int>(std::rand() % MAX_RAND));
         curr++;
     }
 
@@ -33,7 +33,7 @@ bool leaf(Node<T> *tree) {
 
 template<typename T>
 Node<T> *create_tree(int big) {
-    auto tree = new Node<int>(std::rand()%MAX_RAND);
+    auto tree = new Node<int>(std::rand() % MAX_RAND);
     add_children(tree, 1, big);
     return tree;
 }
