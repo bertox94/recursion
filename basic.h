@@ -42,18 +42,19 @@ void scan(Node<T> *node) {
 template<typename T>
 int max_depth(Node<T> *node, int depth) {
     depth++;
-    int m_depth;
-    if (node->is_leaf()) {
-        // no statement for the children
-        m_depth = depth; // for the father
-    } else {
-        std::list<int> ll;
-        for (auto &child: node->children) {
-            auto ret = max_depth(child, depth);
-            ll.push_back(ret);
-        }
-        m_depth = max_utils(ll);
+
+    std::list<int> ll;
+    for (auto &child: node->children) {
+        auto ret = max_depth(child, depth);
+        ll.push_back(ret);
     }
+
+    int m_depth;
+
+    if (ll.empty()) //so we have transformed the problem of recursion to just solving a problem on a list
+        m_depth = depth; // leaf case
+    else
+        m_depth = *max_element(ll.begin(), ll.end());
 
     return m_depth;
 }
@@ -62,18 +63,16 @@ int max_depth(Node<T> *node, int depth) {
 template<typename T>
 int min_depth(Node<T> *node, int depth) { //i.e. depth of the less deep leaf
     depth++;
-    int m_depth;
-    if (node->is_leaf()) {
-        // no statement for the children
-        m_depth = depth; // for the father
-    } else {
-        std::list<int> ll;
-        for (auto &child: node->children) {
-            auto ret = min_depth(child, depth);
-            ll.push_back(ret);
-        }
-        m_depth = min_utils(ll);
+
+    std::list<int> ll;
+    for (auto &child: node->children) {
+        auto ret = min_depth(child, depth);
+        ll.push_back(ret);
     }
+
+    int m_depth = depth;
+    if (!ll.empty())
+        m_depth = *min_element(ll.begin(), ll.end());
 
     return m_depth;
 }
@@ -81,17 +80,13 @@ int min_depth(Node<T> *node, int depth) { //i.e. depth of the less deep leaf
 
 template<typename T>
 int how_many(Node<T> *node) {
-    int h_many;
-    if (node->is_leaf()) {
-        h_many = 1;
-    } else {
-        std::list<int> ll;
-        for (auto &child: node->children) {
-            auto ret = how_many(child);
-            ll.push_back(ret);
-        }
-        h_many = sum_utils(ll) + 1;
+    std::list<int> ll;
+    for (auto &child: node->children) {
+        auto ret = how_many(child);
+        ll.push_back(ret);
     }
+    int h_many = accumulate(ll.begin(), ll.end(), 0);
+    h_many++;
 
     return h_many;
 }
@@ -622,7 +617,7 @@ std::pair<int, int> number_of_nodes_at_height_zero(Node<T> *node) {
 
     num = accumulate(
             ll.begin(), ll.end(), 0,
-            [&](auto acc, auto pair) {
+            [](auto &acc, auto &pair) {
                 return acc + pair.second;
             });
 
