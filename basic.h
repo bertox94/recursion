@@ -39,76 +39,86 @@ void scan(Node<T> *node) {
         scan(child);
 }
 
+// R1: depth
+// L1: min_depth
 template<typename T>
-int max_depth(Node<T> *node, int depth) {
-    depth++;
+int max_depth(Node<T> *node, int R1i) {
+    int R1 = R1i + 1;
 
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = max_depth(child, depth);
-        ll.push_back(ret);
+    int L1;
+    if (node->has_children()) {
+        std::list<int> ll;
+        for (auto &child: node->children) {
+            auto L1ik = max_depth(child, R1);
+            ll.push_back(L1ik);
+        }
+        L1 = *max_element(ll.begin(), ll.end());
+    } else {
+        L1 = R1;
     }
 
-    int m_depth;
-
-    if (ll.empty()) //so we have transformed the problem of recursion to just solving a problem on a list
-        m_depth = depth; // leaf case
-    else
-        m_depth = *max_element(ll.begin(), ll.end());
-
-    return m_depth;
+    return L1;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
+// R1: depth
+// L1: min_depth
 template<typename T>
-int min_depth(Node<T> *node, int depth) { //i.e. depth of the less deep leaf
-    depth++;
+int min_depth(Node<T> *node, int R1i) { //i.e. depth of the less deep leaf
+    int R1 = R1i + 1;
 
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = min_depth(child, depth);
-        ll.push_back(ret);
-    }
-
-    int m_depth = depth;
-    if (!ll.empty())
-        m_depth = *min_element(ll.begin(), ll.end());
-
-    return m_depth;
-}
-
-
-template<typename T>
-int how_many(Node<T> *node) {
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = how_many(child);
-        ll.push_back(ret);
-    }
-    int h_many = accumulate(ll.begin(), ll.end(), 0);
-    h_many++;
-
-    return h_many;
-}
-
-template<typename T>
-int how_many_variant(Node<T> *node, int count) {
-    count++;
-
-    int h_many;
-    if (node->is_leaf()) {
-        h_many = count;
-    } else {
-        int ret;
+    int L1;
+    if (node->has_children()) {
+        std::list<int> ll;
         for (auto &child: node->children) {
-            ret = how_many_variant(child, count);
-            count = ret;
+            auto L1ik = min_depth(child, R1);
+            ll.push_back(L1ik);
         }
-        h_many = count;
+        L1 = *min_element(ll.begin(), ll.end());
+    } else {
+        L1 = R1;
     }
 
-    return h_many;
+    return L1;
 }
+
+template<typename T>
+//L1: num of children
+int how_many(Node<T> *node) {
+
+    int L1;
+    if (node->has_children()) {
+        std::list<int> ll;
+        for (auto &child: node->children) {
+            auto L1k = how_many(child);
+            ll.push_back(L1k);
+        }
+        L1 = accumulate(ll.begin(), ll.end(), 0) + 1;
+    } else {
+        L1 = 1;
+    }
+
+    return L1;
+}
+
+//template<typename T>
+//int how_many_variant(Node<T> *node, int R1i) {
+//    int R1 = R1i + 1;
+//
+//    int L1;
+//    if (node->has_children()) {
+//        int L1k;
+//        for (auto &child: node->children) {
+//            L1k = how_many_variant(child, R1);
+//            R1 = L1k;
+//        }
+//        L1 = L1k;
+//    } else {
+//        L1 = R1;
+//    }
+//
+//    return L1;
+//}
 
 //the base case coincides with the tree being a leaf!
 //here in fact max_utils(empty tree) doesn't make sense, so
@@ -117,102 +127,99 @@ int how_many_variant(Node<T> *node, int count) {
 //A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
 //An empty tree doesn't exist. At least root must be.
 //When thinking what to return and stuff, just think that a leaf is just a root without children
+//L1: max_value
 template<typename T>
 T max_value(Node<T> *node) {
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = max_value(child);
-        ll.push_back(ret);
-    }
-    ll.push_back(*node->item);
-
-    int m_val;
-    m_val = max_utils(ll);
-
-    return m_val;
-}
-
-template<typename T>
-T min_value(Node<T> *node) {
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = min_value(child);
-        ll.push_back(ret);
-    }
-    ll.push_back(*node->item);
-
-    int m_val;
-    m_val = min_utils(ll);
-
-    return m_val;
-}
-
-template<typename T>
-int how_many_like_this(Node<T> *node, T like) {
-    int h_many;
-    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
-
-    if (node->is_leaf()) {
-        if (test_property(node, like))
-            h_many = 1;
-        else
-            h_many = 0;
-    } else {
+    int L1;
+    if (node->has_children()) {
         std::list<int> ll;
         for (auto &child: node->children) {
-            auto ret = how_many_like_this(child, like);
-            ll.push_back(ret);
+            auto L1k = max_value(child);
+            ll.push_back(L1k);
         }
-        h_many = sum_utils(ll);
-        if (test_property(node, like))
-            h_many++;
-    }
-
-    return h_many;
-}
-
-template<typename T>
-//contrived example, to avoid, but interesting for how it is the normal dealing of right and left attributes
-//nb the loop in the else branch changes, it is an indicator of a bad choice of attributes
-int how_many_like_this_variant(Node<T> *node, T like, int count) {
-    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
-
-    if (test_property(node, like)) //since it is a right attribute we update it right now
-        count++;
-    int h_many;
-
-    if (node->is_leaf()) {
-        h_many = count;
+        auto Ltemp = *max_element(ll.begin(), ll.end());
+        L1 = max(Ltemp, *node->item);
     } else {
-        int ret;
-        for (auto &child: node->children) {
-            ret = how_many_like_this_variant(child, like, count);
-            count = ret;
-        }
-        h_many = ret;
+        L1 = *node->item;
     }
 
-    return h_many;
+    return L1;
 }
 
+//L1: min_value
 template<typename T>
-//little bit more confusing
-int how_many_like_this_variant_II(Node<T> *node, T like, int count) {
-    auto test_property = [](Node<T> *node, T like) -> bool { return *node->item == like; };
-
-    if (test_property(node, like)) //since it is a right attribute we update it as first thing
-        count++;
-
-    if (node->is_leaf()) {
-        // nothing
-    } else {
+T min_value(Node<T> *node) {
+    int L1;
+    if (node->has_children()) {
+        std::list<int> ll;
         for (auto &child: node->children) {
-            count = how_many_like_this_variant(child, like, count);
+            auto L1k = min_value(child);
+            ll.push_back(L1k);
+        }
+        auto Ltemp = *min_element(ll.begin(), ll.end());
+        L1 = min(Ltemp, *node->item);
+    } else {
+        L1 = *node->item;
+    }
+
+    return L1;
+}
+
+//R1: item as reference
+//L1: number
+template<typename T>
+int how_many_like_this(Node<T> *node, T R1i) {
+    int R1 = R1i;
+
+    int L1;
+    if (node->has_children()) {
+        std::list<int> ll;
+        for (auto &child: node->children) {
+            auto L1k = how_many_like_this(child, R1);
+            ll.push_back(L1k);
+        }
+        L1 = sum_utils(ll);
+        if (*node->item == R1)
+            L1++;
+    } else {
+        if (*node->item == R1) {
+            L1 = 1;
+        } else {
+            L1 = 0;
         }
     }
 
-    return count;
+    return L1;
 }
+
+//every node that appears more than one time, list_nodes_II in a list of item and number of occurrences
+//then try doing it only for elements with 2 or more occurrences
+template<typename T>
+std::list<std::tuple<int, int>> list_nodes_II(Node<T> *node) {
+    std::list<std::tuple<int, int>> L;
+    if (node->has_children()) {
+        for (auto &child: node->children) {
+            auto Ltemp = list_nodes_II(child);
+
+            for (auto &tpl1: Ltemp) {
+                bool found = false;
+                for (auto &tpl2: L) {
+                    if (std::get<1>(tpl1) == std::get<1>(tpl2)) {
+                        std::get<0>(tpl2)++;
+                        found = true;
+                    }
+                }
+                if (!found)
+                    L.emplace_back(std::get<0>(tpl1), std::get<1>(tpl1));
+            }
+        }
+    } else {
+        L.emplace_back(1, *node->item);
+    }
+
+    return L;
+}
+
 
 template<typename T>
 list<T> list_nodes(Node<T> *node) {

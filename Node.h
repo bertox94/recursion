@@ -24,7 +24,7 @@ public:
         return children.size() == 0;
     }
 
-    bool is_not_leaf() const {
+    bool has_children() const {
         return children.size() > 0;
     }
 
