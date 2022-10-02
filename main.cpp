@@ -27,6 +27,7 @@ struct TupleLess {
 };
 
 void testTree() {
+    //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
     root->add_children(10);
@@ -46,15 +47,15 @@ void testTree() {
     cout << "Max value:      " << max_value(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
     cout << "-------" << endl;
-    for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
-        string str = string("B degree (") + to_string(i) + "):";
+    //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
+    //    string str = string("B degree (") + to_string(i) + "):";
+//
+    //    cout << setw(13) << left << str
+    //         << max_num_of_direct_children_at_depth(root, RightAttr<int>(-1, i)).num -
+    //            std::get<1>(min_num_of_direct_children_at_depth(root, -1, i))
+    //         << endl;//", " << res2 << endl;
+    //}
 
-        cout << setw(13) << left << str
-             << max_num_of_direct_children_at_depth(root, RightAttr<int>(-1, i)).num -
-                std::get<1>(min_num_of_direct_children_at_depth(root, -1, i))
-             << endl;//", " << res2 << endl;
-    }
-/*
     //cout << "Balance Factor: " << (double) number_of_fathers_with_no_child(root) / how_many(root) << endl;
     cout << "-------" << endl;
     for (auto i = minval; i <= minval + 25; i++) {
@@ -129,7 +130,7 @@ void testTree() {
         num++;
     }
     cout << "-------" << endl;
-*/
+
     cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(root, -1).second << endl;
     cout << "MNOC:      " << max_num_of_direct_children(root) << endl;
     auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, -1, 1);
