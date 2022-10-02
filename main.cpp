@@ -28,6 +28,9 @@ struct TupleLess {
 
 void testTree() {
     //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)
+    //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
+    // If it did, then it can't be a right attribute. on the other hand, node refers to the actual node,
+    // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
     root->add_children(10);
@@ -41,8 +44,8 @@ void testTree() {
     auto l = list_nodes(root);
     cout << "How many:   " << how_many(root) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root, -1) << endl;
-    cout << "Max depth:      " << max_depth(root, -1) << endl;
+    cout << "Min depth:      " << min_depth(root, RightAttr<int>(0)).depth << endl;
+    cout << "Max depth:      " << max_depth(root, RightAttr<int>(0)).depth << endl;
     cout << "Min value:      " << min_value(root) << endl;
     cout << "Max value:      " << max_value(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;

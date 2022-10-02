@@ -75,6 +75,8 @@ class RightAttr {
 public:
     RightAttr(int depth, int target) : depth(depth), target(target) {}
 
+    RightAttr(int depth) : depth(depth) {}
+
     int depth;
     int target;
     T value;
@@ -89,6 +91,7 @@ public:
 
     bool valid;
     int num;
+    int depth;
     T value;
     std::list<T> simpleList;
     std::list<LeftAttr<T>> compositeList;

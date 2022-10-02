@@ -42,44 +42,44 @@ void scan(Node<T> *node) {
 // R1: depth
 // L1: min_depth
 template<typename T>
-int max_depth(Node<T> *node, int Rfather) {
-    int R1 = Rfather + 1;
+LeftAttr<T> max_depth(Node<T> *node, RightAttr<T> R) {
 
-    int L1;
+    LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<int> ll;
+        std::list<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto L1ik = max_depth(child, R1);
-            ll.push_back(L1ik);
+            auto Lchild = max_depth(child, RightAttr<T>(R.depth + 1));
+            Lchildren.push_back(Lchild);
         }
-        L1 = *max_element(ll.begin(), ll.end());
+        L = *max_element(Lchildren.begin(), Lchildren.end(),
+                         [](auto &left, auto &right) { return left.depth < right.depth; });
     } else {
-        L1 = R1;
+        L.depth = R.depth;
     }
 
-    return L1;
+    return L;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
 // R1: depth
 // L1: min_depth
 template<typename T>
-int min_depth(Node<T> *node, int R1i) { //i.e. depth of the less deep leaf
-    int R1 = R1i + 1;
+LeftAttr<T> min_depth(Node<T> *node, RightAttr<T> R) { //i.e. depth of the less deep leaf
 
-    int L1;
+    LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<int> ll;
+        std::list<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto L1ik = min_depth(child, R1);
-            ll.push_back(L1ik);
+            auto Lchild = min_depth(child, RightAttr<T>(R.depth + 1));
+            Lchildren.push_back(Lchild);
         }
-        L1 = *min_element(ll.begin(), ll.end());
+        L = *min_element(Lchildren.begin(), Lchildren.end(),
+                         [](auto &left, auto &right) { return left.depth < right.depth; });
     } else {
-        L1 = R1;
+        L.depth = R.depth;
     }
 
-    return L1;
+    return L;
 }
 
 template<typename T>
