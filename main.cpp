@@ -26,59 +26,69 @@ struct TupleLess {
     }
 };
 
-int main() {
-    std::srand(std::time(nullptr));
-
-    cout << "Creating tree..." << endl;
-    Node<int> *tree = create_tree<int>(100);
+void testTree() {
+    cout << "Creating root..." << endl;
+    auto root = new Node<int>(std::rand() % MAX_RAND);
+    root->add_children(10);
     cout << "Done" << endl;
 
-    //print2D(tree);
-    //scan(tree);
+    //print2D(root);
+    //scan(root);
     cout << endl;
-    auto maxval = max_value(tree);
-    auto minval = min_value(tree);
-    auto l = list_nodes(tree);
-    cout << "How many:   " << how_many(tree) << endl;
-    //cout << "How many (RightAttr):   " << how_many_variant(tree, 0) << endl;
-    cout << "Min depth:  " << min_depth(tree, -1) << endl;
-    cout << "Max depth:  " << max_depth(tree, -1) << endl;
-    cout << "Min value:  " << min_value(tree) << endl;
-    cout << "Max value:  " << max_value(tree).value << endl;
-    cout << "N of leaves: " << number_of_fathers_with_no_child(tree) << endl;
+    auto maxval = max_value(root);
+    auto minval = min_value(root);
+    auto l = list_nodes(root);
+    cout << "How many:   " << how_many(root) << endl;
+    //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
+    cout << "Min depth:      " << min_depth(root, -1) << endl;
+    cout << "Max depth:      " << max_depth(root, -1) << endl;
+    cout << "Min value:      " << min_value(root) << endl;
+    cout << "Max value:      " << max_value(root).value << endl;
+    cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
+    cout << "-------" << endl;
+    for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
+        string str = string("B degree (") + to_string(i) + "):";
+
+        cout << setw(13) << left << str
+             << max_num_of_direct_children_at_depth(root, RightAttr<int>(-1, i)).num -
+                std::get<1>(min_num_of_direct_children_at_depth(root, -1, i))
+             << endl;//", " << res2 << endl;
+    }
+/*
+    //cout << "Balance Factor: " << (double) number_of_fathers_with_no_child(root) / how_many(root) << endl;
     cout << "-------" << endl;
     for (auto i = minval; i <= minval + 25; i++) {
         string str = string("HMLT (") + to_string(i) + "):";
-        auto res1 = how_many_like_this(tree, i);
-        //auto res2 = how_many_like_this_variant(tree, i, 0);
+        auto res1 = how_many_like_this(root, i);
+        //auto res2 = how_many_like_this_variant(root, i, 0);
         //if (res1 != res2)
         cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NNSH (") + to_string(i) + "):";
-        cout << setw(13) << left << str << number_of_nodes_at_specific_height(tree, i).second << endl;
+        cout << setw(13) << left << str << number_of_nodes_at_specific_height(root, i).second << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NFSNC (") + to_string(i) + "):";
-        cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(tree, i) << endl;
+        cout << setw(13) << left << str << number_of_fathers_with_specified_number_of_children(root, i) << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MaxNOCD (") + to_string(i) + "):";
-        auto L = max_num_of_direct_children_at_depth(tree, RightAttr<int>(-1, i));
+        auto L = max_num_of_direct_children_at_depth(root, RightAttr<int>(-1, i));
         cout << setw(13) << left << str << (L.valid ? to_string(L.num) : "-") << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MinNOCD (") + to_string(i) + "):";
-        auto tuple = min_num_of_direct_children_at_depth(tree, -1, i);
+        auto tuple = min_num_of_direct_children_at_depth(root, -1, i);
         cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
     }
 
     cout << "-------" << endl;
-    auto lll = list_nodes_II(tree);
+    auto lll = list_nodes_II(root);
     std::vector<LeftAttr<int>> ll{lll.compositeList.begin(), lll.compositeList.end()};
     std::sort(ll.begin(), ll.end(), [](auto &left, auto &right) { return left.value < right.value; });
     int num = 0;
@@ -92,7 +102,7 @@ int main() {
     }
 
     cout << "-------" << endl;
-    auto llll = duplicates(tree);
+    auto llll = duplicates(root);
     std::vector<LeftAttr<int>> duplicatess{llll.compositeList.begin(), llll.compositeList.end()};
     std::vector<int> singletonss{llll.simpleList.begin(), llll.simpleList.end()};
     std::sort(duplicatess.begin(), duplicatess.end(),
@@ -113,19 +123,25 @@ int main() {
     num = 0;
     for (auto &el: duplicatess) {
         cout << to_string(el.value) << ", " << to_string(el.num) << endl;
-        if (num > 25)
+        if (num > 25) {
             break;
+        }
         num++;
     }
-
-    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(tree, -1).second << endl;
-    cout << "MNOC:      " << max_num_of_direct_children(tree) << endl;
-    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(tree, -1, 1);
+    cout << "-------" << endl;
+*/
+    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(root, -1).second << endl;
+    cout << "MNOC:      " << max_num_of_direct_children(root) << endl;
+    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, -1, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
-    //auto ll = list_nodes(tree);
+    //auto ll = list_nodes(root);
     //cout << "List:       \n" << print(ll) << endl;
 
-    delete tree;
+    delete root;
+}
 
+int main() {
+    std::srand(std::time(nullptr));
+    testTree();
     return 0;
 }

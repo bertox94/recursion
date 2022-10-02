@@ -10,6 +10,9 @@
 #include "../Node.h"
 #include "../Tree.h"
 
+// R takes care of preparing the right value for the children, L do not need to
+// param need to be right, returned values are right for the function itself, not the function and the caller (usually)
+
 template<typename T>
 int max_num_of_direct_children(Node<T> *node) {
     int m_num;

@@ -1,7 +1,7 @@
 #ifndef RECURSION_TREE_H
 #define RECURSION_TREE_H
 
-#define MAX_RAND RAND_MAX
+
 
 #include <algorithm>
 #include <chrono>
@@ -14,53 +14,6 @@
 // In my opinion no! a tree can be a leaf, and on a leaf computation is easier but not totally empty!
 // an empty nothing doesn't exists!
 
-template<typename T>
-class RightAttr {
-public:
-    RightAttr(int depth, int target) : depth(depth), target(target) {}
-
-    int depth;
-    int target;
-    T value;
-};
-
-template<typename T>
-class LeftAttr {
-public:
-    LeftAttr(int num, int value) : num(num), value(value) {}
-
-    LeftAttr() = default;
-
-    bool valid;
-    int num;
-    T value;
-    std::list<T> simpleList;
-    std::list<LeftAttr<T>> compositeList;
-};
-
-template<typename T>
-void add_children(Node<T> *tree, int curr, int big) {
-    //higher the number to the right, the bigger the tree
-    while (std::rand() % (2 * curr) <= big) {
-        tree->children.push_back(new Node<int>(std::rand() % MAX_RAND));
-        curr++;
-    }
-
-    for (auto &child: tree->children)
-        add_children(child, curr + 1, big);
-}
-
-template<typename T>
-bool leaf(Node<T> *tree) {
-    return tree->children.empty();
-}
-
-template<typename T>
-Node<T> *create_tree(int big) {
-    auto tree = new Node<int>(std::rand() % MAX_RAND);
-    add_children(tree, 1, big);
-    return tree;
-}
 
 template<typename T>
 T max_utils(const std::list<T> &ll) {
