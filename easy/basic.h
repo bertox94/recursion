@@ -196,15 +196,20 @@ int how_many_like_this(Node<T> *node, T Rfather) {
 }
 
 //here you see that they were right, right is prepared to be what is needed for the current by the parent
+//here you see how thr right param is correctly used
+// so right is used in the curr node as it is passed from the parent, then changed only to be passed to its child
 template<typename T>
-void print(Node<T> *node, int indent = 0) {
+void print(Node<T> *node, const std::string &indent = "") {
     if (node->has_children()) {
-        std::cout << std::string(indent, '-') << *node->item << ":" << std::endl;
+        std::cout << indent << *node->item << ":" << std::endl;
         for (auto &child: node->children) {
-            print(child, indent + to_string(*node->item).length() + 2);
+            int num = to_string(*node->item).length() + indent.length() - 2;
+            if (num < 0)
+                num = 0;
+            print(child, std::string(num, ' ') + "+ ");
         }
     } else {
-        std::cout << "+"<<std::string(indent, '-') << *node->item << std::endl;
+        std::cout << indent << *node->item << std::endl;
     }
 
 }
