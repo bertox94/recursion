@@ -7,7 +7,6 @@
 #include "easy/children.h"
 #include "easy/printing.h"
 #include "easy/sorting.h"
-#include <sstream>
 #include <iomanip>
 
 void testTree() {
