@@ -15,7 +15,7 @@ void testTree() {
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
-    root->add_children(8);
+    root->add_children(13);
     cout << "Done" << endl;
 
     //print2D(root);

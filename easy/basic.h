@@ -206,7 +206,7 @@ void print(Node<T> *node, int spacing = 0) {
             print(child, spacing + 3);
         }
     } else {
-        std::cout << std::string(spacing, ' ') << "+ " << *node->item << std::endl;
+        std::cout << std::string(spacing, ' ') << "- " << *node->item << std::endl;
     }
 
 }
