@@ -25,7 +25,7 @@ template<typename T>
 class Node {
 public:
     T item;
-    list<Node *> children;
+    std::vector<Node *> children;
 
     Node() = default;
 

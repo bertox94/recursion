@@ -11,13 +11,17 @@ template<typename T>
 int sorted(Node<T> *node) {
     int height;
     if (node->has_children()) {
-        std::sort(node->children.begin(), node->children.end(),
-                  [&](auto left, auto right) {
-                      auto l = sorted(left);
-                      auto r = sorted(right);
-                      height = std::max(l, r) + 1;
-                      return l < r;
-                  });
+        std::vector<std::pair<Node<T> *, int>> ll;
+        for (auto &child: node->children)
+            ll.emplace_back(child, sorted(child));
+
+        std::sort(ll.begin(), ll.end(),
+                  [](auto left, auto right) { return left.second > right.second; });
+        node->children.clear();
+        for (auto &child: ll) {
+            node->children.push_back(child.first);
+        }
+        height = (*max_element(ll.begin(), ll.end(), [](auto l, auto r) { return l.second < r.second; })).second + 1;
     } else {
         height = 0;
     }
