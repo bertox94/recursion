@@ -10,6 +10,17 @@
 
 using namespace std;
 
+/**
+                                          read L for 1 ←|← written R for 1
+                                  passed above L for 1 ↑|↓ passed below R for 1
+                        used L for 2, computed L for 1 |1| used R for 1, computed R for 2
+                                  passed above L for 2 ↑|↓ passed below R for 2
+                        used L for 3, computed L for 2 |2| used R for 2, computed R for 3
+                                  passed above L for 3 ↑|↓ passed below R for 3
+                                       written L for 3 |3| read R for 3
+                                                        ←
+*/
+
 template<typename T>
 class Node {
 public:
