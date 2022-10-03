@@ -16,7 +16,7 @@ int sorted(Node<T> *node) {
                       auto l = sorted(left);
                       auto r = sorted(right);
                       height = std::max(l, r) + 1;
-                      return &l < &r;
+                      return l < r;
                   });
     } else {
         height = 0;
