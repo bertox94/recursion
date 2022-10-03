@@ -22,14 +22,16 @@ void print(Node<T> *node, int spacing = 0) {
     }
 }
 
+// S-> num|num[( S)+]
 template<typename T>
-void to_string(Node<T> *node, const std::string &pre = "") {
-    std::cout << pre << node->item;
+void to_string(Node<T> *node) {
+    std::cout << node->item;
     if (node->has_children()) {
-        std::cout << " [";
+        std::cout << "[";
         bool flag = true;
         for (auto &child: node->children) {
-            to_string(child, flag ? "" : " ");
+            std::cout << " "; // what will follow will be either (1): X[... or X
+            to_string(child);
             flag = false;
         }
         std::cout << "]";
