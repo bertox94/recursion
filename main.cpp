@@ -33,7 +33,7 @@ void testTree() {
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
     cout << "-------" << endl;
     print(root);
-    /*
+
      //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
      //    string str = string("B degree (") + to_string(i) + "):";
  //
@@ -122,7 +122,7 @@ void testTree() {
      cout << "MNOC:      " << max_num_of_direct_children(root) << endl;
      auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, -1, 1);
      cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
-     */
+
     //auto ll = list_nodes(root);
     //cout << "List:       \n" << print(ll) << endl;
 

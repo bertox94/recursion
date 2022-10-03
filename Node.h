@@ -24,12 +24,12 @@ using namespace std;
 template<typename T>
 class Node {
 public:
-    T *item;
+    T item;
     list<Node *> children;
 
     Node() = default;
 
-    explicit Node(const T &item) : item(new T(item)) {}
+    explicit Node(const T &item) : item(item) {}
 
     explicit Node(T &&item) : Node(item) {}
 
@@ -71,12 +71,6 @@ public:
 
         for (auto &child: root->children)
             buildtree(child, curr + 1, big, max_children);
-    }
-
-    ~Node() {
-        for (auto &child: children)
-            delete child;
-        delete item;
     }
 
 };

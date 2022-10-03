@@ -132,14 +132,14 @@ template<typename T>
 LeftAttr<T> max_value(Node<T> *node) {
     LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<T> list{*node->item};
+        std::list<T> list{node->item};
         for (auto &child: node->children) {
             auto Lchild = max_value(child);
             list.push_back(Lchild.value);
         }
         L.value = *max_element(list.begin(), list.end());
     } else {
-        L.value = *node->item;
+        L.value = node->item;
     }
 
     return L;
@@ -156,9 +156,9 @@ T min_value(Node<T> *node) {
             ll.push_back(L1k);
         }
         auto Ltemp = *min_element(ll.begin(), ll.end());
-        L1 = min(Ltemp, *node->item);
+        L1 = min(Ltemp, node->item);
     } else {
-        L1 = *node->item;
+        L1 = node->item;
     }
 
     return L1;
@@ -166,6 +166,7 @@ T min_value(Node<T> *node) {
 
 //R1: item as reference
 //L1: number
+//as an execrise you could remove the else branch when not necessary, for example here
 template<typename T>
 int how_many_like_this(Node<T> *node, T Rfather) {
     int R1 = Rfather;
@@ -182,10 +183,10 @@ int how_many_like_this(Node<T> *node, T Rfather) {
                 [](auto acc, auto item) {
                     return acc + item;
                 });
-        if (*node->item == R1)
+        if (node->item == R1)
             L1++;
     } else {
-        if (*node->item == R1) {
+        if (node->item == R1) {
             L1 = 1;
         } else {
             L1 = 0;
@@ -195,20 +196,27 @@ int how_many_like_this(Node<T> *node, T Rfather) {
     return L1;
 }
 
+template<typename T>
+void deletee(Node<T> *node) {
+    for (auto &child: node->children) {
+        deletee(child);
+    }
+    delete node;
+}
+
 //here you see that they were right, right is prepared to be what is needed for the current by the parent
 //here you see how thr right param is correctly used
 // so right is used in the curr node as it is passed from the parent, then changed only to be passed to its child
 template<typename T>
 void print(Node<T> *node, int spacing = 0) {
     if (node->has_children()) {
-        std::cout << std::string(spacing, ' ') << (spacing > 0 ? "+ " : "") << *node->item << ":" << std::endl;
+        std::cout << std::string(spacing, ' ') << (spacing > 0 ? "+ " : "") << node->item << ":" << std::endl;
         for (auto &child: node->children) {
             print(child, spacing + 3);
         }
     } else {
-        std::cout << std::string(spacing, ' ') << "- " << *node->item << std::endl;
+        std::cout << std::string(spacing, ' ') << "- " << node->item << std::endl;
     }
-
 }
 
 

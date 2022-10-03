@@ -16,9 +16,9 @@ LeftAttr<T> list_nodes(Node<T> *node) {
             auto Lchild = list_nodes(child);
             L.simpleList.splice(L.simpleList.end(), Lchild.simpleList);
         }
-        L.simpleList.push_back(*node->item);
+        L.simpleList.push_back(node->item);
     } else {
-        L.simpleList.push_back(*node->item);
+        L.simpleList.push_back(node->item);
     }
 
     return L;
@@ -46,16 +46,16 @@ LeftAttr<T> list_nodes_II(Node<T> *node) {
         }
         bool found = false;
         for (auto &LAttr: L.compositeList) {
-            if (*node->item == LAttr.value) {
+            if (node->item == LAttr.value) {
                 LAttr.num++;
                 found = true;
                 break;
             }
         }
         if (!found)
-            L.compositeList.emplace_back(_num(1), _value(*node->item));
+            L.compositeList.emplace_back(_num(1), _value(node->item));
     } else {
-        L.compositeList.emplace_back(_num(1), _value(*node->item));
+        L.compositeList.emplace_back(_num(1), _value(node->item));
     }
 
     return L;
@@ -144,7 +144,7 @@ LeftAttr<T> duplicates(Node<T> *node) {
         //curr that do not appear in L singleton --> append them to L singleton
         bool found = false;
         for (auto &currMultiple: L.compositeList) {
-            if (*node->item == currMultiple.value) {
+            if (node->item == currMultiple.value) {
                 currMultiple.num++;
                 found = true;
                 break;
@@ -152,8 +152,8 @@ LeftAttr<T> duplicates(Node<T> *node) {
         }
         if (!found) {
             for (auto currSingleton = L.simpleList.begin(); currSingleton != L.simpleList.end(); currSingleton++) {
-                if (*node->item == *currSingleton) {
-                    L.compositeList.push_back(LeftAttr<T>(_num(2), _value(*node->item)));
+                if (node->item == *currSingleton) {
+                    L.compositeList.push_back(LeftAttr<T>(_num(2), _value(node->item)));
                     L.simpleList.erase(currSingleton);
                     found = true;
                     break;
@@ -161,10 +161,10 @@ LeftAttr<T> duplicates(Node<T> *node) {
             }
         }
         if (!found) {
-            L.simpleList.push_back(*node->item);
+            L.simpleList.push_back(node->item);
         }
     } else {
-        L.simpleList.push_back(*node->item);
+        L.simpleList.push_back(node->item);
     }
 
     return L;
