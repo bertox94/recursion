@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "../Node.h"
-#include "../Tree.h"
 
 // R takes care of preparing the right value for the children, L do not need to
 // param need to be right, returned values are right for the function itself, not the function and the caller (usually)
@@ -26,7 +25,7 @@ int max_num_of_direct_children(Node<T> *node) {
             ll.push_back(ret);
         }
         ll.push_back(node->children.size());
-        m_num = max_utils(ll);
+        m_num = *max_element(ll.begin(), ll.end());
     }
 
     return m_num;
@@ -50,16 +49,16 @@ LeftAttr<T> max_num_of_direct_children_at_depth(Node<T> *node, RightAttr<T> Rfat
             if (Lchild.valid)
                 Lchildren.push_back(Lchild.num);
         }
-        if (!Lchildren.empty()) { // then you can assume that the current depth is not the target depth
+        if (!Lchildren.empty()) { // then you can assume that the current depth is not the target_depth depth
             L.num = *max_element(Lchildren.begin(), Lchildren.end());
             L.valid = true;
-        } else if (R.depth == R.target) { // target depth = current depth
+        } else if (R.depth == R.target_depth) { // target_depth depth = current depth
             L.num = node->children.size();
             L.valid = true;
-        } else // target depth < current depth
+        } else // target_depth depth < current depth
             L.valid = false;
     } else {
-        if (R.depth == R.target) {
+        if (R.depth == R.target_depth) {
             L.num = node->children.size();
             L.valid = true;
         } else
@@ -101,7 +100,7 @@ std::tuple<bool, int> min_num_of_direct_children_at_depth(Node<T> *node, int cur
             valid = false;
         } else {
             valid = true;
-            m_num = min_utils(minima);
+            m_num = *min_element(minima.begin(), minima.end());
         }
     }
 

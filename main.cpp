@@ -1,6 +1,5 @@
 #include <iostream>
 #include "Node.h"
-#include "Tree.h"
 #include "easy/basic.h"
 #include "hard/Height.h"
 #include "hard/ListNodes.h"
@@ -18,14 +17,6 @@ string print(const list<int> &ll) {
     return ss.str();
 }
 
-template<int index>
-struct TupleLess {
-    template<typename Tuple>
-    bool operator()(const Tuple &left, const Tuple &right) const {
-        return std::get<index>(left) < std::get<index>(right);
-    }
-};
-
 void testTree() {
     //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)
     //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
@@ -33,7 +24,7 @@ void testTree() {
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
-    root->add_children(10);
+    root->add_children(100);
     cout << "Done" << endl;
 
     //print2D(root);
@@ -42,10 +33,10 @@ void testTree() {
     auto maxval = max_value(root);
     auto minval = min_value(root);
     auto l = list_nodes(root);
-    cout << "How many:   " << how_many(root) << endl;
+    cout << "How many:       " << how_many(root) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root, RightAttr<int>(0)).depth << endl;
-    cout << "Max depth:      " << max_depth(root, RightAttr<int>(0)).depth << endl;
+    cout << "Min depth:      " << min_depth(root, RightAttr<int>(_depth(0))).depth << endl;
+    cout << "Max depth:      " << max_depth(root, RightAttr<int>(_depth(0))).depth << endl;
     cout << "Min value:      " << min_value(root) << endl;
     cout << "Max value:      " << max_value(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
@@ -68,11 +59,11 @@ void testTree() {
         //if (res1 != res2)
         cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;
     }
-    cout << "-------" << endl;
-    for (auto i = 0; i <= 25; i++) {
-        string str = string("NNSH (") + to_string(i) + "):";
-        cout << setw(13) << left << str << number_of_nodes_at_specific_height(root, i).second << endl;
-    }
+    //cout << "-------" << endl;
+    //for (auto i = 0; i <= 25; i++) {
+    //    string str = string("NNSH (") + to_string(i) + "):";
+    //    cout << setw(13) << left << str << number_of_nodes_at_specific_height(root, i).second << endl;
+    //}
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NFSNC (") + to_string(i) + "):";
@@ -81,7 +72,7 @@ void testTree() {
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MaxNOCD (") + to_string(i) + "):";
-        auto L = max_num_of_direct_children_at_depth(root, RightAttr<int>(-1, i));
+        auto L = max_num_of_direct_children_at_depth(root, RightAttr<int>(_depth(-1), _targetdepth(i)));
         cout << setw(13) << left << str << (L.valid ? to_string(L.num) : "-") << endl;
     }
     cout << "-------" << endl;

@@ -6,7 +6,6 @@
 #define RECURSION_DEPTH_H
 
 #include "../Node.h"
-#include "../Tree.h"
 /**
  * DEPTH
  * The depth of a node is the depth of the father +1. The father has depth 0.

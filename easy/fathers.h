@@ -6,7 +6,6 @@
 #define RECURSION_FATHERS_H
 
 #include "../Node.h"
-#include "../Tree.h"
 
 /**
  * Number of fathers with a specified number of children
@@ -28,7 +27,11 @@ int number_of_fathers_with_no_child(Node<T> *node) {
             auto ret = number_of_fathers_with_no_child(child);
             ll.push_back(ret);
         }
-        num = sum_utils(ll);
+        num = accumulate(
+                ll.begin(), ll.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                });
         if (test_property(node))
             num++;
     }
@@ -51,7 +54,11 @@ int number_of_fathers_with_single_child(Node<T> *node) {
             auto ret = number_of_fathers_with_single_child(child);
             ll.push_back(ret);
         }
-        num = sum_utils(ll);
+        num = accumulate(
+                ll.begin(), ll.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                });
         if (test_property(node))
             num++;
     }
@@ -76,7 +83,11 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_o
             auto ret = number_of_fathers_with_specified_number_of_children(child, num_of_children);
             ll.push_back(ret);
         }
-        num = sum_utils(ll);
+        num = accumulate(
+                ll.begin(), ll.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                });
         if (test_property(node, num_of_children))
             num++;
     }
@@ -127,7 +138,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_at_least_one_child(Node<T>
 
         if (!ll2.empty()) {
             found = true;
-            depth = max_utils(ll2);
+            depth = *max_element(ll2.begin(), ll2.end());
         } else {
             found = false;
         }
@@ -179,7 +190,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
 
         if (!ll2.empty()) {
             found = true;
-            depth = max_utils(ll2);
+            depth = *max_element(ll2.begin(), ll2.end());
         } else {
             found = false;
         }
@@ -211,7 +222,7 @@ depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int
 
     if (!ll.empty()) {
         found = true;
-        depth = max_utils(ll);
+        depth = *max_element(ll.begin(), ll.end());
     } else
         found = false;
 

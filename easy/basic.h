@@ -6,7 +6,6 @@
 #define RECURSION_BASIC_H
 
 #include "../Node.h"
-#include "../Tree.h"
 
 /**
  * TEMPLATE:
@@ -48,7 +47,7 @@ LeftAttr<T> max_depth(Node<T> *node, RightAttr<T> R) {
     if (node->has_children()) {
         std::list<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto Lchild = max_depth(child, RightAttr<T>(R.depth + 1));
+            auto Lchild = max_depth(child, RightAttr<T>(_depth(R.depth + 1)));
             Lchildren.push_back(Lchild);
         }
         L = *max_element(Lchildren.begin(), Lchildren.end(),
@@ -70,7 +69,7 @@ LeftAttr<T> min_depth(Node<T> *node, RightAttr<T> R) { //i.e. depth of the less 
     if (node->has_children()) {
         std::list<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto Lchild = min_depth(child, RightAttr<T>(R.depth + 1));
+            auto Lchild = min_depth(child, RightAttr<T>(_depth(R.depth + 1)));
             Lchildren.push_back(Lchild);
         }
         L = *min_element(Lchildren.begin(), Lchildren.end(),
@@ -177,7 +176,11 @@ int how_many_like_this(Node<T> *node, T Rfather) {
             auto L1k = how_many_like_this(child, R1);
             ll.push_back(L1k);
         }
-        L1 = sum_utils(ll);
+        L1 = accumulate(
+                ll.begin(), ll.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                });
         if (*node->item == R1)
             L1++;
     } else {

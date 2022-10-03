@@ -6,7 +6,6 @@
 #define RECURSION_HEIGHT_H
 
 #include "../Node.h"
-#include "../Tree.h"
 
 /**
  * HEIGHT
