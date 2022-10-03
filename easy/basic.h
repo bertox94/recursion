@@ -5,6 +5,7 @@
 #ifndef RECURSION_BASIC_H
 #define RECURSION_BASIC_H
 
+#include <iomanip>
 #include "../Node.h"
 
 /**
@@ -194,16 +195,16 @@ int how_many_like_this(Node<T> *node, T Rfather) {
     return L1;
 }
 
-//here you see that they were right, right are computed by the father for the child
+//here you see that they were right, right is prepared to be what is needed for the current by the parent
 template<typename T>
-void print(Node<T> *node, const std::string &indent = "") {
+void print(Node<T> *node, int indent = 0) {
     if (node->has_children()) {
-        std::cout << indent << *node->item << ":" << std::endl;
+        std::cout << std::string(indent, '-') << *node->item << ":" << std::endl;
         for (auto &child: node->children) {
-            print(child, indent + "\t");
+            print(child, indent + to_string(*node->item).length() + 2);
         }
     } else {
-        std::cout << indent << *node->item << std::endl;
+        std::cout << "+"<<std::string(indent, '-') << *node->item << std::endl;
     }
 
 }

@@ -165,8 +165,9 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
     // it comes easier to do the else branch before, because you are helped by the children
     // in the if branch, test the current and provide the results may be done at the same time, in the else branch usually no,
     // children are to be considered as well
+    //std::cout <<"---"<< depth << std::endl;
     if (node->is_leaf()) {
-        if (test_property(node)) { // if the current is a father, i.e. test the current for the property
+        if (test_property(node)) { // test the current for the property
             found = true;
             depth = curr_depth;
         } else {
