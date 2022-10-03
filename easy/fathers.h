@@ -207,9 +207,9 @@ depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int
 
     std::list<int> ll;
     for (auto &child: node->children) {
-        auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
-                                                                                                      current_depth,
-                                                                                                      children);
+        auto ret = depth_of_the_deepest_father_with_specified_number_of_children(child,
+                                                                                 current_depth,
+                                                                                 children);
         if (ret.first)
             ll.push_back(ret.second);
     }
