@@ -5,6 +5,7 @@
 #include "hard/ListNodes.h"
 #include "easy/fathers.h"
 #include "easy/children.h"
+#include "easy/printing.h"
 #include <sstream>
 #include <iomanip>
 
@@ -15,7 +16,7 @@ void testTree() {
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
-    root->add_children(13);
+    root->add_children(3);
     cout << "Done" << endl;
 
     //print2D(root);
@@ -33,7 +34,9 @@ void testTree() {
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
     cout << "-------" << endl;
     print(root);
-
+    std::cout << std::endl;
+    to_string(root);
+    return;
     //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
     //    string str = string("B degree (") + to_string(i) + "):";
     //
