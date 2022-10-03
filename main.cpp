@@ -8,15 +8,6 @@
 #include <sstream>
 #include <iomanip>
 
-
-string print(const list<int> &ll) {
-    stringstream ss;
-    for (auto &el: ll) {
-        ss << el << endl;
-    }
-    return ss.str();
-}
-
 void testTree() {
     //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)
     //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
@@ -24,8 +15,9 @@ void testTree() {
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     cout << "Creating root..." << endl;
     auto root = new Node<int>(std::rand() % MAX_RAND);
-    root->add_children(100);
+    root->add_children(3);
     cout << "Done" << endl;
+    print(root);
 
     //print2D(root);
     //scan(root);
@@ -59,11 +51,11 @@ void testTree() {
         //if (res1 != res2)
         cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;
     }
-    //cout << "-------" << endl;
-    //for (auto i = 0; i <= 25; i++) {
-    //    string str = string("NNSH (") + to_string(i) + "):";
-    //    cout << setw(13) << left << str << number_of_nodes_at_specific_height(root, i).second << endl;
-    //}
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("NNSH (") + to_string(i) + "):";
+        cout << setw(13) << left << str << number_of_nodes_at_specific_height(root, i).second << endl;
+    }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("NFSNC (") + to_string(i) + "):";

@@ -194,5 +194,19 @@ int how_many_like_this(Node<T> *node, T Rfather) {
     return L1;
 }
 
+//here you see that they were right, right are computed by the father for the child
+template<typename T>
+void print(Node<T> *node, const std::string &indent = "") {
+    if (node->has_children()) {
+        std::cout << indent << *node->item << ":" << std::endl;
+        for (auto &child: node->children) {
+            print(child, indent + "\t");
+        }
+    } else {
+        std::cout << indent << *node->item << std::endl;
+    }
+
+}
+
 
 #endif //RECURSION_BASIC_H
