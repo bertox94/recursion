@@ -8,6 +8,7 @@
 #include "easy/printing.h"
 #include "easy/sorting.h"
 #include <iomanip>
+#include <string>
 
 void testTree() {
     //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)

@@ -6,6 +6,7 @@
 #define RECURSION_BASIC_H
 
 #include <iomanip>
+#include <numeric>
 #include "../Node.h"
 
 /**
@@ -93,7 +94,7 @@ int how_many(Node<T> *node) {
             auto L1k = how_many(child);
             ll.push_back(L1k);
         }
-        L1 = accumulate(ll.begin(), ll.end(), 0) + 1;
+        L1 = std::accumulate(ll.begin(), ll.end(), 0) + 1;
     } else {
         L1 = 1;
     }
