@@ -8,7 +8,7 @@
 #include <tuple>
 #include "../Node.h"
 
-//it would be nice to know those two leafs
+//it would be nice to know those two leafs, maybe identify them with the path from root to them
 template<typename T>
 std::tuple<int, int, int> max_distance(Node<T> *node, int depth) {
     std::vector<int> max_depths;
