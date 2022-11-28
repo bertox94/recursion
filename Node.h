@@ -138,10 +138,7 @@ public:
 };
 
 template<typename T>
-unsigned long build_tree(Node<T> *node, int curr_depth, int max_depth, int max_breadth, int curr_nodes, int max_nodes) {
-    if (curr_nodes >= max_nodes) {
-        return curr_nodes;
-    }
+unsigned long build_tree(Node<T> *node, int curr_depth, int max_depth, int max_breadth, int curr_nodes) {
     if (curr_depth == max_depth) {
         return curr_nodes;
     }
@@ -153,8 +150,8 @@ unsigned long build_tree(Node<T> *node, int curr_depth, int max_depth, int max_b
             auto child = new Node<T>(std::rand());
             node->children.push_back(child);
             curr_nodes = build_tree(child,
-                                    curr_depth + 1, max_depth, max_breadth,
-                                    curr_nodes + 1, max_nodes);
+                                    curr_depth + 1, max_depth,
+                                    max_breadth, curr_nodes + 1);
         }
         return curr_nodes;
     } else {
