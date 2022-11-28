@@ -15,14 +15,39 @@ void testTree() {
     //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
     // If it did, then it can't be a right attribute. on the other hand, node refers to the actual node,
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
-    cout << "Creating root..." << endl;
-    auto root = new Node<int>(std::rand() % MAX_RAND);
-    root->add_children(100);
+    Node<int> *root;
+    while (true) {
+        cout << "Creating root..." << endl;
+        root = new Node<int>(std::rand());
+        cout << "Populating tree..." << endl;
+        //root->add_children(100);
+        auto nnum = build_tree(root, 0, 25, 5, 1, 600);
+        auto num = how_many(root);
+
+        if (num < 100) {
+            cout << "Tree is too small (" << num << ")\n" << endl;
+        } else
+            break;
+        destroy(root);
+    }
     cout << "Done" << endl;
 
     //print2D(root);
     //scan(root);
+
+    cout << "-------" << endl;
     cout << endl;
+    print(root);
+    cout << "-------" << endl;
+    cout << "sorted ##" << endl;
+    sorted(root);
+    print(root);
+    cout << "-------" << endl;
+    cout << endl;
+    to_string(root);
+    cout << "-------" << endl;
+    cout << endl;
+
     auto maxval = max_value(root);
     auto minval = min_value(root);
     auto l = list_nodes(root);
@@ -33,14 +58,8 @@ void testTree() {
     cout << "Min value:      " << min_value(root) << endl;
     cout << "Max value:      " << max_value(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
-    cout << "-------" << endl;
-    print(root);
-    sorted(root);
-    cout << "-------" << endl;
-    print(root);
-    std::cout << std::endl;
-    to_string(root);
-    //return;
+
+    return;
     //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
     //    string str = string("B degree (") + to_string(i) + "):";
     //
@@ -133,7 +152,7 @@ void testTree() {
     //auto ll = list_nodes(root);
     //cout << "List:       \n" << print(ll) << endl;
 
-    deletee(root);
+    destroy(root);
 }
 
 int main() {

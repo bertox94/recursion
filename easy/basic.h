@@ -198,9 +198,9 @@ int how_many_like_this(Node<T> *node, T Rfather) {
 }
 
 template<typename T>
-void deletee(Node<T> *node) {
+void destroy(Node<T> *node) {
     for (auto &child: node->children) {
-        deletee(child);
+        destroy(child);
     }
     delete node;
 }

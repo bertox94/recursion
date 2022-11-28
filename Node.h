@@ -137,5 +137,46 @@ public:
     std::list<LeftAttr<T>> compositeList;
 };
 
+int i1 = 0;
+int i2 = 0;
+int i3 = 0;
+int i4 = 0;
+int i5 = 0;
+
+template<typename T>
+unsigned long build_tree(Node<T> *node, int curr_depth, int max_depth, int max_breadth, int curr_nodes, int max_nodes) {
+    if (curr_nodes >= max_nodes) {
+        return curr_nodes;
+    }
+    if (curr_depth == max_depth) {
+        return curr_nodes;
+    }
+
+    bool has_children = rand() % 2;
+    if (has_children) {
+        int n_children = 1 + (rand() % max_breadth);
+        i1 = n_children == 1 ? i1 + 1 : i1;
+        i2 = n_children == 1 ? i2 + 1 : i2;
+        i3 = n_children == 1 ? i3 + 1 : i3;
+        i4 = n_children == 1 ? i4 + 1 : i4;
+        i5 = n_children == 1 ? i5 + 1 : i5;
+        for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
+            auto child = new Node<T>(std::rand());
+            node->children.push_back(child);
+            curr_nodes = build_tree(child,
+                                    curr_depth + 1, max_depth, max_breadth,
+                                    curr_nodes + 1, max_nodes);
+        }
+        return curr_nodes;
+    } else {
+        return curr_nodes;
+    }
+    cout<<i1<<endl;
+    cout<<i2<<endl;
+    cout<<i3<<endl;
+    cout<<i4<<endl;
+    cout<<i5<<endl;
+}
+
 
 #endif //RECURSION_NODE_H
