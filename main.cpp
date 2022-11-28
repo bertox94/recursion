@@ -59,7 +59,7 @@ void testTree() {
     cout << "Max value:      " << max_value(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
 
-    return;
+
     //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
     //    string str = string("B degree (") + to_string(i) + "):";
     //
