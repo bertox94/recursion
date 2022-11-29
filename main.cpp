@@ -35,6 +35,26 @@ void testTree() {
     //print2D(root);
     //scan(root);
 
+/*
+    destroy(root);
+    int i = 0;
+    auto n1 = new Node<int>(++i);
+    auto n2 = new Node<int>(++i);
+    auto n3 = new Node<int>(++i);
+    n3->children.push_back(n1);
+    n3->children.push_back(n2);
+    auto n4 = new Node<int>(++i);
+    auto n5 = new Node<int>(++i);
+    n5->children.push_back(n4);
+    auto n6 = new Node<int>(++i);
+    auto n7 = new Node<int>(++i);
+    n7->children.push_back(n6);
+    root = new Node<int>(++i);
+    root->children.push_back(n3);
+    root->children.push_back(n5);
+    root->children.push_back(n7);
+*/
+
     cout << "-------" << endl;
     cout << endl;
     print(root);
@@ -98,6 +118,13 @@ void testTree() {
     for (auto i = 0; i <= 25; i++) {
         string str = string("MinNOCD (") + to_string(i) + "):";
         auto tuple = min_num_of_direct_children_at_depth(root, 0, i);
+        cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
+    }
+
+    cout << "-------" << endl;
+    for (auto i = 0; i <= 25; i++) {
+        string str = string("MaxNOCDFDaB (") + to_string(i) + "):";
+        auto tuple = max_size_of_subtrees_from_depth_and_below(root, 0, i);
         cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
     }
 

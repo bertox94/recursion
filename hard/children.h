@@ -113,20 +113,28 @@ min_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
 
 template<typename T>
 std::tuple<bool, unsigned long>
-max_num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
     unsigned long max_num;
     bool valid;
 
     if (node->has_children()) {
-        if (depth == t_depth) {
-            max_num = node->children.size();
+        if (depth >= t_depth) {
+            std::list<unsigned long> children_max_nums;
+            for (auto &child: node->children) {
+                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1, t_depth);
+                if (child_valid)
+                    children_max_nums.push_back(child_max_num);
+            }
+            max_num = accumulate(
+                    children_max_nums.begin(), children_max_nums.end(), 0,
+                    [](auto acc, auto item) {
+                        return acc + item;
+                    }) + 1;
             valid = true;
-        } else if (depth > t_depth) {
-            valid = false;
         } else {
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1, t_depth);
                 if (child_valid)
                     children_max_nums.push_back(child_max_num);
             }
@@ -138,9 +146,9 @@ max_num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long dep
             }
         }
     } else {
-        if (depth == t_depth) {
+        if (depth >= t_depth) {
             valid = true;
-            max_num = 0;
+            max_num = 1;
         } else
             valid = false;
     }
