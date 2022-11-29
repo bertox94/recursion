@@ -56,7 +56,7 @@ void testTree() {
     cout << "Min depth:      " << min_depth(root) << endl;
     cout << "Max depth:      " << max_depth(root) << endl;
     cout << "Min value:      " << min_value(root) << endl;
-    cout << "Max value:      " << max_value(root).value << endl;
+    cout << "Max value:      " << max_value(root) << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
 
 
