@@ -91,8 +91,8 @@ void testTree() {
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MaxNOCD (") + to_string(i) + "):";
-        auto L = max_num_of_direct_children_at_depth(root, RightAttr<int>(_depth(-1), _targetdepth(i)));
-        cout << setw(13) << left << str << (L.valid ? to_string(L.num) : "-") << endl;
+        auto L = max_num_of_direct_children_at_depth(root, 0, i);
+        cout << setw(13) << left << str << (std::get<0>(L) ? to_string(std::get<1>(L)) : "-") << endl;
     }
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {

@@ -19,11 +19,11 @@ unsigned long max_num_of_direct_children(Node<T> *node) {
     if (node->has_children()) {
         std::list<unsigned long> children_max_nums;
         for (auto &child: node->children) {
-            auto child_max_num = how_many(child);
+            auto child_max_num = max_num_of_direct_children(child);
             children_max_nums.push_back(child_max_num);
         }
         auto children_max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-        max_num = std::max(children_max_num, (unsigned long)node->children.size());
+        max_num = std::max(children_max_num, (unsigned long) node->children.size());
     } else {
         max_num = 0;
     }
@@ -36,36 +36,40 @@ unsigned long max_num_of_direct_children(Node<T> *node) {
 // RightAttr: [depth, target_depth]
 // LeftAttr: [valid, max_num]
 template<typename T>
-unsigned long max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth) {
-    auto Rtemp = Rfather;
-    Rtemp.depth++;
-    auto R = Rtemp;
+std::tuple<bool, unsigned long>
+max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+    unsigned long max_num;
+    bool valid;
 
-    LeftAttr<T> L;
     if (node->has_children()) {
-        std::list<int> Lchildren;
-        for (auto &child: node->children) {
-            auto Lchild = max_num_of_direct_children_at_depth(child, R);
-            if (Lchild.valid)
-                Lchildren.push_back(Lchild.num);
+        if (depth == t_depth) {
+            max_num = node->children.size();
+            valid = true;
+        } else if (depth > t_depth) {
+            valid = false;
+        } else {
+            std::list<unsigned long> children_max_nums;
+            for (auto &child: node->children) {
+                auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+                if (child_valid)
+                    children_max_nums.push_back(child_max_num);
+            }
+            if (children_max_nums.empty()) {
+                valid = false;
+            } else {
+                max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
+                valid = true;
+            }
         }
-        if (!Lchildren.empty()) { // then you can assume that the current depth is not the target_depth depth
-            L.num = *max_element(Lchildren.begin(), Lchildren.end());
-            L.valid = true;
-        } else if (R.depth == R.target_depth) { // target_depth depth = current depth
-            L.num = node->children.size();
-            L.valid = true;
-        } else // target_depth depth < current depth
-            L.valid = false;
     } else {
-        if (R.depth == R.target_depth) {
-            L.num = node->children.size();
-            L.valid = true;
+        if (depth == t_depth) {
+            valid = true;
+            max_num = 0;
         } else
-            L.valid = false;
+            valid = false;
     }
 
-    return L;
+    return {valid, max_num};
 }
 
 // min_num_of_direct_children_at_depth(node,1) should be 0
@@ -105,6 +109,24 @@ std::tuple<bool, int> min_num_of_direct_children_at_depth(Node<T> *node, int cur
     }
 
     return {valid, m_num};
+}
+
+template<typename T>
+unsigned long max_num_of_children_at_depth(Node<T> *node, unsigned long depth) {
+    unsigned long max_num;
+    if (node->has_children()) {
+        std::list<unsigned long> children_max_nums;
+        for (auto &child: node->children) {
+            auto child_max_num = how_many(child);
+            children_max_nums.push_back(child_max_num);
+        }
+        auto children_max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
+        max_num = std::max(children_max_num, (unsigned long) node->children.size());
+    } else {
+        max_num = 0;
+    }
+
+    return max_num;
 }
 
 #endif //RECURSION_CHILDREN_H
