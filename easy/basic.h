@@ -40,25 +40,24 @@ void scan(Node<T> *node) {
         scan(child);
 }
 
-// R1: depth
-// L1: min_depth
+// NB: depth = height at the root of each tree
 template<typename T>
-LeftAttr<T> max_depth(Node<T> *node, RightAttr<T> R) {
+unsigned long max_depth(Node<T> *node) {
 
-    LeftAttr<T> L;
+    unsigned long max_depth_;
     if (node->has_children()) {
-        std::list<LeftAttr<T>> Lchildren;
+        std::list<unsigned long> children_depth;
         for (auto &child: node->children) {
-            auto Lchild = max_depth(child, RightAttr<T>(_depth(R.depth + 1)));
-            Lchildren.push_back(Lchild);
+            auto child_depth = max_depth(child) + 1;
+            children_depth.push_back(child_depth);
         }
-        L = *max_element(Lchildren.begin(), Lchildren.end(),
-                         [](auto &left, auto &right) { return left.depth < right.depth; });
+        max_depth_ = *max_element(children_depth.begin(), children_depth.end(),
+                                  [](auto &left, auto &right) { return left < right; });
     } else {
-        L.depth = R.depth;
+        max_depth_ = 0;
     }
 
-    return L;
+    return max_depth_;
 }
 
 //always check that the base case makes sense, here in fact a tree with no child has depth = 0
