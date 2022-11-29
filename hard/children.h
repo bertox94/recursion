@@ -41,32 +41,24 @@ max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
     unsigned long max_num;
     bool valid;
 
-    if (node->has_children()) {
-        if (depth == t_depth) {
-            max_num = node->children.size();
-            valid = true;
-        } else if (depth > t_depth) {
+    if (depth == t_depth) {
+        max_num = node->children.size();
+        valid = true;
+    } else if (depth > t_depth) {
+        valid = false;
+    } else {
+        std::list<unsigned long> children_max_nums;
+        for (auto &child: node->children) {
+            auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+            if (child_valid)
+                children_max_nums.push_back(child_max_num);
+        }
+        if (children_max_nums.empty()) {
             valid = false;
         } else {
-            std::list<unsigned long> children_max_nums;
-            for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
-                if (child_valid)
-                    children_max_nums.push_back(child_max_num);
-            }
-            if (children_max_nums.empty()) {
-                valid = false;
-            } else {
-                max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-                valid = true;
-            }
-        }
-    } else {
-        if (depth == t_depth) {
+            max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
             valid = true;
-            max_num = 0;
-        } else
-            valid = false;
+        }
     }
 
     return {valid, max_num};
