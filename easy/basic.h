@@ -45,17 +45,13 @@ template<typename T>
 unsigned long max_depth(Node<T> *node) {
 
     unsigned long max_depth_;
-    if (node->has_children()) {
-        std::list<unsigned long> children_depths;
-        for (auto &child: node->children) {
-            auto child_depth = max_depth(child);
-            children_depths.push_back(child_depth + 1);
-        }
-        max_depth_ = *max_element(children_depths.begin(), children_depths.end(),
-                                  [](auto &left, auto &right) { return left < right; });
-    } else {
-        max_depth_ = 0;
+    std::list<unsigned long> children_depths;
+    for (auto &child: node->children) {
+        auto child_depth = max_depth(child);
+        children_depths.push_back(child_depth + 1);
     }
+    max_depth_ = (children_depths.empty() ? 0 : *max_element(children_depths.begin(), children_depths.end(),
+                                                             [](auto &left, auto &right) { return left < right; }));
 
     return max_depth_;
 }
