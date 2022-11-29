@@ -53,7 +53,7 @@ void testTree() {
     auto l = list_nodes(root);
     cout << "How many:       " << how_many(root) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root, RightAttr<int>(_depth(0))).depth << endl;
+    cout << "Min depth:      " << min_depth(root) << endl;
     cout << "Max depth:      " << max_depth(root) << endl;
     cout << "Min value:      " << min_value(root) << endl;
     cout << "Max value:      " << max_value(root).value << endl;

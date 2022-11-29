@@ -64,22 +64,22 @@ unsigned long max_depth(Node<T> *node) {
 // R1: depth
 // L1: min_depth
 template<typename T>
-LeftAttr<T> min_depth(Node<T> *node, RightAttr<T> R) { //i.e. depth of the less deep leaf
+unsigned long min_depth(Node<T> *node) { //i.e. depth of the less deep leaf
 
-    LeftAttr<T> L;
+    unsigned long min_depth_;
     if (node->has_children()) {
-        std::list<LeftAttr<T>> Lchildren;
+        std::list<unsigned long> children_depth;
         for (auto &child: node->children) {
-            auto Lchild = min_depth(child, RightAttr<T>(_depth(R.depth + 1)));
-            Lchildren.push_back(Lchild);
+            auto child_depth = min_depth(child) + 1;
+            children_depth.push_back(child_depth);
         }
-        L = *min_element(Lchildren.begin(), Lchildren.end(),
-                         [](auto &left, auto &right) { return left.depth < right.depth; });
+        min_depth_ = *min_element(children_depth.begin(), children_depth.end(),
+                                  [](auto &left, auto &right) { return left < right; });
     } else {
-        L.depth = R.depth;
+        min_depth_ = 0;
     }
 
-    return L;
+    return min_depth_;
 }
 
 template<typename T>
