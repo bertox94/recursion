@@ -1,10 +1,10 @@
 #include <iostream>
 #include "Node.h"
 #include "easy/basic.h"
-#include "hard/Height.h"
+#include "easy/Height.h"
 #include "hard/ListNodes.h"
 #include "easy/fathers.h"
-#include "easy/children.h"
+#include "hard/children.h"
 #include "easy/printing.h"
 #include "easy/sorting.h"
 #include <iomanip>

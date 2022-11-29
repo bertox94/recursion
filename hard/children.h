@@ -13,22 +13,22 @@
 // param need to be right, returned values are right for the function itself, not the function and the caller (usually)
 
 template<typename T>
-int max_num_of_direct_children(Node<T> *node) {
-    int m_num;
+unsigned long max_num_of_direct_children(Node<T> *node) {
 
-    if (node->is_leaf()) {
-        m_num = 0;
-    } else {
-        std::list<int> ll;
+    unsigned long max_num;
+    if (node->has_children()) {
+        std::list<unsigned long> children_max_nums;
         for (auto &child: node->children) {
-            auto ret = max_num_of_direct_children(child);
-            ll.push_back(ret);
+            auto child_max_num = how_many(child);
+            children_max_nums.push_back(child_max_num);
         }
-        ll.push_back(node->children.size());
-        m_num = *max_element(ll.begin(), ll.end());
+        auto children_max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
+        max_num = std::max(children_max_num, (unsigned long)node->children.size());
+    } else {
+        max_num = 0;
     }
 
-    return m_num;
+    return max_num;
 }
 
 // to reason for leaves, just say, the tree is of one element. Then max num is exactly that,
@@ -36,7 +36,7 @@ int max_num_of_direct_children(Node<T> *node) {
 // RightAttr: [depth, target_depth]
 // LeftAttr: [valid, max_num]
 template<typename T>
-LeftAttr<T> max_num_of_direct_children_at_depth(Node<T> *node, RightAttr<T> Rfather) {
+unsigned long max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth) {
     auto Rtemp = Rfather;
     Rtemp.depth++;
     auto R = Rtemp;
