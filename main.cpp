@@ -97,7 +97,7 @@ void testTree() {
     cout << "-------" << endl;
     for (auto i = 0; i <= 25; i++) {
         string str = string("MinNOCD (") + to_string(i) + "):";
-        auto tuple = min_num_of_direct_children_at_depth(root, -1, i);
+        auto tuple = min_num_of_direct_children_at_depth(root, 0, i);
         cout << setw(13) << left << str << (get<0>(tuple) ? to_string(get<1>(tuple)) : "-") << endl;
     }
 
