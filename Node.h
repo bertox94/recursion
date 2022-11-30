@@ -55,10 +55,7 @@ public:
         return children.size() > 0;
     }
 
-    void add_children(int big, int max_children = 0) {
-        buildtree(this, 1, big, max_children);
-    }
-
+    /*
     void buildtree(Node<T> *root, int curr, int big, int max_children) {
         //higher the number to the right, the bigger the root
         int num = curr;
@@ -72,6 +69,7 @@ public:
         for (auto &child: root->children)
             buildtree(child, curr + 1, big, max_children);
     }
+     */
 
 };
 
@@ -138,20 +136,21 @@ public:
 };
 
 template<typename T>
-unsigned long build_tree(Node<T> *node, int curr_depth, int max_depth, int max_breadth, int curr_nodes) {
+unsigned long
+build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
     if (curr_depth == max_depth) {
         return curr_nodes;
     }
 
     bool has_children = rand() % 2;
     if (has_children) {
-        int n_children = 1 + (rand() % max_breadth);
+        int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
             auto child = new Node<T>(std::rand());
             node->children.push_back(child);
             curr_nodes = build_tree(child,
                                     curr_depth + 1, max_depth,
-                                    max_breadth, curr_nodes + 1);
+                                    min_breadth, max_breadth, curr_nodes + 1);
         }
         return curr_nodes;
     } else {

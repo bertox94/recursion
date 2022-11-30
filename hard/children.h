@@ -158,7 +158,7 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
 // simple as that:
 //      for a node in the middle, we return to the father the sum of the results of the children + the num of direct children of that node,
 //      for a leaf it would just pass 0 to its father.
-// By the way this just mean, count the number of nodes in the tree
+// By the way this just means, count the number of nodes in the tree
 template<typename T>
 unsigned long num_of_direct_children(Node<T> *node) {
     unsigned long count;

@@ -20,9 +20,13 @@ void testTree() {
         cout << "Creating root..." << endl;
         root = new Node<int>(std::rand());
         cout << "Populating tree..." << endl;
-        //root->add_children(100);
-        auto nnum = build_tree(root, 0, 20, 5, 1);
+        auto nnum = build_tree(root, 0, 20, 1, 1, 1);
         auto num = how_many(root);
+
+        if (nnum != num) {
+            cout << "Tree is too small (" << num << ")\n" << endl;
+            throw 1;
+        }
 
         if (num < 100) {
             cout << "Tree is too small (" << num << ")\n" << endl;
