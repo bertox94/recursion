@@ -31,10 +31,6 @@ unsigned long max_num_of_direct_children(Node<T> *node) {
     return max_num;
 }
 
-// to reason for leaves, just say, the tree is of one element. Then max num is exactly that,
-// no need to consider everything else. Basically just assume the entire tree is a leaf.
-// RightAttr: [depth, target_depth]
-// LeftAttr: [valid, max_num]
 template<typename T>
 std::tuple<bool, unsigned long>
 max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned long t_depth) {
@@ -132,6 +128,7 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
                         return acc + item;
                     }) + 1;
             valid = true; // should it be (!children_max_nums.empty()) why true always? It seems ok, but can you prove it?
+            // maybe because even if there are no children at least you return 1, and that's enough to make it true
         } else {
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
