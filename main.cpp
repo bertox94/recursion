@@ -20,7 +20,8 @@ void testTree() {
         cout << "Creating root..." << endl;
         root = new Node<int>(std::rand());
         cout << "Populating tree..." << endl;
-        auto nnum = build_list(root,1,3200);//build_tree(root, 0, 20, 0, 5, 1);
+        auto nnum = build_tree(root, 0, 20, 0, 5, 1);
+        //auto nnum = build_list(root,1,3200);
         auto num = how_many(root);
 
         if (nnum != num) {
