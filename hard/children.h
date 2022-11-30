@@ -181,7 +181,6 @@ unsigned long num_of_direct_children(Node<T> *node) {
     return count;
 }
 
-
 template<typename T>
 std::tuple<bool, unsigned long>
 num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
