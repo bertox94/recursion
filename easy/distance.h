@@ -8,7 +8,8 @@
 #include <tuple>
 #include "../Node.h"
 
-//it would be nice to know those two leafs, maybe identify them with the path from root to them
+// it would be nice to know those two leafs, maybe identify them with the path from root to them
+// each node must have exactly 2 direct children
 template<typename T>
 LeftAttr<T> max_distance(Node<T> *node, RightAttr<T> R) {
     LeftAttr<T> L;
