@@ -121,7 +121,8 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
         if (depth >= t_depth) {
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1, t_depth);
+                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
+                                                                                              t_depth);
                 if (child_valid)
                     children_max_nums.push_back(child_max_num);
             }
@@ -134,7 +135,8 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
         } else {
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1, t_depth);
+                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
+                                                                                              t_depth);
                 if (child_valid)
                     children_max_nums.push_back(child_max_num);
             }
@@ -157,40 +159,48 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
 }
 
 template<typename T>
-std::tuple<bool, unsigned long>
-num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
-    unsigned long max_num;
-    bool valid;
+unsigned long num_of_direct_children(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+    unsigned long count;
 
     if (node->has_children()) {
-        if (depth == t_depth) {
-            max_num = node->children.size();
-            valid = true;
-        } else if (depth > t_depth) {
-            valid = false;
-        } else {
-            std::list<unsigned long> children_max_nums;
-            for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
-                if (child_valid)
-                    children_max_nums.push_back(child_max_num);
-            }
-            if (children_max_nums.empty()) {
-                valid = false;
-            } else {
-                max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-                valid = true;
-            }
+        std::list<unsigned long> children_max_nums;
+        for (auto &child: node->children) {
+            auto child_count = num_of_direct_children(child, depth + 1, t_depth);
+            children_max_nums.push_back(child_count);
         }
+        count = accumulate(
+                children_max_nums.begin(), children_max_nums.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                }) + node->children.size();
     } else {
-        if (depth == t_depth) {
-            valid = true;
-            max_num = 0;
-        } else
-            valid = false;
+        return 0;
     }
 
-    return {valid, max_num};
+    return count;
+}
+
+
+template<typename T>
+unsigned long num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+    unsigned long count;
+
+    if (node->has_children()) {
+        std::list<unsigned long> children_max_nums;
+        for (auto &child: node->children) {
+            auto child_count = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+            children_max_nums.push_back(child_count);
+        }
+        count = accumulate(
+                children_max_nums.begin(), children_max_nums.end(), 0,
+                [](auto acc, auto item) {
+                    return acc + item;
+                }) + node->children.size();
+    } else {
+        return 0;
+    }
+
+    return count;
 }
 
 #endif //RECURSION_CHILDREN_H
