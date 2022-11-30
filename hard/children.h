@@ -131,7 +131,7 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
                     [](auto acc, auto item) {
                         return acc + item;
                     }) + 1;
-            valid = true;
+            valid = true; // should it be (!children_max_nums.empty()) why true always? It seems ok, but can you prove it?
         } else {
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
@@ -158,23 +158,27 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
     return {valid, max_num};
 }
 
+// simple as that:
+//      for a node in the middle, we return to the father the sum of the results of the children + the num of direct children of that node,
+//      for a leaf it would just pass 0 to its father.
+// By the way this just mean, count the number of nodes in the tree
 template<typename T>
-unsigned long num_of_direct_children(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+unsigned long num_of_direct_children(Node<T> *node) {
     unsigned long count;
 
     if (node->has_children()) {
-        std::list<unsigned long> children_max_nums;
+        std::list<unsigned long> children_counts;
         for (auto &child: node->children) {
-            auto child_count = num_of_direct_children(child, depth + 1, t_depth);
-            children_max_nums.push_back(child_count);
+            auto child_count = num_of_direct_children(child);
+            children_counts.push_back(child_count);
         }
         count = accumulate(
-                children_max_nums.begin(), children_max_nums.end(), 0,
+                children_counts.begin(), children_counts.end(), 0,
                 [](auto acc, auto item) {
                     return acc + item;
                 }) + node->children.size();
     } else {
-        return 0;
+        count = 0;
     }
 
     return count;
@@ -182,25 +186,48 @@ unsigned long num_of_direct_children(Node<T> *node, unsigned long depth, unsigne
 
 
 template<typename T>
-unsigned long num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
+std::tuple<bool, unsigned long>
+num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
     unsigned long count;
+    bool valid;
 
     if (node->has_children()) {
-        std::list<unsigned long> children_max_nums;
-        for (auto &child: node->children) {
-            auto child_count = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
-            children_max_nums.push_back(child_count);
+        if (depth >= t_depth) {
+            std::list<unsigned long> children_counts;
+            for (auto &child: node->children) {
+                auto child_count = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+                children_counts.push_back(child_count);
+            }
+            count = accumulate(
+                    children_counts.begin(), children_counts.end(), 0,
+                    [](auto acc, auto item) {
+                        return acc + item;
+                    }) + node->children.size();
+            valid = true;
+        } else {
+            std::list<unsigned long> children_counts;
+            for (auto &child: node->children) {
+                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
+                                                                                              t_depth);
+                if (child_valid)
+                    children_counts.push_back(child_max_num);
+            }
+            count = accumulate(
+                    children_counts.begin(), children_counts.end(), 0,
+                    [](auto acc, auto item) {
+                        return acc + item;
+                    });
+            valid = !children_counts.empty();
         }
-        count = accumulate(
-                children_max_nums.begin(), children_max_nums.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                }) + node->children.size();
     } else {
-        return 0;
+        if (depth >= t_depth) {
+            valid = true;
+            count = 0;
+        } else
+            valid = false;
     }
 
-    return count;
+    return {valid, count};
 }
 
 #endif //RECURSION_CHILDREN_H
