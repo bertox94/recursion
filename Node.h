@@ -137,26 +137,21 @@ public:
 
 // min_breadth of course doesn't mean that every node has at least min_breadth children,
 // but the nodes that have children, they have at least min_breadth children
-// min_depth instead means that all branches has depth >= min_depth.
-// It makes sense for lists, which have only one direct child per node.
-// But should be improved to have at least one branch that depth.
 template<typename T>
 unsigned long
-build_tree(Node<T> *node, int min_depth, int curr_depth, int max_depth,
-           int min_breadth, int max_breadth,
-           int curr_nodes) {
+build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
     if (curr_depth == max_depth) {
         return curr_nodes;
     }
 
-    bool make_children = (rand() % 2) || (curr_depth < min_depth);
+    bool make_children = (rand() % 2);
     if (make_children) {
         int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
             auto child = new Node<T>(std::rand());
             node->children.push_back(child);
             curr_nodes = build_tree(child,
-                                    min_depth, curr_depth + 1, max_depth,
+                                    curr_depth + 1, max_depth,
                                     min_breadth, max_breadth, curr_nodes + 1);
         }
         return curr_nodes;
@@ -165,5 +160,16 @@ build_tree(Node<T> *node, int min_depth, int curr_depth, int max_depth,
     }
 }
 
+template<typename T>
+unsigned long build_list(Node<T> *node, int curr_nodes, int exact_nodes) {
+    if (curr_nodes == exact_nodes) {
+        return curr_nodes;
+    } else {
+        auto child = new Node<T>(std::rand());
+        node->children.push_back(child);
+        curr_nodes = build_list(child, curr_nodes + 1, exact_nodes);
+        return curr_nodes;
+    }
+}
 
 #endif //RECURSION_NODE_H

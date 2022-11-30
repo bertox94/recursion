@@ -20,11 +20,11 @@ void testTree() {
         cout << "Creating root..." << endl;
         root = new Node<int>(std::rand());
         cout << "Populating tree..." << endl;
-        auto nnum = build_tree(root, 0, 0, 20, 0, 5, 1);
+        auto nnum = build_list(root,1,3200);//build_tree(root, 0, 20, 0, 5, 1);
         auto num = how_many(root);
 
         if (nnum != num) {
-            cout << "Tree is too small (" << num << ")\n" << endl;
+            cout << "size mismatch (" << num << ")\n" << endl;
             throw 1;
         }
 
@@ -176,7 +176,7 @@ void testTree() {
     cout << "-------" << endl;
 
     cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(root, -1).second << endl;
-    cout << "MNOC:      " << max_num_of_direct_children(root) << endl;
+    cout << "MNOC:       " << max_num_of_direct_children(root) << endl;
     auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, -1, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
 

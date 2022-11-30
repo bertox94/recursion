@@ -131,7 +131,7 @@ T min_value(Node<T> *node) {
     if (node->has_children()) {
         std::list<T> children_min_values{node->item};
         for (auto &child: node->children) {
-            auto child_min_value = max_value(child);
+            auto child_min_value = min_value(child);
             children_min_values.push_back(child_min_value);
         }
         min_val_ = *max_element(children_min_values.begin(), children_min_values.end());
