@@ -160,29 +160,21 @@ T min_value(Node<T> *node) {
 //as an execrise you could remove the else branch when not necessary, for example here
 template<typename T>
 int how_many_like_this(Node<T> *node, T cmp) {
-    int count;
     if (node->has_children()) {
-        std::list<int> children_counts;
+        int count = 0;
         for (auto &child: node->children) {
             auto child_count = how_many_like_this(child, cmp);
-            children_counts.push_back(child_count);
+            count += child_count;
         }
-        count = accumulate(
-                children_counts.begin(), children_counts.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                });
-        if (node->item == cmp)
-            count++;
+        count += node->item == cmp ? 1 : 0;
+        return count;
     } else {
         if (node->item == cmp) {
-            count = 1;
+            return 1;
         } else {
-            count = 0;
+            return 0;
         }
     }
-
-    return count;
 }
 
 template<typename T>

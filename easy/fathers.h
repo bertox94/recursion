@@ -12,87 +12,50 @@
  */
 template<typename T>
 int number_of_fathers_with_no_child(Node<T> *node) {
-    // the following are left unspecified for now because we don't know what value is it now
-    // the data of the children can and usually must survive outside the if-else blocks, so it's declared here
-    int num;
-    auto test_property = [](Node<T> *node) -> bool { return node->children.empty(); };
-    if (node->is_leaf()) {
-        if (test_property(node))
-            num = 1;
-        else
-            num = 0;
-    } else {
-        std::list<int> ll;
+    if (node->has_children()) {
+        int count = 0;
         for (auto &child: node->children) {
-            auto ret = number_of_fathers_with_no_child(child);
-            ll.push_back(ret);
+            auto child_count = number_of_fathers_with_no_child(child);
+            count += child_count;
         }
-        num = accumulate(
-                ll.begin(), ll.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                });
-        if (test_property(node))
-            num++;
+        return count;
+    } else {
+        return 1;
     }
-
-    return num;
 }
 
 template<typename T>
 int number_of_fathers_with_single_child(Node<T> *node) {
-    int num;
-    auto test_property = [](Node<T> *node) -> bool { return node->children.size() == 1; };
-    if (node->is_leaf()) {
-        if (test_property(node))
-            num = 1;
-        else
-            num = 0;
-    } else {
-        std::list<int> ll;
+    if (node->has_children()) {
+        int count = 0;
         for (auto &child: node->children) {
-            auto ret = number_of_fathers_with_single_child(child);
-            ll.push_back(ret);
+            auto child_count = number_of_fathers_with_no_child(child);
+            count += child_count;
         }
-        num = accumulate(
-                ll.begin(), ll.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                });
-        if (test_property(node))
-            num++;
+        count += node->children.size == 1 ? 1 : 0;
+        return count;
+    } else {
+        return 0;
     }
-
-    return num;
 }
 
 template<typename T>
 int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_of_children) {
-    int num;
-    auto test_property = [](Node<T> *node, int num_of_children) -> bool {
-        return node->children.size() == num_of_children;
-    };
-    if (node->is_leaf()) {
-        if (test_property(node, num_of_children))
-            num = 1;
-        else
-            num = 0;
-    } else {
-        std::list<int> ll;
+    if (node->has_children()) {
+        int count = 0;
         for (auto &child: node->children) {
-            auto ret = number_of_fathers_with_specified_number_of_children(child, num_of_children);
-            ll.push_back(ret);
+            auto child_count = number_of_fathers_with_no_child(child);
+            count += child_count;
         }
-        num = accumulate(
-                ll.begin(), ll.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                });
-        if (test_property(node, num_of_children))
-            num++;
+        count += node->children.size() == num_of_children ? 1 : 0;
+        return count;
+    } else {
+        if (node->children.size() == num_of_children) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
-
-    return num;
 }
 
 /**
@@ -100,134 +63,96 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_o
  */
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_father_with_at_least_one_child(Node<T> *node, int curr_depth) {
-    curr_depth++;
 
-    int depth;
-    bool found;
-
-    auto test_property = [](Node<T> *node) -> bool { return !node->children.empty(); };
-
-    // the only difference between these two branches is that the first considers only the current,
-    // while the other considers the children plus the current
-    // the else will never be taken, yet we write it here for completeness
-    // it comes easier to do the else branch before, because you are helped by the children
-    // in the if branch, test the current and provide the results may be done at the same time, in the else branch usually no,
-    // children are to be considered as well
-    if (leaf(node)) {
-        if (test_property(node)) { // if the current is a father, i.e. test the current for the property
-            found = true;
-            depth = curr_depth;
-        } else {
-            found = false;
-        }
-    } else {
-        list<std::pair<bool, int>> ll; //here we see that depth when false is a random value, bacause there is no rihgt value
+    if (node->has_children()) {
+        int max_depth = -1;
+        bool valid = false;
         for (auto &child: node->children) {
-            auto ret = depth_of_the_deepest_father_with_at_least_one_child(child, curr_depth);
-            ll.push_back(ret);
+            auto [child_valid, child_max_depth] = depth_of_the_deepest_father_with_at_least_one_child(child,
+                                                                                                      curr_depth + 1);
+            valid |= child_valid;
+            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
         }
-        list<int> ll2;
-        for (auto &el: ll) {
-            if (el.first)
-                ll2.push_back(el.second);
-        }
-
-        if (test_property(node)) {
-            ll2.push_back(curr_depth);
-        }
-
-        if (!ll2.empty()) {
-            found = true;
-            depth = *max_element(ll2.begin(), ll2.end());
+        if (!valid) {
+            // we are in the branch node->has_children() == true;
+            return {true, curr_depth};
         } else {
-            found = false;
+            //even if curr has childre, curr_depth is less than children's depth
+            return {true, max_depth};
         }
-    }
-    //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
 
-    return {found, depth};
+    } else {
+        // we are in the branch node->has_children() == false;
+        return {false, std::rand()};
+    }
 }
 
 // do also by passing depth as parameter, but leave also those here with height so you can see the differences
 // father must be treated differently of the children
 template<typename T>
 std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node, int curr_depth) {
-    curr_depth++;
 
-    int depth;
-    bool found;
-
-    auto test_property = [](Node<T> *node) -> bool { return node->children.size() == 1; };
-
-    // the only difference between these two branches is that the first considers only the current,
-    // while the other considers the children plus the current
-    // the else will never be taken, yet we write it here for completeness
-    // it comes easier to do the else branch before, because you are helped by the children
-    // in the if branch, test the current and provide the results may be done at the same time, in the else branch usually no,
-    // children are to be considered as well
-    //std::cout <<"---"<< depth << std::endl;
-    if (node->is_leaf()) {
-        if (test_property(node)) { // test the current for the property
-            found = true;
-            depth = curr_depth;
+    if (node->has_children()) {
+        int max_depth = -1;
+        bool valid = false;
+        for (auto &child: node->children) {
+            auto [child_valid, child_max_depth] = depth_of_the_deepest_father_with_single_child(child,
+                                                                                                curr_depth + 1);
+            valid |= child_valid;
+            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
+        }
+        if (valid) {
+            // curr is uninfluential here, either it has a single child or not,
+            // its depth is surely less than that from the children
+            return {true, max_depth};
         } else {
-            found = false;
+            //all children has no father with single child
+            if (node->children.size() == 1) {
+                return {true, curr_depth};
+            } else {
+                //nope, not even curr
+                return {false, std::rand()};
+            }
         }
     } else {
-        list<std::pair<bool, int>> ll; //here we see that depth when false is a random value, bacause there is no rihgt value
-        for (auto &child: node->children) {
-            auto ret = depth_of_the_deepest_father_with_single_child(child, curr_depth);
-            ll.push_back(ret);
-        }
-        list<int> ll2;
-        for (auto &el: ll) {
-            if (el.first)
-                ll2.push_back(el.second);
-        }
-
-        if (test_property(node)) {
-            ll2.push_back(curr_depth);
-        }
-
-        if (!ll2.empty()) {
-            found = true;
-            depth = *max_element(ll2.begin(), ll2.end());
-        } else {
-            found = false;
-        }
+        return {false, std::rand()};
     }
-    //here we come out of the branches with valid dept and found, regarless of the branch (undefined when false is a valid condition)
-
-    return {found, depth};
 }
 
 template<typename T>
 std::pair<bool, int>
 depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int current_depth, int children) {
-    current_depth++;
 
-    std::list<int> ll;
-    for (auto &child: node->children) {
-        auto ret = depth_of_the_deepest_father_with_specified_number_of_children(child,
-                                                                                 current_depth,
-                                                                                 children);
-        if (ret.first)
-            ll.push_back(ret.second);
+    if (node->has_children()) {
+        int max_depth = -1;
+        bool valid = false;
+        for (auto &child: node->children) {
+            auto [child_valid, child_max_depth] = depth_of_the_deepest_father_with_specified_number_of_children(child,
+                                                                                                                current_depth +
+                                                                                                                1);
+            valid |= child_valid;
+            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
+        }
+        if (valid) {
+            // curr is uninfluential here, either it has a single child or not,
+            // its depth is surely less than that from the children
+            return {true, max_depth};
+        } else {
+            //all children has no father with specified num. of child
+            if (node->children.size() == children) {
+                return {true, current_depth};
+            } else {
+                //nope, not even curr
+                return {false, std::rand()};
+            }
+        }
+    } else {
+        if (node->children.size() == children) {
+            return {true, current_depth};
+        } else {
+            return {false, std::rand()};
+        }
     }
-
-    if (node->children.size() == children)
-        ll.push_back(current_depth);
-
-    bool found;
-    int depth;
-
-    if (!ll.empty()) {
-        found = true;
-        depth = *max_element(ll.begin(), ll.end());
-    } else
-        found = false;
-
-    return {found, depth};
 }
 
 template<typename T>
