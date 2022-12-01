@@ -9,8 +9,24 @@
 
 #include "../Node.h"
 
-// R takes care of preparing the right value for the children, L do not need to
-// param need to be right, returned values are right for the function itself, not the function and the caller (usually)
+// simple as that:
+//      for a node in the middle, we return to the father the sum of the results of the children + the num of direct children of that node,
+//      for a leaf it would just pass 0 to its father.
+// By the way this just means, count the number of nodes in the tree
+template<typename T>
+unsigned long num_of_direct_children(Node<T> *node) {
+
+    if (node->has_children()) {
+        unsigned long count = 0;
+        for (auto &child: node->children) {
+            auto child_count = num_of_direct_children(child);
+            count += child_count;
+        }
+        return node->children.size() + count;
+    } else {
+        return 0;
+    }
+}
 
 template<typename T>
 unsigned long max_num_of_direct_children(Node<T> *node) {
@@ -38,15 +54,13 @@ max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
             return {false, std::rand()};
         } else {
             bool valid = false;
-            std::list<unsigned long> children_max_nums;
+            unsigned long max_num = -1;
             for (auto &child: node->children) {
                 auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
                 valid |= child_valid;
-                if (child_valid)
-                    children_max_nums.push_back(child_max_num);
+                max_num = child_valid ? std::max(max_num, child_max_num) : max_num;
             }
-            return {valid, valid ? *max_element(children_max_nums.begin(),
-                                                children_max_nums.end()) : std::rand()};
+            return {valid, max_num};
         }
     } else {
         if (depth == t_depth) {
@@ -122,26 +136,6 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
             return {false, std::rand()};
         }
     }
-}
-
-// simple as that:
-//      for a node in the middle, we return to the father the sum of the results of the children + the num of direct children of that node,
-//      for a leaf it would just pass 0 to its father.
-// By the way this just means, count the number of nodes in the tree
-template<typename T>
-unsigned long num_of_direct_children(Node<T> *node) {
-
-    if (node->has_children()) {
-        unsigned long count = 0;
-        for (auto &child: node->children) {
-            auto child_count = num_of_direct_children(child);
-            count += child_count;
-        }
-        return node->children.size() + count;
-    } else {
-        return 0;
-    }
-
 }
 
 template<typename T>
