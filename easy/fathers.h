@@ -71,16 +71,15 @@ std::pair<bool, int> depth_of_the_deepest_father_with_at_least_one_child(Node<T>
             auto [child_valid, child_max_depth] = depth_of_the_deepest_father_with_at_least_one_child(child,
                                                                                                       curr_depth + 1);
             valid |= child_valid;
-            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
+            max_depth = child_valid ? std::max(max_depth, child_max_depth) : max_depth;
         }
-        if (!valid) {
-            // we are in the branch node->has_children() == true;
-            return {true, curr_depth};
-        } else {
+        if (valid) {
             //even if curr has childre, curr_depth is less than children's depth
             return {true, max_depth};
+        } else {
+            // we are in the branch node->has_children() == true, so at least one child is verified.
+            return {true, curr_depth};
         }
-
     } else {
         // we are in the branch node->has_children() == false;
         return {false, std::rand()};
@@ -99,7 +98,7 @@ std::pair<bool, int> depth_of_the_deepest_father_with_single_child(Node<T> *node
             auto [child_valid, child_max_depth] = depth_of_the_deepest_father_with_single_child(child,
                                                                                                 curr_depth + 1);
             valid |= child_valid;
-            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
+            max_depth = child_valid ? std::max(max_depth, child_max_depth) : max_depth;
         }
         if (valid) {
             // curr is uninfluential here, either it has a single child or not,
@@ -131,11 +130,11 @@ depth_of_the_deepest_father_with_specified_number_of_children(Node<T> *node, int
                                                                                                                 current_depth +
                                                                                                                 1);
             valid |= child_valid;
-            max_depth = valid ? std::max(max_depth, child_max_depth) : max_depth;
+            max_depth = child_valid ? std::max(max_depth, child_max_depth) : max_depth;
         }
         if (valid) {
             // curr is uninfluential here, either it has a single child or not,
-            // its depth is surely less than that from the children
+            // its depth is surely less than that from the children.
             return {true, max_depth};
         } else {
             //all children has no father with specified num. of child

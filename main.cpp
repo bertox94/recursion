@@ -78,8 +78,8 @@ void testTree() {
     auto l = list_nodes(root);
     cout << "How many:       " << how_many(root) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root,0) << endl;
-    cout << "Max depth:      " << max_depth(root,0) << endl;
+    cout << "Min depth:      " << min_depth(root, 0) << endl;
+    cout << "Max depth:      " << max_depth(root, 0) << endl;
     cout << "Min value:      " << min_value(root) << endl;
     cout << "Max value:      " << max_value(root) << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
@@ -176,9 +176,9 @@ void testTree() {
     }
     cout << "-------" << endl;
 
-    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(root, -1).second << endl;
+    cout << "DDFSC:      " << depth_of_the_deepest_father_with_single_child(root, 0).second << endl;
     cout << "MNOC:       " << max_num_of_direct_children(root) << endl;
-    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, -1, 1);
+    auto tuple = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(root, 0, 1);
     cout << "NFWSCSMD:   " << get<1>(tuple) << ", " << get<2>(tuple) << endl;
 
     //auto ll = list_nodes(root);
