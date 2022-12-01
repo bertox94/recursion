@@ -110,49 +110,36 @@ min_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
 template<typename T>
 std::tuple<bool, unsigned long>
 max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
-    unsigned long max_num;
-    bool valid;
 
     if (node->has_children()) {
         if (depth >= t_depth) {
-            std::list<unsigned long> children_max_nums;
+            unsigned long max_num = 0;
             for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
-                                                                                              t_depth);
-                if (child_valid)
-                    children_max_nums.push_back(child_max_num);
+                auto [_, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
+                                                                                    t_depth);
+                max_num += child_max_num;
             }
-            max_num = accumulate(
-                    children_max_nums.begin(), children_max_nums.end(), 0,
-                    [](auto acc, auto item) {
-                        return acc + item;
-                    }) + 1;
-            valid = true; // should it be (!children_max_nums.empty()) why true always? It seems ok, but can you prove it?
-            // maybe because even if there are no children at least you return 1, and that's enough to make it true
+            return {true, max_num + 1};
         } else {
             std::list<unsigned long> children_max_nums;
+            bool valid = false;
             for (auto &child: node->children) {
                 auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
                                                                                               t_depth);
+                valid |= child_valid;
                 if (child_valid)
                     children_max_nums.push_back(child_max_num);
             }
-            if (children_max_nums.empty()) {
-                valid = false;
-            } else {
-                max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-                valid = true;
-            }
+            return {valid, valid ? *max_element(children_max_nums.begin(),
+                                                children_max_nums.end()) : std::rand()};
         }
     } else {
         if (depth >= t_depth) {
-            valid = true;
-            max_num = 1;
-        } else
-            valid = false;
+            return {true, 1};
+        } else {
+            return {false, std::rand()};
+        }
     }
-
-    return {valid, max_num};
 }
 
 // simple as that:
@@ -161,24 +148,18 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
 // By the way this just means, count the number of nodes in the tree
 template<typename T>
 unsigned long num_of_direct_children(Node<T> *node) {
-    unsigned long count;
 
     if (node->has_children()) {
-        std::list<unsigned long> children_counts;
+        unsigned long count = 0;
         for (auto &child: node->children) {
             auto child_count = num_of_direct_children(child);
-            children_counts.push_back(child_count);
+            count += child_count;
         }
-        count = accumulate(
-                children_counts.begin(), children_counts.end(), 0,
-                [](auto acc, auto item) {
-                    return acc + item;
-                }) + node->children.size();
+        return node->children.size() + count;
     } else {
-        count = 0;
+        return 0;
     }
 
-    return count;
 }
 
 template<typename T>
