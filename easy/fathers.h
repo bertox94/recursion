@@ -158,12 +158,10 @@ template<typename T>
 std::tuple<bool, int, int> //do the same also with min, so that you test all properties (i.e. testproperty on children branch)
 number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(Node<T> *node, int current_depth,
                                                                                    int children) {
-    current_depth++;
-
     std::list<std::tuple<bool, int, int>> ll;
     for (auto &child: node->children) {
         auto ret = number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_depth(child,
-                                                                                                      current_depth,
+                                                                                                      current_depth + 1,
                                                                                                       children);
         ll.emplace_back(ret);
     }
