@@ -138,7 +138,7 @@ public:
 // min_breadth of course doesn't mean that every node has at least min_breadth children,
 // but the nodes that have children, they have at least min_breadth children
 template<typename T>
-unsigned long
+int
 build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
     if (curr_depth == max_depth) {
         return curr_nodes;
@@ -161,7 +161,7 @@ build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int ma
 }
 
 template<typename T>
-unsigned long build_list(Node<T> *node, int curr_nodes, int exact_nodes) {
+int build_list(Node<T> *node, int curr_nodes, int exact_nodes) {
     if (curr_nodes == exact_nodes) {
         return curr_nodes;
     } else {

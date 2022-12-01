@@ -40,63 +40,83 @@ void scan(Node<T> *node) {
         scan(child);
 }
 
-// NB: depth = height at the root of each tree
 template<typename T>
-unsigned long max_depth(Node<T> *node) {
+int max_depth(Node<T> *node, int depth) {
 
-    unsigned long max_depth_;
-    std::list<unsigned long> children_depths;
-    for (auto &child: node->children) {
-        auto child_depth = max_depth(child);
-        children_depths.push_back(child_depth + 1);
+    if (node->has_children()) {
+        int max_depth_ = -1;
+        for (auto &child: node->children) {
+            auto child_depth = max_depth(child, depth + 1);
+            max_depth_ = std::max(max_depth_, child_depth);
+        }
+        return max_depth_;
+    } else {
+        return depth;
     }
-    max_depth_ = (children_depths.empty() ? 0 : *max_element(children_depths.begin(), children_depths.end(),
-                                                             [](auto &left, auto &right) { return left < right; }));
-
-    return max_depth_;
 }
 
-//always check that the base case makes sense, here in fact a tree with no child has depth = 0
-// all you need to cconsider is:
-//if it has children, then we pass upward the minimum value among the children, because for the sub-root, the minimum depth is simply the minimum among its children,
-// and for the sub-root of a tree with just the root, (which may very well be the original tree without children) the minimum depth is simply the depth of that node.
-// The same applies for the leaf, it doesnt matter the depth relative to its parent, it only matters the depth relative to its children, as if only that existed.
+// what the parent in the middle receives from the children is none other than the height that the children says to their father.
+// Of course what th father will answer its father, to the original question that was once applied to the root of the tree,
+// will be the height of the children + 1. And it is the same question that the children hve answered to their father.
 template<typename T>
-unsigned long min_depth(Node<T> *node) { //i.e. depth of the less deep leaf
+int max_height(Node<T> *node) {
 
-    unsigned long min_depth_;
     if (node->has_children()) {
-        std::list<unsigned long> children_depths;
+        int max_height_ = -1;
         for (auto &child: node->children) {
-            auto child_depth = min_depth(child);
-            children_depths.push_back(child_depth + 1);
+            auto child_depth = max_height(child);
+            max_height_ = std::max(max_height_, child_depth);
         }
-        min_depth_ = *min_element(children_depths.begin(), children_depths.end(),
-                                  [](auto &left, auto &right) { return left < right; });
+        return max_height_ + 1;
     } else {
-        min_depth_ = 0;
+        return 0;
     }
+}
 
-    return min_depth_;
+template<typename T>
+int min_depth(Node<T> *node, int depth) {
+
+    if (node->has_children()) {
+        int min_depth_ = -1;
+        for (auto &child: node->children) {
+            auto child_depth = min_depth(child, depth + 1);
+            min_depth_ = min_depth_ == -1 ? child_depth : std::min(min_depth_, child_depth);
+        }
+        return min_depth_;
+    } else {
+        return depth;
+    }
+}
+
+template<typename T>
+int min_height(Node<T> *node) {
+
+    if (node->has_children()) {
+        int min_height_ = -1;
+        for (auto &child: node->children) {
+            auto child_depth = min_height(child);
+            min_height_ = min_height_ == -1 ? child_depth : std::min(min_height_, child_depth);
+        }
+        return min_height_ + 1;
+    } else {
+        return 0;
+    }
 }
 
 template<typename T>
 //L1: num of children
-unsigned long how_many(Node<T> *node) {
+int how_many(Node<T> *node) {
 
-    unsigned long size;
     if (node->has_children()) {
-        std::list<int> children_sizes;
+        int count = 0;
         for (auto &child: node->children) {
-            auto child_size = how_many(child);
-            children_sizes.push_back(child_size);
+            auto child_count = how_many(child);
+            count += child_count;
         }
-        size = std::accumulate(children_sizes.begin(), children_sizes.end(), 0) + 1;
+        return count + 1;
     } else {
-        size = 1;
+        return 1;
     }
-
-    return size;
 }
 
 //the base case coincides with the tree being a leaf!
@@ -109,47 +129,40 @@ unsigned long how_many(Node<T> *node) {
 //L1: max_value
 template<typename T>
 T max_value(Node<T> *node) {
-    T max_val_;
     if (node->has_children()) {
-        std::list<T> children_max_values{node->item};
+        T max_val_ = node->item;
         for (auto &child: node->children) {
             auto child_max_value = max_value(child);
-            children_max_values.push_back(child_max_value);
+            max_val_ = std::max(max_val_, child_max_value);
         }
-        max_val_ = *max_element(children_max_values.begin(), children_max_values.end());
+        return max_val_;
     } else {
-        max_val_ = node->item;
+        return node->item;
     }
-
-    return max_val_;
 }
 
-//L1: min_value
 template<typename T>
 T min_value(Node<T> *node) {
-    T min_val_;
     if (node->has_children()) {
-        std::list<T> children_min_values{node->item};
+        T min_val_ = node->item;
         for (auto &child: node->children) {
             auto child_min_value = min_value(child);
-            children_min_values.push_back(child_min_value);
+            min_val_ = std::min(min_val_, child_min_value);
         }
-        min_val_ = *min_element(children_min_values.begin(), children_min_values.end());
+        return min_val_;
     } else {
-        min_val_ = node->item;
+        return node->item;
     }
-
-    return min_val_;
 }
 
 //R1: item as reference
 //L1: number
 //as an execrise you could remove the else branch when not necessary, for example here
 template<typename T>
-unsigned long how_many_like_this(Node<T> *node, T cmp) {
-    unsigned long count;
+int how_many_like_this(Node<T> *node, T cmp) {
+    int count;
     if (node->has_children()) {
-        std::list<unsigned long> children_counts;
+        std::list<int> children_counts;
         for (auto &child: node->children) {
             auto child_count = how_many_like_this(child, cmp);
             children_counts.push_back(child_count);
