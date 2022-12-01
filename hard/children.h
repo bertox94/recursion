@@ -184,46 +184,34 @@ unsigned long num_of_direct_children(Node<T> *node) {
 template<typename T>
 std::tuple<bool, unsigned long>
 num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, unsigned long t_depth) {
-    unsigned long count;
-    bool valid;
 
     if (node->has_children()) {
         if (depth >= t_depth) {
-            std::list<unsigned long> children_counts;
+            unsigned long count = 0;
             for (auto &child: node->children) {
-                auto child_count = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
-                children_counts.push_back(child_count);
+                auto [_, child_max_num] = num_of_direct_children_from_depth_and_below(child, depth + 1,
+                                                                                      t_depth);
+                count += child_max_num;
             }
-            count = accumulate(
-                    children_counts.begin(), children_counts.end(), 0,
-                    [](auto acc, auto item) {
-                        return acc + item;
-                    }) + node->children.size();
-            valid = true;
+            return {true, node->children.size() + count};
         } else {
-            std::list<unsigned long> children_counts;
+            unsigned long count = 0;
+            bool valid = false;
             for (auto &child: node->children) {
-                auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
-                                                                                              t_depth);
+                auto [child_valid, child_max_num] = num_of_direct_children_from_depth_and_below(child, depth + 1,
+                                                                                                t_depth);
+                valid |= child_valid;
                 if (child_valid)
-                    children_counts.push_back(child_max_num);
+                    count += child_max_num;
             }
-            count = accumulate(
-                    children_counts.begin(), children_counts.end(), 0,
-                    [](auto acc, auto item) {
-                        return acc + item;
-                    });
-            valid = !children_counts.empty();
+            return {valid, count};
         }
     } else {
-        if (depth >= t_depth) {
-            valid = true;
-            count = 0;
-        } else
-            valid = false;
+        if (depth >= t_depth)
+            return {true, 0};
+        else
+            return {false, std::rand()};
     }
-
-    return {valid, count};
 }
 
 #endif //RECURSION_CHILDREN_H
