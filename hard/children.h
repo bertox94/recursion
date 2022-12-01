@@ -15,57 +15,46 @@
 template<typename T>
 unsigned long max_num_of_direct_children(Node<T> *node) {
 
-    unsigned long max_num;
     if (node->has_children()) {
-        std::list<unsigned long> children_max_nums;
+        unsigned long max_num = node->children.size();
         for (auto &child: node->children) {
             auto child_max_num = max_num_of_direct_children(child);
-            children_max_nums.push_back(child_max_num);
+            max_num = std::max(max_num, child_max_num);
         }
-        auto children_max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-        max_num = std::max(children_max_num, (unsigned long) node->children.size());
+        return max_num;
     } else {
-        max_num = 0;
+        return 0;
     }
-
-    return max_num;
 }
 
 template<typename T>
 std::tuple<bool, unsigned long>
 max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned long t_depth) {
-    unsigned long max_num;
-    bool valid;
 
     if (node->has_children()) {
         if (depth == t_depth) {
-            max_num = node->children.size();
-            valid = true;
+            return {true, node->children.size()};
         } else if (depth > t_depth) {
-            valid = false;
+            return {false, std::rand()};
         } else {
+            bool valid = false;
             std::list<unsigned long> children_max_nums;
             for (auto &child: node->children) {
                 auto [child_valid, child_max_num] = max_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+                valid |= child_valid;
                 if (child_valid)
                     children_max_nums.push_back(child_max_num);
             }
-            if (children_max_nums.empty()) {
-                valid = false;
-            } else {
-                max_num = *max_element(children_max_nums.begin(), children_max_nums.end());
-                valid = true;
-            }
+            return {valid, valid ? *max_element(children_max_nums.begin(),
+                                                children_max_nums.end()) : std::rand()};
         }
     } else {
         if (depth == t_depth) {
-            valid = true;
-            max_num = 0;
-        } else
-            valid = false;
+            return {true, 0};
+        } else {
+            return {false, std::rand()};
+        }
     }
-
-    return {valid, max_num};
 }
 
 // min_num_of_direct_children_at_depth(node,1) should be 0
@@ -73,38 +62,31 @@ max_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
 template<typename T>
 std::tuple<bool, unsigned long>
 min_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned long t_depth) {
-    unsigned long min_num;
-    bool valid;
 
     if (node->has_children()) {
         if (depth == t_depth) {
-            min_num = node->children.size();
-            valid = true;
+            return {true, node->children.size()};
         } else if (depth > t_depth) {
-            valid = false;
+            return {false, std::rand()};
         } else {
+            bool valid = false;
             std::list<unsigned long> children_min_nums;
             for (auto &child: node->children) {
                 auto [child_valid, child_min_num] = min_num_of_direct_children_at_depth(child, depth + 1, t_depth);
+                valid |= child_valid;
                 if (child_valid)
                     children_min_nums.push_back(child_min_num);
             }
-            if (children_min_nums.empty()) {
-                valid = false;
-            } else {
-                min_num = *min_element(children_min_nums.begin(), children_min_nums.end());
-                valid = true;
-            }
+            return {valid, valid ? *min_element(children_min_nums.begin(),
+                                                children_min_nums.end()) : std::rand()};
         }
     } else {
         if (depth == t_depth) {
-            valid = true;
-            min_num = 0;
-        } else
-            valid = false;
+            return {true, 0};
+        } else {
+            return {false, std::rand()};
+        }
     }
-
-    return {valid, min_num};
 }
 
 template<typename T>
