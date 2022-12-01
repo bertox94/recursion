@@ -22,7 +22,7 @@ unsigned long num_of_direct_children(Node<T> *node) {
             auto child_count = num_of_direct_children(child);
             count += child_count;
         }
-        return node->children.size() + count;
+        return count + node->children.size();
     } else {
         return 0;
     }
@@ -84,15 +84,13 @@ min_num_of_direct_children_at_depth(Node<T> *node, unsigned long depth, unsigned
             return {false, std::rand()};
         } else {
             bool valid = false;
-            std::list<unsigned long> children_min_nums;
+            unsigned long min_num = -1;
             for (auto &child: node->children) {
                 auto [child_valid, child_min_num] = min_num_of_direct_children_at_depth(child, depth + 1, t_depth);
                 valid |= child_valid;
-                if (child_valid)
-                    children_min_nums.push_back(child_min_num);
+                min_num = child_valid ? (min_num == -1 ? child_min_num : std::min(min_num, child_min_num)) : min_num;
             }
-            return {valid, valid ? *min_element(children_min_nums.begin(),
-                                                children_min_nums.end()) : std::rand()};
+            return {valid, min_num};
         }
     } else {
         if (depth == t_depth) {
@@ -117,17 +115,15 @@ max_size_of_subtrees_from_depth_and_below(Node<T> *node, unsigned long depth, un
             }
             return {true, max_num + 1};
         } else {
-            std::list<unsigned long> children_max_nums;
             bool valid = false;
+            unsigned long max_num = -1;
             for (auto &child: node->children) {
                 auto [child_valid, child_max_num] = max_size_of_subtrees_from_depth_and_below(child, depth + 1,
                                                                                               t_depth);
                 valid |= child_valid;
-                if (child_valid)
-                    children_max_nums.push_back(child_max_num);
+                max_num = child_valid ? std::max(max_num, child_max_num) : max_num;
             }
-            return {valid, valid ? *max_element(children_max_nums.begin(),
-                                                children_max_nums.end()) : std::rand()};
+            return {valid, max_num};
         }
     } else {
         if (depth >= t_depth) {
@@ -158,8 +154,7 @@ num_of_direct_children_from_depth_and_below(Node<T> *node, unsigned long depth, 
                 auto [child_valid, child_max_num] = num_of_direct_children_from_depth_and_below(child, depth + 1,
                                                                                                 t_depth);
                 valid |= child_valid;
-                if (child_valid)
-                    count += child_max_num;
+                count += child_valid ? child_max_num : 0;
             }
             return {valid, count};
         }
