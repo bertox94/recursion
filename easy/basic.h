@@ -134,7 +134,7 @@ T min_value(Node<T> *node) {
             auto child_min_value = min_value(child);
             children_min_values.push_back(child_min_value);
         }
-        min_val_ = *max_element(children_min_values.begin(), children_min_values.end());
+        min_val_ = *min_element(children_min_values.begin(), children_min_values.end());
     } else {
         min_val_ = node->item;
     }
