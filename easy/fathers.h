@@ -44,7 +44,7 @@ int number_of_fathers_with_specified_number_of_children(Node<T> *node, int num_o
     if (node->has_children()) {
         int count = 0;
         for (auto &child: node->children) {
-            auto child_count = number_of_fathers_with_no_child(child);
+            auto child_count = number_of_fathers_with_specified_number_of_children(child, num_of_children);
             count += child_count;
         }
         count += node->children.size() == num_of_children ? 1 : 0;
