@@ -176,7 +176,7 @@ number_of_fathers_with_specified_number_of_children_at_maximal_and_thus_same_dep
             });
             return {true, max_depth, count};
         } else {
-            //all children has no father with specified num. of child
+            //all children have no father with specified num. of child
             if (node->children.size() == children) {
                 return {true, current_depth, 1};
             } else {
