@@ -24,14 +24,15 @@ using namespace std;
 template<typename T>
 class Node {
 public:
+    int id;
     T item;
     std::vector<Node *> children;
 
     Node() = default;
 
-    explicit Node(const T &item) : item(item) {}
+    explicit Node(int id, const T &item) : id(id), item(item) {}
 
-    explicit Node(T &&item) : Node(item) {}
+    explicit Node(int id, T &&item) : Node(id, item) {}
 
     Node<T> *next() {
         switch (children.size()) {
@@ -54,23 +55,6 @@ public:
     bool has_children() const {
         return children.size() > 0;
     }
-
-    /*
-    void buildtree(Node<T> *root, int curr, int big, int max_children) {
-        //higher the number to the right, the bigger the root
-        int num = curr;
-        while (std::rand() % (2 * curr) <= big) {
-            if (max_children && (curr - num) >= max_children)
-                break;
-            root->children.push_back(new Node<T>(std::rand() % MAX_RAND));
-            curr++;
-        }
-
-        for (auto &child: root->children)
-            buildtree(child, curr + 1, big, max_children);
-    }
-     */
-
 };
 
 template<typename T>
@@ -148,7 +132,7 @@ build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int ma
     if (make_children) {
         int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
-            auto child = new Node<T>(std::rand());
+            auto child = new Node<T>(curr_nodes + 1, std::rand());
             node->children.push_back(child);
             curr_nodes = build_tree(child,
                                     curr_depth + 1, max_depth,
