@@ -20,12 +20,12 @@ void testTree() {
         cout << "Creating root..." << endl;
         root = new Node<int>(std::rand());
         cout << "Populating tree..." << endl;
-        auto nnum = build_tree(root, 0, 20, 0, 5, 1);
+        auto nnum = build_tree(root, 0, 20, 0, 5);
         //auto nnum = build_list(root,1,3200);
         auto num = how_many(root);
 
         if (nnum != num) {
-            cout << "size mismatch (" << num << ")\n" << endl;
+            cout << "size mismatch (" << nnum << ", " << num << ")\n" << endl;
             throw 1;
         }
 

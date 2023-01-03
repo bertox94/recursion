@@ -161,6 +161,30 @@ build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int ma
 }
 
 template<typename T>
+int
+build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth) {
+    if (curr_depth == max_depth) {
+        return 1;
+    }
+
+    bool make_children = (rand() % 2);
+    if (make_children) {
+        int direct_children = std::max(1 + (rand() % max_breadth), min_breadth);
+        int num_of_children = 0;
+        for (auto i = 1; i <= direct_children /*&& curr_nodes < max_nodes*/; i++) {
+            auto child = new Node<T>(std::rand());
+            node->children.push_back(child);
+            num_of_children += build_tree(child,
+                                          curr_depth + 1, max_depth,
+                                          min_breadth, max_breadth);
+        }
+        return num_of_children + 1;
+    } else {
+        return 1;
+    }
+}
+
+template<typename T>
 int build_list(Node<T> *node, int curr_nodes, int exact_nodes) {
     if (curr_nodes == exact_nodes) {
         return curr_nodes;
