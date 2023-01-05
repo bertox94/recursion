@@ -7,6 +7,7 @@
 
 #include <iomanip>
 #include <numeric>
+#include <fstream>
 #include "../Node.h"
 
 /**
@@ -35,9 +36,11 @@
 //or counting, max/min
 
 template<typename T>
-void scan(Node<T> *node) {
-    for (auto &child: node->children)
-        scan(child);
+void scan(Node<T> *node, ofstream &myfile) {
+    myfile << node->id << std::endl;
+    for (auto &child: node->children) {
+        scan(child, myfile);
+    }
 }
 
 template<typename T>

@@ -59,6 +59,10 @@ void testTree() {
     root->children.push_back(n5);
     root->children.push_back(n7);
 */
+    ofstream myfile;
+    myfile.open ("example.txt");
+    scan(root, myfile);
+    myfile.close();
 
     cout << "-------" << endl;
     cout << endl;

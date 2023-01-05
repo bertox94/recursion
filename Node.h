@@ -124,19 +124,17 @@ public:
 template<typename T>
 int
 build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
-    if (curr_depth == max_depth) {
-        return curr_nodes;
-    }
 
-    bool make_children = (rand() % 2);
+    bool make_children = (rand() % 2) && curr_depth < max_depth;
     if (make_children) {
         int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
             auto child = new Node<T>(curr_nodes + 1, std::rand());
+            curr_nodes++;
             node->children.push_back(child);
             curr_nodes = build_tree(child,
                                     curr_depth + 1, max_depth,
-                                    min_breadth, max_breadth, curr_nodes + 1);
+                                    min_breadth, max_breadth, curr_nodes);
         }
         return curr_nodes;
     } else {
