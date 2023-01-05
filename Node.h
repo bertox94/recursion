@@ -65,9 +65,16 @@ public:
     T val;
 };
 
-class _depth {
+class depth_ {
 public:
-    explicit _depth(int vv) : val(vv) {}
+    explicit depth_(int vv) : val(vv) {}
+
+    int val;
+};
+
+class height_ {
+public:
+    explicit height_(int vv) : val(vv) {}
 
     int val;
 };
@@ -95,9 +102,9 @@ public:
 template<typename T>
 class RightAttr {
 public:
-    RightAttr(_depth d, _targetdepth td) : depth(d.val), target_depth(td.val) {}
+    RightAttr(depth_ d, _targetdepth td) : depth(d.val), target_depth(td.val) {}
 
-    RightAttr(_depth d) : depth(d.val) {}
+    RightAttr(depth_ d) : depth(d.val) {}
 
     int depth;
     int target_depth;
@@ -109,11 +116,16 @@ class LeftAttr {
 public:
     LeftAttr(_num n, _value<T> v) : num(n.val), value(v.val) {}
 
+    LeftAttr(depth_ d) : depth(d.val) {}
+
+    LeftAttr(height_ h) : height(h.val) {}
+
     LeftAttr() = default;
 
     bool valid;
     int num;
     int depth;
+    int height;
     T value;
     std::list<T> simpleList;
     std::list<LeftAttr<T>> compositeList;

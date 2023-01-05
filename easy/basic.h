@@ -44,35 +44,26 @@ void scan(Node<T> *node, ofstream &myfile) {
 }
 
 template<typename T>
-int max_depth(Node<T> *node, int depth) {
-
-    if (node->has_children()) {
-        int max_depth_ = -1;
-        for (auto &child: node->children) {
-            auto child_depth = max_depth(child, depth + 1);
-            max_depth_ = std::max(max_depth_, child_depth);
-        }
-        return max_depth_;
-    } else {
-        return depth;
-    }
+LeftAttr<T> max_depth(Node<T> *node, int depth) {
+    return max_height(node);
 }
 
 // what the parent in the middle receives from the children is none other than the height that the children says to their father.
 // Of course what th father will answer its father, to the original question that was once applied to the root of the tree,
 // will be the height of the children + 1. And it is the same question that the children hve answered to their father.
 template<typename T>
-int max_height(Node<T> *node) {
-
+LeftAttr<T> max_height(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        int max_height_ = -1;
+        std::vector<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto child_depth = max_height(child);
-            max_height_ = std::max(max_height_, child_depth);
+            auto Lchild = max_height(child);
+            Lchildren.push_back(Lchild);
         }
-        return max_height_ + 1;
+        return height_((*max_element(Lchildren.begin(), Lchildren.end(),
+                                     [](auto &l, auto &r) { return l.height < r.height; })).height + 1);
     } else {
-        return 0;
+        return height_(0);
     }
 }
 
