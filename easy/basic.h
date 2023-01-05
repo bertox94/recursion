@@ -83,17 +83,18 @@ int min_depth(Node<T> *node, int depth) {
 }
 
 template<typename T>
-int min_height(Node<T> *node) {
-
+LeftAttr<T> min_height(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        int min_height_ = -1;
+        std::vector<LeftAttr<T>> Lchildren;
         for (auto &child: node->children) {
-            auto child_depth = min_height(child);
-            min_height_ = min_height_ == -1 ? child_depth : std::min(min_height_, child_depth);
+            auto Lchild = min_height(child);
+            Lchildren.push_back(Lchild);
         }
-        return min_height_ + 1;
+        return height_((*min_element(Lchildren.begin(), Lchildren.end(),
+                                     [](auto &l, auto &r) { return l.height < r.height; })).height + 1);
     } else {
-        return 0;
+        return height_(0);
     }
 }
 
