@@ -13,12 +13,13 @@
 template<typename T>
 void print(Node<T> *node, int spacing = 0) {
     if (node->has_children()) {
-        std::cout << std::string(spacing, ' ') << (spacing > 0 ? "+ " : "") << node->item << ":" << std::endl;
+        std::cout << std::string(spacing, ' ') << (spacing > 0 ? "+ " : "") << node->id << ", " << node->item << ":"
+                  << std::endl;
         for (auto &child: node->children) {
             print(child, spacing + 3);
         }
     } else {
-        std::cout << std::string(spacing, ' ') << "- " << node->item << std::endl;
+        std::cout << std::string(spacing, ' ') << "- " << node->id << ", " << node->item << std::endl;
     }
 }
 

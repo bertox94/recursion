@@ -18,14 +18,14 @@ void testTree() {
     Node<int> *root;
     while (true) {
         cout << "Creating root..." << endl;
-        root = new Node<int>(std::rand());
+        root = new Node<int>(1, std::rand());
         cout << "Populating tree..." << endl;
         auto nnum = build_tree(root, 0, 20, 0, 5, 1);
         //auto nnum = build_list(root,1,3200);
         auto num = how_many(root);
 
         if (nnum != num) {
-            cout << "size mismatch (" << num << ")\n" << endl;
+            cout << "size mismatch (" << nnum << ", " << num << ")\n" << endl;
             throw 1;
         }
 
@@ -59,6 +59,10 @@ void testTree() {
     root->children.push_back(n5);
     root->children.push_back(n7);
 */
+    ofstream myfile;
+    myfile.open ("example.txt");
+    scan(root, myfile);
+    myfile.close();
 
     cout << "-------" << endl;
     cout << endl;
