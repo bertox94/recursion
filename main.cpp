@@ -22,7 +22,7 @@ void testTree() {
         cout << "Populating tree..." << endl;
         auto nnum = build_tree(root, 0, 20, 0, 5, 1);
         //auto nnum = build_list(root,1,3200);
-        auto num = how_many(root);
+        auto num = how_many(root).num;
 
         if (nnum != num) {
             cout << "size mismatch (" << nnum << ", " << num << ")\n" << endl;
@@ -60,7 +60,7 @@ void testTree() {
     root->children.push_back(n7);
 */
     ofstream myfile;
-    myfile.open ("example.txt");
+    myfile.open("example.txt");
     scan(root, myfile);
     myfile.close();
 
@@ -77,15 +77,15 @@ void testTree() {
     cout << "-------" << endl;
     cout << endl;
 
-    auto maxval = max_value(root);
-    auto minval = min_value(root);
+    auto maxval = maxvalue_(root);
+    auto minval = minvalue_(root);
     auto l = list_nodes(root);
-    cout << "How many:       " << how_many(root) << endl;
+    cout << "How many:       " << how_many(root).num << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root, 0) << endl;
-    cout << "Max depth:      " << max_depth(root, 0).height << endl;
-    cout << "Min value:      " << min_value(root) << endl;
-    cout << "Max value:      " << max_value(root) << endl;
+    cout << "Min depth:      " << min_depth(root, 0).depth << endl;
+    cout << "Max depth:      " << max_depth(root, 0).depth << endl;
+    cout << "Min value:      " << minvalue_(root).value << endl;
+    cout << "Max value:      " << maxvalue_(root).value << endl;
     cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
 
 
@@ -100,9 +100,9 @@ void testTree() {
 
     //cout << "Balance Factor: " << (double) number_of_fathers_with_no_child(root) / how_many(root) << endl;
     cout << "-------" << endl;
-    for (auto i = minval; i <= minval + 25; i++) {
+    for (auto i = minval.value; i <= minval.value + 25; i++) {
         string str = string("HMLT (") + to_string(i) + "):";
-        auto res1 = how_many_like_this(root, i);
+        auto res1 = how_many_like_this(root, RightAttr<int>(value_(i))).num;
         //auto res2 = how_many_like_this_variant(root, i, 0);
         //if (res1 != res2)
         cout << setw(13) << left << str << res1 << endl;//", " << res2 << endl;

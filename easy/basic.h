@@ -45,7 +45,7 @@ void scan(Node<T> *node, ofstream &myfile) {
 
 template<typename T>
 LeftAttr<T> max_depth(Node<T> *node, int depth) {
-    return max_height(node);
+    return depth_(max_height(node).height);
 }
 
 // what the parent in the middle receives from the children is none other than the height that the children says to their father.
@@ -68,18 +68,8 @@ LeftAttr<T> max_height(Node<T> *node) {
 }
 
 template<typename T>
-int min_depth(Node<T> *node, int depth) {
-
-    if (node->has_children()) {
-        int min_depth_ = -1;
-        for (auto &child: node->children) {
-            auto child_depth = min_depth(child, depth + 1);
-            min_depth_ = min_depth_ == -1 ? child_depth : std::min(min_depth_, child_depth);
-        }
-        return min_depth_;
-    } else {
-        return depth;
-    }
+LeftAttr<T> min_depth(Node<T> *node, int depth) {
+    return depth_(min_height(node).height);
 }
 
 template<typename T>
@@ -100,17 +90,18 @@ LeftAttr<T> min_height(Node<T> *node) {
 
 template<typename T>
 //L1: num of children
-int how_many(Node<T> *node) {
-
+LeftAttr<T> how_many(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        int count = 0;
+        L.num = 0;
         for (auto &child: node->children) {
-            auto child_count = how_many(child);
-            count += child_count;
+            auto Lchild = how_many(child);
+            L.num += Lchild.num;
         }
-        return count + 1;
+        L.num++;
+        return L;
     } else {
-        return 1;
+        return num_(1);
     }
 }
 
@@ -121,32 +112,38 @@ int how_many(Node<T> *node) {
 //A tree consists of a root, and zero or more trees T1, T2, . . ., Tk
 //An empty tree doesn't exist. At least root must be.
 //When thinking what to return and stuff, just think that a leaf is just a root without children
-//L1: max_value
+//L1: maxvalue_
 template<typename T>
-T max_value(Node<T> *node) {
+LeftAttr<T> maxvalue_(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        T max_val_ = node->item;
+        std::vector<LeftAttr<T>> Ltemp;
         for (auto &child: node->children) {
-            auto child_max_value = max_value(child);
-            max_val_ = std::max(max_val_, child_max_value);
+            auto Lchild = maxvalue_(child);
+            Ltemp.push_back(Lchild);
         }
-        return max_val_;
+        Ltemp.push_back(value_(node->item));
+        return value_((*max_element(Ltemp.begin(), Ltemp.end(),
+                                    [](auto &l, auto &r) { return l.height < r.height; })).value);
     } else {
-        return node->item;
+        return value_(node->item);
     }
 }
 
 template<typename T>
-T min_value(Node<T> *node) {
+LeftAttr<T> minvalue_(Node<T> *node) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        T min_val_ = node->item;
+        std::vector<LeftAttr<T>> Ltemp;
         for (auto &child: node->children) {
-            auto child_min_value = min_value(child);
-            min_val_ = std::min(min_val_, child_min_value);
+            auto Lchild = minvalue_(child);
+            Ltemp.push_back(Lchild);
         }
-        return min_val_;
+        Ltemp.push_back(value_(node->item));
+        return value_((*min_element(Ltemp.begin(), Ltemp.end(),
+                                    [](auto &l, auto &r) { return l.height < r.height; })).value);
     } else {
-        return node->item;
+        return value_(node->item);
     }
 }
 
@@ -154,20 +151,21 @@ T min_value(Node<T> *node) {
 //L1: number
 //as an execrise you could remove the else branch when not necessary, for example here
 template<typename T>
-int how_many_like_this(Node<T> *node, T cmp) {
+LeftAttr<T> how_many_like_this(Node<T> *node, RightAttr<T> R) {
+    LeftAttr<T> L;
     if (node->has_children()) {
-        int count = 0;
+        L.num = 0;
         for (auto &child: node->children) {
-            auto child_count = how_many_like_this(child, cmp);
-            count += child_count;
+            auto Lchild = how_many_like_this(child, R);
+            L.num += Lchild.num;
         }
-        count += node->item == cmp ? 1 : 0;
-        return count;
+        L.num += node->item == R.value ? 1 : 0;
+        return L;
     } else {
-        if (node->item == cmp) {
-            return 1;
+        if (node->item == R.value) {
+            return num_(1);
         } else {
-            return 0;
+            return num_(0);
         }
     }
 }

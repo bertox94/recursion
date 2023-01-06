@@ -58,9 +58,9 @@ public:
 };
 
 template<typename T>
-class _value {
+class value_ {
 public:
-    explicit _value(T vv) : val(vv) {}
+    explicit value_(T vv) : val(vv) {}
 
     T val;
 };
@@ -91,9 +91,9 @@ public:
     bool val;
 };
 
-class _num {
+class num_ {
 public:
-    explicit _num(int vv) : val(vv) {}
+    explicit num_(int vv) : val(vv) {}
 
     int val;
 };
@@ -106,6 +106,8 @@ public:
 
     RightAttr(depth_ d) : depth(d.val) {}
 
+    RightAttr(value_<T> v) : value(v.val) {}
+
     int depth;
     int target_depth;
     T value;
@@ -114,11 +116,15 @@ public:
 template<typename T>
 class LeftAttr {
 public:
-    LeftAttr(_num n, _value<T> v) : num(n.val), value(v.val) {}
+    LeftAttr(num_ n, value_<T> v) : num(n.val), value(v.val) {}
 
     LeftAttr(depth_ d) : depth(d.val) {}
 
     LeftAttr(height_ h) : height(h.val) {}
+
+    LeftAttr(num_ n) : num(n.val) {}
+
+    LeftAttr(value_<T> v) : value(v.val) {}
 
     LeftAttr() = default;
 

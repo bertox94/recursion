@@ -41,7 +41,7 @@ LeftAttr<T> list_nodes_II(Node<T> *node) {
                     }
                 }
                 if (!found)
-                    L.compositeList.push_back(LeftAttr<T>(_num(LAttr1.num), _value(LAttr1.value)));
+                    L.compositeList.push_back(LeftAttr<T>(num_(LAttr1.num), value_(LAttr1.value)));
             }
         }
         bool found = false;
@@ -53,9 +53,9 @@ LeftAttr<T> list_nodes_II(Node<T> *node) {
             }
         }
         if (!found)
-            L.compositeList.emplace_back(_num(1), _value(node->item));
+            L.compositeList.emplace_back(num_(1), value_(node->item));
     } else {
-        L.compositeList.emplace_back(_num(1), _value(node->item));
+        L.compositeList.emplace_back(num_(1), value_(node->item));
     }
 
     return L;
@@ -101,7 +101,7 @@ LeftAttr<T> duplicates(Node<T> *node) {
                     for (auto currSingleton = L.simpleList.begin();
                          currSingleton != L.simpleList.end(); currSingleton++) {
                         if (childSingleton == *currSingleton) {
-                            L.compositeList.push_back(LeftAttr<T>(_num(2), _value(childSingleton)));
+                            L.compositeList.push_back(LeftAttr<T>(num_(2), value_(childSingleton)));
                             currSingleton = L.simpleList.erase(currSingleton);
                             found = true;
                             break;
@@ -118,7 +118,7 @@ LeftAttr<T> duplicates(Node<T> *node) {
                 for (auto currSingleton = L.simpleList.begin(); currSingleton != L.simpleList.end(); currSingleton++) {
                     if (childMultiple.value == *currSingleton) {
                         L.compositeList.push_back(
-                                LeftAttr<T>(_num(childMultiple.num + 1), _value(childMultiple.value)));
+                                LeftAttr<T>(num_(childMultiple.num + 1), value_(childMultiple.value)));
                         L.simpleList.erase(currSingleton);
                         found = true;
                         break;
@@ -134,7 +134,7 @@ LeftAttr<T> duplicates(Node<T> *node) {
                     }
                 }
                 if (!found) {
-                    L.compositeList.push_back(LeftAttr<T>(_num(childMultiple.num), _value(childMultiple.value)));
+                    L.compositeList.push_back(LeftAttr<T>(num_(childMultiple.num), value_(childMultiple.value)));
                 }
             }
         }
@@ -153,7 +153,7 @@ LeftAttr<T> duplicates(Node<T> *node) {
         if (!found) {
             for (auto currSingleton = L.simpleList.begin(); currSingleton != L.simpleList.end(); currSingleton++) {
                 if (node->item == *currSingleton) {
-                    L.compositeList.push_back(LeftAttr<T>(_num(2), _value(node->item)));
+                    L.compositeList.push_back(LeftAttr<T>(num_(2), value_(node->item)));
                     L.simpleList.erase(currSingleton);
                     found = true;
                     break;
