@@ -16,11 +16,9 @@ void testTree() {
     // If it did, then it can't be a right attribute. on the other hand, node refers to the actual node,
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
     Node<int> *root;
+    int nnum;
     while (true) {
-        cout << "Creating root..." << endl;
-        root = new Node<int>(1, std::rand());
-        cout << "Populating tree..." << endl;
-        auto nnum = build_tree(root, 0, 20, 0, 5, 1);
+        std::tie(root,nnum) = build_tree<int>( 0, 5, 0, 5);
         //auto nnum = build_list(root,1,3200);
         auto num = how_many(root).num;
 

@@ -139,6 +139,14 @@ public:
 
 // min_breadth of course doesn't mean that every node has at least min_breadth children,
 // but the nodes that have children, they have at least min_breadth children
+
+template<typename T>
+std::tuple<Node<T>*, int>
+build_tree(int curr_depth, int max_depth, int min_breadth, int max_breadth) {
+   Node<T> *root = new Node<int>(1, std::rand());
+   return {root, build_tree<T>(root,curr_depth,max_depth,min_breadth,max_breadth,1)};
+}
+
 template<typename T>
 int
 build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
@@ -147,41 +155,15 @@ build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int ma
     if (make_children) {
         int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
-            auto child = new Node<T>(curr_nodes + 1, std::rand());
             curr_nodes++;
+            auto child = new Node<T>(curr_nodes, std::rand());
             node->children.push_back(child);
             curr_nodes = build_tree(child,
                                     curr_depth + 1, max_depth,
                                     min_breadth, max_breadth, curr_nodes);
         }
-        return curr_nodes;
-    } else {
-        return curr_nodes;
     }
-}
-
-template<typename T>
-int
-build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth) {
-    if (curr_depth == max_depth) {
-        return 1;
-    }
-
-    bool make_children = (rand() % 2);
-    if (make_children) {
-        int direct_children = std::max(1 + (rand() % max_breadth), min_breadth);
-        int num_of_children = 0;
-        for (auto i = 1; i <= direct_children /*&& curr_nodes < max_nodes*/; i++) {
-            auto child = new Node<T>(std::rand());
-            node->children.push_back(child);
-            num_of_children += build_tree(child,
-                                          curr_depth + 1, max_depth,
-                                          min_breadth, max_breadth);
-        }
-        return num_of_children + 1;
-    } else {
-        return 1;
-    }
+    return curr_nodes;
 }
 
 template<typename T>
