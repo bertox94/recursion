@@ -18,7 +18,15 @@ void testTree() {
     Node<int> *root;
     int nnum;
     while (true) {
-        std::tie(root,nnum) = build_tree<int>( 0, 5, 0, 5);
+
+        root = new Node<int>(1, std::rand());
+        auto R = std::unordered_map<std::string, int>{{keys::curr_depth,  0},
+                                                      {keys::max_depth,   5},
+                                                      {keys::min_breadth, 0},
+                                                      {keys::max_breadth, 5}};
+
+        auto L = build_tree<int>(root, R);
+        nnum = L[keys::curr_nodes];
         //auto nnum = build_list(root,1,3200);
         auto num = how_many(root).num;
 
@@ -27,7 +35,7 @@ void testTree() {
             throw 1;
         }
 
-        if (num < 100) {
+        if (num < 10) {
             cout << "Tree is too small (" << num << ")\n" << endl;
         } else
             break;
@@ -59,7 +67,7 @@ void testTree() {
 */
     ofstream myfile;
     myfile.open("example.txt");
-    scan(root, myfile);
+    print_to_file(root, myfile);
     myfile.close();
 
     cout << "-------" << endl;
@@ -74,6 +82,8 @@ void testTree() {
     to_string(root);
     cout << "-------" << endl;
     cout << endl;
+
+    auto node = scan(root, 121);
 
     auto maxval = maxvalue_(root);
     auto minval = minvalue_(root);

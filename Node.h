@@ -7,6 +7,10 @@
 #include <ctime>
 #include <iostream>
 #include <list>
+#include <unordered_map>
+#include <any>
+#include <variant>
+#include "keys.h"
 
 using namespace std;
 
@@ -141,29 +145,31 @@ public:
 // but the nodes that have children, they have at least min_breadth children
 
 template<typename T>
-std::tuple<Node<T>*, int>
-build_tree(int curr_depth, int max_depth, int min_breadth, int max_breadth) {
-   Node<T> *root = new Node<int>(1, std::rand());
-   return {root, build_tree<T>(root,curr_depth,max_depth,min_breadth,max_breadth,1)};
+std::unordered_map<string, int>
+build_tree(Node<T> *node, std::unordered_map<std::string, int> R) {
+    R[keys::curr_nodes] = 1;
+    auto L = build_tree_impl<T>(node, R);
+    return L;
 }
 
 template<typename T>
-int
-build_tree(Node<T> *node, int curr_depth, int max_depth, int min_breadth, int max_breadth, int curr_nodes) {
-
-    bool make_children = (rand() % 2) && curr_depth < max_depth;
+std::unordered_map<string, int>
+build_tree_impl(Node<T> *node, std::unordered_map<string, int> R) {
+    std::unordered_map<string, int> L = {{keys::curr_nodes, (R[keys::curr_nodes])}};
+    bool make_children = (rand() % 2) && R[keys::curr_depth] < R[keys::max_depth];
     if (make_children) {
-        int n_children = std::max(1 + (rand() % max_breadth), min_breadth);
+        int n_children = std::max(1 + (rand() % R[keys::max_breadth]), R[keys::min_breadth]);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
-            curr_nodes++;
-            auto child = new Node<T>(curr_nodes, std::rand());
+            R[keys::curr_nodes] += 1;
+            auto child = new Node<T>(R[keys::curr_nodes], std::rand());
             node->children.push_back(child);
-            curr_nodes = build_tree(child,
-                                    curr_depth + 1, max_depth,
-                                    min_breadth, max_breadth, curr_nodes);
+            R[keys::curr_depth] += 1;
+            auto Left = build_tree_impl(child, R);
+            L = Left;
+            R[keys::curr_nodes] = L[keys::curr_nodes];
         }
     }
-    return curr_nodes;
+    return L;
 }
 
 template<typename T>

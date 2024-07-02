@@ -36,11 +36,24 @@
 //or counting, max/min
 
 template<typename T>
-void scan(Node<T> *node, ofstream &myfile) {
+void print_to_file(Node<T> *node, ofstream &myfile) {
     myfile << node->id << std::endl;
     for (auto &child: node->children) {
-        scan(child, myfile);
+        print_to_file(child, myfile);
     }
+}
+
+template<typename T>
+Node<T>* scan(Node<T> *node, int id) {
+    if(node->id==id)
+        return node;
+    for (auto child = node->children.begin();child<node->children.end();child++) {
+        if((*child)->id>id){
+            child--;
+            return scan(*child,id);
+        }
+    }
+    return nullptr;
 }
 
 template<typename T>
