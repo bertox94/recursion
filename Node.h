@@ -147,6 +147,7 @@ public:
 template<typename T>
 std::unordered_map<string, int>
 build_tree(Node<T> *node, std::unordered_map<std::string, int> R) {
+    R[keys::curr_depth] = 0;
     R[keys::curr_nodes] = 1;
     auto L = build_tree_impl<T>(node, R);
     return L;

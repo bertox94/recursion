@@ -10,7 +10,7 @@
 #include <iomanip>
 #include <string>
 
-void testTree() {
+void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
     //TODO: give right attribute to child already prepared for them (e.g. the depth of the first call is 0, not -1)
     //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
     // If it did, then it can't be a right attribute. on the other hand, node refers to the actual node,
@@ -20,10 +20,9 @@ void testTree() {
     while (true) {
 
         root = new Node<int>(1, std::rand());
-        auto R = std::unordered_map<std::string, int>{{keys::curr_depth,  0},
-                                                      {keys::max_depth,   5},
-                                                      {keys::min_breadth, 0},
-                                                      {keys::max_breadth, 5}};
+        auto R = std::unordered_map<std::string, int>{{keys::max_depth,   maxdepth},
+                                                      {keys::min_breadth, minbreadth},
+                                                      {keys::max_breadth, maxbreadth}};
 
         auto L = build_tree<int>(root, R);
         nnum = L[keys::curr_nodes];
@@ -35,11 +34,12 @@ void testTree() {
             throw 1;
         }
 
-        if (num < 10) {
+        if (num < minnum) {
             cout << "Tree is too small (" << num << ")\n" << endl;
-        } else
+            destroy(root);
+        } else {
             break;
-        destroy(root);
+        }
     }
     cout << "Done" << endl;
 
@@ -74,16 +74,20 @@ void testTree() {
     cout << endl;
     print(root);
     cout << "-------" << endl;
-    cout << "sorted ##" << endl;
-    sorted(root);
-    print(root);
-    cout << "-------" << endl;
+    //cout << "sorted ##" << endl;
+    //sorted(root);
+    //print(root);
+    //cout << "-------" << endl;
     cout << endl;
     to_string(root);
     cout << "-------" << endl;
     cout << endl;
 
-    auto node = scan(root, 121);
+    auto id = std::rand() % (minnum - 1) + 1;
+    cout << "searching for id:" << id << endl;
+    auto node = scan(root, {{keys::id, id}});
+    cout << "Id:\t" << id << " has val: " << node[keys::node]->item << endl;
+
 
     auto maxval = maxvalue_(root);
     auto minval = minvalue_(root);
@@ -201,6 +205,8 @@ void testTree() {
 
 int main() {
     std::srand(std::time(nullptr));
-    testTree();
+    auto i = 0;
+    for (; i < 100; i++)
+        testTree(100, 10, 0, 5);
     return 0;
 }

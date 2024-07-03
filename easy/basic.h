@@ -44,16 +44,19 @@ void print_to_file(Node<T> *node, ofstream &myfile) {
 }
 
 template<typename T>
-Node<T>* scan(Node<T> *node, int id) {
-    if(node->id==id)
-        return node;
-    for (auto child = node->children.begin();child<node->children.end();child++) {
-        if((*child)->id>id){
-            child--;
-            return scan(*child,id);
+unordered_map<string, Node<T> *> scan(Node<T> *node, unordered_map<std::string, int> R) {
+    if (node->id == R[keys::id])
+        return {{keys::node, node}};
+    if (node->has_children()) {
+        auto child = node->children.begin();
+        auto prev = child;
+        while (child != node->children.end() && (*child)->id <= R[keys::id]) {
+            prev = child;
+            child++;
         }
+        return scan(*prev, R);
     }
-    return nullptr;
+    return {{keys::node, nullptr}};
 }
 
 template<typename T>

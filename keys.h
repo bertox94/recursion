@@ -12,4 +12,5 @@ namespace keys {
     std::string curr_nodes = "curr_nodes";
     std::string node = "node";
     std::string root = "root";
+    std::string id = "id";
 }
