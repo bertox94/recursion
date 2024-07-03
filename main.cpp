@@ -204,6 +204,7 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
 
 int main() {
     std::srand(std::time(nullptr));
-    testTree(100, 15, 0, 5);
+    testTree(4000, 18, 0, 8);
+    system("pause");
     return 0;
 }

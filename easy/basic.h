@@ -137,7 +137,7 @@ LeftAttr<T> maxvalue_(Node<T> *node) {
         }
         Ltemp.push_back(value_(node->item));
         return value_((*max_element(Ltemp.begin(), Ltemp.end(),
-                                    [](auto &l, auto &r) { return l.height < r.height; })).value);
+                                    [](auto &l, auto &r) { return l.value < r.value; })).value);
     } else {
         return value_(node->item);
     }
@@ -154,7 +154,7 @@ LeftAttr<T> minvalue_(Node<T> *node) {
         }
         Ltemp.push_back(value_(node->item));
         return value_((*min_element(Ltemp.begin(), Ltemp.end(),
-                                    [](auto &l, auto &r) { return l.height < r.height; })).value);
+                                    [](auto &l, auto &r) { return l.value < r.value; })).value);
     } else {
         return value_(node->item);
     }
