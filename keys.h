@@ -11,6 +11,4 @@ namespace keys {
     std::string min_breadth = "min_breadth";
     std::string curr_nodes = "curr_nodes";
     std::string node = "node";
-    std::string root = "root";
-    std::string id = "id";
 }

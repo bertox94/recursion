@@ -84,9 +84,8 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
     cout << endl;
 
     auto id = std::rand() % (minnum - 1) + 1;
-    cout << "searching for id:" << id << endl;
-    auto node = scan(root, {{keys::id, id}});
-    cout << "Id:\t" << id << " has val: " << node[keys::node]->item << endl;
+    auto node = scan(root, id);
+    cout << "Id:\t" << id << " has val: " << node->item << endl;
 
 
     auto maxval = maxvalue_(root);
