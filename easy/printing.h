@@ -10,8 +10,7 @@
 //here you see that they were right, right is prepared to be what is needed for the current by the parent
 //here you see how thr right param is correctly used
 // so right is used in the curr node as it is passed from the parent, then changed only to be passed to its child
-template<typename T>
-void print(Node<T> *node, int spacing = 0) {
+void print(Node *node, int spacing = 0) {
     if (node->has_children()) {
         std::cout << std::string(spacing, ' ') << (spacing > 0 ? "+ " : "") << node->id << ", " << node->item << ":"
                   << std::endl;
@@ -24,8 +23,7 @@ void print(Node<T> *node, int spacing = 0) {
 }
 
 // S-> num|num[( S)+]
-template<typename T>
-void to_string(Node<T> *node) {
+void to_string(Node *node) {
     std::cout << node->item;
     if (node->has_children()) {
         std::cout << "[";

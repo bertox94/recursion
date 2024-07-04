@@ -25,39 +25,24 @@ using namespace std;
                                                         ←
 */
 
-template<typename T>
 class Node {
 public:
     int id;
-    T item;
+    int item;
     std::vector<Node *> children;
 
     Node() = default;
 
-    explicit Node(int id, const T &item) : id(id), item(item) {}
+    explicit Node(int id, const int &item) : id(id), item(item) {}
 
-    explicit Node(int id, T &&item) : Node(id, item) {}
-
-    Node<T> *next() {
-        switch (children.size()) {
-            case 0:
-                throw runtime_error("The current node has no child.");
-                break;
-            case 1:
-                return children.front();
-                break;
-            default:
-                throw runtime_error("Node was expected to be in a list.");
-                break;
-        }
-    }
+    explicit Node(int id, int &&item) : Node(id, item) {}
 
     bool is_leaf() const {
-        return children.size() == 0;
+        return children.empty();
     }
 
     bool has_children() const {
-        return children.size() > 0;
+        return !children.empty();
     }
 };
 
@@ -136,7 +121,7 @@ public:
     int num;
     int depth;
     int height;
-    T value;
+    int value;
     std::list<T> simpleList;
     std::list<LeftAttr<T>> compositeList;
 };
@@ -144,25 +129,15 @@ public:
 // min_breadth of course doesn't mean that every node has at least min_breadth children,
 // but the nodes that have children, they have at least min_breadth children
 
-template<typename T>
 std::unordered_map<string, int>
-build_tree(Node<T> *node, std::unordered_map<std::string, int> R) {
-    R[keys::curr_depth] = 0;
-    R[keys::curr_nodes] = 1;
-    auto L = build_tree_impl<T>(node, R);
-    return L;
-}
-
-template<typename T>
-std::unordered_map<string, int>
-build_tree_impl(Node<T> *node, std::unordered_map<string, int> R) {
+build_tree_impl(Node *node, std::unordered_map<string, int> R) {
     std::unordered_map<string, int> L = {{keys::curr_nodes, (R[keys::curr_nodes])}};
     bool make_children = (rand() % 2) && R[keys::curr_depth] < R[keys::max_depth];
     if (make_children) {
         int n_children = std::max(1 + (rand() % R[keys::max_breadth]), R[keys::min_breadth]);
         for (auto i = 1; i <= n_children /*&& curr_nodes < max_nodes*/; i++) {
             R[keys::curr_nodes] += 1;
-            auto child = new Node<T>(R[keys::curr_nodes], std::rand());
+            auto child = new Node(R[keys::curr_nodes], std::rand());
             node->children.push_back(child);
             R[keys::curr_depth] += 1;
             auto Left = build_tree_impl(child, R);
@@ -173,16 +148,14 @@ build_tree_impl(Node<T> *node, std::unordered_map<string, int> R) {
     return L;
 }
 
-template<typename T>
-int build_list(Node<T> *node, int curr_nodes, int exact_nodes) {
-    if (curr_nodes == exact_nodes) {
-        return curr_nodes;
-    } else {
-        auto child = new Node<T>(std::rand());
-        node->children.push_back(child);
-        curr_nodes = build_list(child, curr_nodes + 1, exact_nodes);
-        return curr_nodes;
-    }
+std::unordered_map<string, int>
+build_tree(Node *node, std::unordered_map<std::string, int> R) {
+    R[keys::curr_depth] = 0;
+    R[keys::curr_nodes] = 1;
+    auto L = build_tree_impl(node, R);
+    return L;
 }
+
+
 
 #endif //RECURSION_NODE_H

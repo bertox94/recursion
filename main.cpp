@@ -1,12 +1,7 @@
 #include <iostream>
 #include "Node.h"
 #include "easy/basic.h"
-#include "easy/Height.h"
-#include "hard/ListNodes.h"
-#include "easy/fathers.h"
-#include "hard/children.h"
 #include "easy/printing.h"
-#include "easy/sorting.h"
 #include <iomanip>
 #include <string>
 
@@ -15,19 +10,19 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
     //Note: left attributes consider value of the curr plus children, right attr compute value for curr already because it doesn't depend on curr.
     // If it did, then it can't be a right attribute. on the other hand, node refers to the actual node,
     // and if the param is named curr_depth, it makes sense that curr_depth on node x, refers to its actual current_depth
-    Node<int> *root;
+    Node *root;
     int nnum;
     while (true) {
 
-        root = new Node<int>(1, std::rand());
+        root = new Node(1, std::rand());
         auto R = std::unordered_map<std::string, int>{{keys::max_depth,   maxdepth},
                                                       {keys::min_breadth, minbreadth},
                                                       {keys::max_breadth, maxbreadth}};
 
-        auto L = build_tree<int>(root, R);
+        auto L = build_tree(root, R);
         nnum = L[keys::curr_nodes];
         //auto nnum = build_list(root,1,3200);
-        auto num = how_many(root).num;
+        auto num = how_many(root);
 
         if (nnum != num) {
             cout << "size mismatch (" << nnum << ", " << num << ")\n" << endl;
@@ -90,14 +85,16 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
 
     auto maxval = maxvalue_(root);
     auto minval = minvalue_(root);
-    auto l = list_nodes(root);
-    cout << "How many:       " << how_many(root).num << endl;
+    //auto l = list_nodes(root);
+    cout << "How many:       " << how_many(root) << endl;
     //cout << "How many (RightAttr):   " << how_many_variant(root, 0) << endl;
-    cout << "Min depth:      " << min_depth(root, 0).depth << endl;
-    cout << "Max depth:      " << max_depth(root, 0).depth << endl;
-    cout << "Min value:      " << minvalue_(root).value << endl;
-    cout << "Max value:      " << maxvalue_(root).value << endl;
-    cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
+    cout << "Min depth:      " << min_depth(root, 0) << endl;
+    cout << "Max depth:      " << max_depth(root, 0) << endl;
+    cout << "Min height:      " << min_height(root) << endl;
+    cout << "Max height:      " << max_height(root) << endl;
+    cout << "Min value:      " << minvalue_(root) << endl;
+    cout << "Max value:      " << maxvalue_(root) << endl;
+    //cout << "N of leaves:    " << number_of_fathers_with_no_child(root) << endl;
 
 
     //for (auto i = 0; i <= max_depth(root, -1) + 25; i++) {
@@ -108,7 +105,7 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
     //            std::get<1>(min_num_of_direct_children_at_depth(root, -1, i))
     //         << endl;//", " << res2 << endl;
     //}
-
+/*
     //cout << "Balance Factor: " << (double) number_of_fathers_with_no_child(root) / how_many(root) << endl;
     cout << "-------" << endl;
     for (auto i = minval.value; i <= minval.value + 25; i++) {
@@ -198,13 +195,13 @@ void testTree(int minnum, int maxdepth, int minbreadth, int maxbreadth) {
 
     //auto ll = list_nodes(root);
     //cout << "List:       \n" << print(ll) << endl;
-
+*/
     destroy(root);
 }
 
 int main() {
     std::srand(std::time(nullptr));
-    testTree(4000, 18, 0, 8);
+    testTree(10, 5, 0, 5);
     system("pause");
     return 0;
 }

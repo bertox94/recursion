@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <numeric>
 #include <fstream>
+#include <functional>
 #include "../Node.h"
 
 /**
@@ -35,16 +36,17 @@
 //divide functions based on the behavior on the base case (there you should see max, count)
 //or counting, max/min
 
-template<typename T>
-void print_to_file(Node<T> *node, ofstream &myfile) {
+auto maximum = [](std::vector<int> vector) { return *std::max_element(vector.begin(), vector.end()); };
+auto minimum = [](std::vector<int> vector) { return *std::min_element(vector.begin(), vector.end()); };
+
+void print_to_file(Node *node, ofstream &myfile) {
     myfile << node->id << std::endl;
     for (auto &child: node->children) {
         print_to_file(child, myfile);
     }
 }
 
-template<typename T>
-Node<T> *scan(Node<T> *node, int id) {
+Node *scan(Node *node, int id) {
     if (node->id == id)
         return node;
     auto child = node->children.begin();
@@ -56,66 +58,33 @@ Node<T> *scan(Node<T> *node, int id) {
     return scan(*prev, id);
 }
 
-template<typename T>
-LeftAttr<T> max_depth(Node<T> *node, int depth) {
-    return depth_(max_height(node).height);
-}
-
-// what the parent in the middle receives from the children is none other than the height that the children says to their father.
-// Of course what th father will answer its father, to the original question that was once applied to the root of the tree,
-// will be the height of the children + 1. And it is the same question that the children hve answered to their father.
-template<typename T>
-LeftAttr<T> max_height(Node<T> *node) {
-    LeftAttr<T> L;
+int _depth(Node *node, int depth, const std::function<int(vector < int > )> &lambda) {
     if (node->has_children()) {
-        std::vector<LeftAttr<T>> Lchildren;
+        std::vector<int> children_depths;
         for (auto &child: node->children) {
-            auto Lchild = max_height(child);
-            Lchildren.push_back(Lchild);
+            children_depths.push_back(_depth(child, depth + 1, lambda));
         }
-        return height_((*max_element(Lchildren.begin(), Lchildren.end(),
-                                     [](auto &l, auto &r) { return l.height < r.height; })).height + 1);
-    } else {
-        return height_(0);
+        return lambda(children_depths);
     }
+    return depth;
 }
 
-template<typename T>
-LeftAttr<T> min_depth(Node<T> *node, int depth) {
-    return depth_(min_height(node).height);
+int max_depth(Node *node, int depth) {
+    return _depth(node, depth, maximum);
 }
 
-template<typename T>
-LeftAttr<T> min_height(Node<T> *node) {
-    LeftAttr<T> L;
-    if (node->has_children()) {
-        std::vector<LeftAttr<T>> Lchildren;
-        for (auto &child: node->children) {
-            auto Lchild = min_height(child);
-            Lchildren.push_back(Lchild);
-        }
-        return height_((*min_element(Lchildren.begin(), Lchildren.end(),
-                                     [](auto &l, auto &r) { return l.height < r.height; })).height + 1);
-    } else {
-        return height_(0);
-    }
+int min_depth(Node *node, int depth) {
+    return _depth(node, depth, minimum);
 }
 
-template<typename T>
 //L1: num of children
-LeftAttr<T> how_many(Node<T> *node) {
-    LeftAttr<T> L;
+int how_many(Node *node) {
+    int num = 1;
     if (node->has_children()) {
-        L.num = 0;
-        for (auto &child: node->children) {
-            auto Lchild = how_many(child);
-            L.num += Lchild.num;
-        }
-        L.num++;
-        return L;
-    } else {
-        return num_(1);
+        for (auto &child: node->children)
+            num += how_many(child);
     }
+    return num;
 }
 
 //the base case coincides with the tree being a leaf!
@@ -126,65 +95,51 @@ LeftAttr<T> how_many(Node<T> *node) {
 //An empty tree doesn't exist. At least root must be.
 //When thinking what to return and stuff, just think that a leaf is just a root without children
 //L1: maxvalue_
-template<typename T>
-LeftAttr<T> maxvalue_(Node<T> *node) {
-    LeftAttr<T> L;
+
+int maxvalue_(Node *node) {
     if (node->has_children()) {
-        std::vector<LeftAttr<T>> Ltemp;
+        std::vector<int> Ltemp;
         for (auto &child: node->children) {
             auto Lchild = maxvalue_(child);
             Ltemp.push_back(Lchild);
         }
-        Ltemp.push_back(value_(node->item));
-        return value_((*max_element(Ltemp.begin(), Ltemp.end(),
-                                    [](auto &l, auto &r) { return l.value < r.value; })).value);
-    } else {
-        return value_(node->item);
+        Ltemp.push_back(node->item);
+        return maximum(Ltemp);
     }
+    return node->item;
 }
 
-template<typename T>
-LeftAttr<T> minvalue_(Node<T> *node) {
-    LeftAttr<T> L;
+int minvalue_(Node *node) {
     if (node->has_children()) {
-        std::vector<LeftAttr<T>> Ltemp;
+        std::vector<int> Ltemp;
         for (auto &child: node->children) {
-            auto Lchild = minvalue_(child);
+            auto Lchild = maxvalue_(child);
             Ltemp.push_back(Lchild);
         }
-        Ltemp.push_back(value_(node->item));
-        return value_((*min_element(Ltemp.begin(), Ltemp.end(),
-                                    [](auto &l, auto &r) { return l.value < r.value; })).value);
-    } else {
-        return value_(node->item);
+        Ltemp.push_back(node->item);
+        return minimum(Ltemp);
     }
+    return node->item;
 }
 
 //R1: item as reference
 //L1: number
 //as an execrise you could remove the else branch when not necessary, for example here
-template<typename T>
-LeftAttr<T> how_many_like_this(Node<T> *node, RightAttr<T> R) {
-    LeftAttr<T> L;
+int how_many_like_this(Node *node, int it) {
+    int num = 0;
     if (node->has_children()) {
-        L.num = 0;
         for (auto &child: node->children) {
-            auto Lchild = how_many_like_this(child, R);
-            L.num += Lchild.num;
-        }
-        L.num += node->item == R.value ? 1 : 0;
-        return L;
-    } else {
-        if (node->item == R.value) {
-            return num_(1);
-        } else {
-            return num_(0);
+            auto Lchild = how_many_like_this(child, it);
+            num += Lchild;
         }
     }
+    if (node->item == it)
+        num++;
+    return num;
 }
 
-template<typename T>
-void destroy(Node<T> *node) {
+
+void destroy(Node *node) {
     for (auto &child: node->children) {
         destroy(child);
     }

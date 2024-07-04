@@ -3,4 +3,7 @@ project(recursion)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(recursion main.cpp easy/basic.h easy/depth.h easy/fathers.h hard/children.h easy/Height.h hard/ListNodes.h easy/sorting.h easy/printing.h easy/distance.h keys.h)
+add_executable(recursion main.cpp easy/basic.h easy/printing.h
+        #easy/depth.h easy/fathers.h hard/children.h easy/Height.h hard/ListNodes.h easy/sorting.h easy/distance.h
+        keys.h
+        )
